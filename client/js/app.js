@@ -81,6 +81,10 @@ $(document).ready(async () => {
     }, 300);
   });
 
+  $('#new-file-upload').on('click', () => {
+    $('#upload-file-dialog').modal('show');
+  });
+
   // $('#upload-file-dialog').modal('show');
 
   // FileDownloadHandler.start();

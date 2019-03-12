@@ -1,15 +1,63 @@
+const fetch = require('node-fetch');
 
-<html>
-<head>
-  <title>OpenID transaction in progress</title>
-</head>
-<body onload="document.forms[0].submit();">
-<form id="openid_message" action="https://id.atlassian.com/openid/v2/op" method="post" accept-charset="UTF-8" enctype="application/x-www-form-urlencoded"><input name="openid.ns.crowdid" type="hidden" value="https://developer.atlassian.com/display/CROWDDEV/CrowdID+OpenID+extensions#CrowdIDOpenIDextensions-login-page-parameters"/><input name="openid.return_to" type="hidden" value="https://bitbucket.org/socialauth/complete/atlassianid/?janrain_nonce=2019-03-12T00%3A32%3A43ZHPIPAK"/><input name="openid.realm" type="hidden" value="https://bitbucket.org"/><input name="openid.ns" type="hidden" value="http://specs.openid.net/auth/2.0"/><input name="openid.sreg.optional" type="hidden" value="fullname,nickname,email"/><input name="openid.claimed_id" type="hidden" value="http://specs.openid.net/auth/2.0/identifier_select"/><input name="openid.ns.sreg" type="hidden" value="http://openid.net/extensions/sreg/1.1"/><input name="openid.crowdid.application" type="hidden" value="bitbucket"/><input name="openid.assoc_handle" type="hidden" value="16874549"/><input name="openid.mode" type="hidden" value="checkid_setup"/><input name="openid.identity" type="hidden" value="http://specs.openid.net/auth/2.0/identifier_select"/><input type="submit" value="Continue"/></form>
-<script>
-var elements = document.forms[0].elements;
-for (var i = 0; i < elements.length; i++) {
-  elements[i].style.display = "none";
+const config = require('../../../../config.json');
+
+const Crypto = require('../crypto/crypto.js');
+const streamSaver = require('./StreamSaver.js');
+
+const ipfsUrl = config.infura.ipfs.gateway;
+
+const Block = {
+  getNextBlock: async (url, writer, privKey) => {
+    try {
+      const res = await fetch(url, {
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+      });
+      const out = await res.text();
+
+      const decrypted = await Crypto.decrypt(privKey, out);
+      writer.write(decrypted);
+
+    } catch (err) {
+      throw err;
+    }
+  },
+};
+
+const Worker = {
+  downloadFile: async (ipfsList, fileName, privKey) => {
+    try {
+      // Create the writeable stream.
+      const fileStream = streamSaver.createWriteStream(fileName);
+      const writer = fileStream.getWriter();
+
+      // Read all the blocks from ipfs and join them.
+      for (const hash of ipfsList) {
+        const url = ipfsUrl + hash;
+        await Block.getNextBlock(url, writer, privKey);
+      }
+
+      // Close the stream.
+      writer.close();
+
+    } catch (err) {
+      throw err;
+    }
+  },
+};
+
+class FileDownloader {
+  constructor(ipfsList, fileName, privKey) {
+    this.ipfsList = ipfsList;
+    this.fileName = fileName;
+    this.privKey  = privKey;
+  }
+
+  async start() {
+    await Worker.downloadFile(this.ipfsList, this.fileName, this.privKey);
+  }
 }
-</script>
-</body>
-</html>
+
+module.exports = FileDownloader;

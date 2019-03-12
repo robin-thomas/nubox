@@ -31,6 +31,14 @@
   border-color: rgba(181,187,202,.1);
 }
 
+#account-dashboard #new-file-upload {
+  border-color: #dc3545;
+}
+
+#account-dashboard .fa-plus-circle {
+  color: #dc3545;
+}
+
 #contacts-connect {
   background: rgba(255, 255, 255, 0.1);
 }
