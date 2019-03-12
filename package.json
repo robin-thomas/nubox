@@ -1,5 +1,5 @@
 {
-  "name": "nubox",
+  "name": "nunew",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -25,7 +25,8 @@
     "express": "^4.16.4",
     "ipfs-http-client": "29.1.1",
     "lodash": "^4.17.11",
-    "node-fetch": "2.3.0",
+    "node-fetch": "^2.3.0",
+    "url": "^0.11.0",
     "web3": "1.0.0-beta.46",
     "webworkify": "^1.5.0"
   }

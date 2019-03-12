@@ -7,38 +7,57 @@ body {
   overflow: hidden;
 }
 
+#cookie-login-loading {
+  color: #17a2b8;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+#cookie-login-loading > i {
+  font-size: 20rem;
+}
+
+#cookie-login-loading > p {
+  font-size: 5rem;
+  text-transform: uppercase;
+  letter-spacing: -5px;
+}
+
 #upload-file-dialog .modal-body > .container {
-  padding:0;
+  padding: 0;
 }
 
 #file-upload-fake {
-  padding:8px 15px;
-  cursor:pointer;
+  padding: 8px 15px;
+  cursor: pointer;
 }
 
 #file-upload-progress {
-  height:300px;
-  max-width:100%;
-  overflow-x:hidden;
+  height: 300px;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 #upload-file-dialog .modal-footer .progress {
-  height:2px;
-  width:100%;
+  height: 2px;
+  width: 100%;
 }
 
 #file-upload-progress-footer {
-  font-size:13px;
-  line-height:40px;
+  font-size: 13px;
+  line-height: 40px;
 }
 
 #file-upload-progress-total-size-display {
-  text-align:right;
+  text-align: right;
 }
 
 #header {
-  width:100%;
-  height:50px;
+  width: 100%;
+  height: 50px;
 }
 
 #header .container, #header .row, #header .col-md-1, #header .col-md-3, #header .col-md-9 {
@@ -60,7 +79,7 @@ body {
   font-size: 24px;
   display: table-cell;
   vertical-align: middle;
-  text-align:center
+  text-align: center
 }
 
 .wallet-toggle-button {
@@ -128,4 +147,13 @@ body {
 
 #wallet-logout-button {
   display: none;
+}
+
+#footer {
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  bottom: 0;
+  border-width: 1px 0 0 0;
+  border-style: solid;
 }

@@ -1,9 +1,14 @@
+const WalletHandler = require('./modules/handlers/metamask.js');
 const FileUploadHandler = require('./modules/handlers/uploader.js');
 const FileDownloadHandler = require('./modules/handlers/downloader.js');
 
 const Metamask = require('./modules/crypto/metamask.js');
 
 $(document).ready(async () => {
+  const confirmAddrButton = $('#confirm-eth-addr');
+
+  $('#wallet-login-button').on('click', async (e) => WalletHandler.walletConnectHandler(e));
+  confirmAddrButton.on('click', () => WalletHandler.walletConnectConfirmHandler(confirmAddrButton));
 
   $('#file-upload').on('change', (e) => FileUploadHandler.handler(e));
   $('#file-upload-progress').on('click', '.file-upload-progress-cancel', (e) => {
@@ -51,6 +56,9 @@ $(document).ready(async () => {
                   <i class="fas fa-times file-upload-progress-cancel" style="cursor:pointer;"></i>';
     $(e.currentTarget).parent().html(html);
   });
+
+  // Check if already logged in.
+  WalletHandler.walletConnectConfirmHandler();
 
   // $('#upload-file-dialog').modal('show');
 
