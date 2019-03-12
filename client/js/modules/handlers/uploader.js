@@ -12,7 +12,6 @@ const File = {
   getFileKey: (file) => {
     return Buffer.from(JSON.stringify({
       lastMod: file.lastModified,
-      lastModDate: file.lastModifiedDate,
       size: file.size,
       name: file.name,
       type: file.type,
@@ -25,8 +24,8 @@ const File = {
     const ext = fileName.substr(index + 1);
 
     let name = fileName.substr(0, index);
-    if (name.length > 12) {
-      name = name.substr(0, 4) + '...' + name.substr(name.length - 5);
+    if (name.length > 10) {
+      name = name.substr(0, 3) + '...' + name.substr(name.length - 4);
     }
 
     return name + '.' + ext;
@@ -46,55 +45,57 @@ const FileUploadHandler = {
   createFileUploadUI: (key, file) => {
     $('#file-upload-progress').find('.file-upload-progress-full-file-name');
 
+    const fileName = File.getFileName(file.name);
+    const fileSize = File.getFileSize(file.size);
 
-    let row = '<div class="row" id="{fileKey}">\
-                  <input type="hidden" class="file-upload-progress-full-file-name" value="{fileName}"/>\
-                  <div class="col-md-2">\
-                    <i class="fas fa-file-alt" style="font-size:46px;"></i>\
-                  </div>\
-                  <div class="col-md-10">\
-                    <div class="row">\
-                      <div class="col-md-9">\
-                        <div class="file-upload-progress-file-name">\
-                          <b>{fileName}</b>\
-                        </div>\
-                      </div>\
-                      <div class="col-md-3" style="text-align:right">\
-                        <input type="hidden" class="file-upload-progress-key" value="{fileKey}" />\
-                        <div class="file-upload-progress-btn">\
-                          <i class="fas fa-spinner fa-spin"></i>\
-                        </div>\
-                      </div>\
-                    </div>\
-                    <div class="row">\
-                      <div class="col-md-5">\
-                        <div style="font-size:11px;color:grey;">{fileSize}</div>\
-                      </div>\
+    let row = `<div class="row" id="${key}">
+                  <input type="hidden" class="file-upload-progress-full-file-name" value="${fileName}"/>
+                  <div class="col-md-2">
+                    <i class="fas fa-file-alt" style="font-size:46px;"></i>
+                  </div>
+                  <div class="col-md-10">
+                    <div class="row">
+                      <div class="col-md-9">
+                        <div class="file-upload-progress-file-name">
+                          <b>${fileName}</b>
+                        </div>
+                      </div>
+                      <div class="col-md-3" style="text-align:right">
+                        <input type="hidden" class="file-upload-progress-key" value="${key}" />
+                        <div class="file-upload-progress-btn">
+                          <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-5">
+                        <div style="font-size:11px;color:grey;">${fileSize}</div>
+                      </div>
                       <div class="col-md-7" style="text-align:right">\
                         <div class="file-upload-progress-status" style="font-size:12px;color:grey;">Queued</div>\
-                      </div>\
-                    </div>\
-                    <div class="row">\
-                      <div class="progress" style="height:2px;margin:15px;width:100%;">\
-                        <div class="progress-bar bg-danger" role="progressbar" style="width:0px" aria-valuenow="0" \
-                             aria-valuemin="0" aria-valuemax="100"></div>\
-                      </div>\
-                    </div>\
-                  </div>\
-                 </div>';
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="progress" style="height:2px;margin:15px;width:100%;">
+                        <div class="progress-bar bg-danger" role="progressbar" style="width:0px" aria-valuenow="0"
+                             aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                    </div>
+                  </div>
+                 </div>`;
 
-    // TODO: improve the below code to replace multiple occurances of same string.
-    row = row.replace('{fileKey}', key);
-    row = row.replace('{fileKey}', key);
-    row = row.replace('{fileName}', File.getFileName(file.name));
-    row = row.replace('{fileName}', File.getFileName(file.name));
-    row = row.replace('{fileSize}', File.getFileSize(file.size));
-
-    $('#file-upload-progress').append(row);
+    const simpleBarContent = $('#file-upload-progress').find('.simplebar-content');
+    const container = simpleBarContent.find('#file-upload-simplebar-container');
+    if (container.length > 1) {
+      container.append(row);
+    } else {
+      simpleBarContent.append(`<div id="file-upload-simplebar-container" class="container">${row}</div>`);
+    }
   },
 
   handler: (e) => {
     const files = e.target.files;
+    const el = new SimpleBar($('#file-upload-progress')[0]);
 
     // Check if the file is in the upload UI.
     // If not, start the job.
@@ -110,6 +111,8 @@ const FileUploadHandler = {
         // TODO: scroll the UI to the existing file in the UI.
       }
     }
+
+    el.recalculate();
   },
 
   timer: () => {
