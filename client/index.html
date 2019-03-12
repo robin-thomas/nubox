@@ -1,15 +1,48 @@
-
+<!DOCTYPE html>
 <html>
-<head>
-  <title>OpenID transaction in progress</title>
-</head>
-<body onload="document.forms[0].submit();">
-<form id="openid_message" action="https://id.atlassian.com/openid/v2/op" method="post" accept-charset="UTF-8" enctype="application/x-www-form-urlencoded"><input name="openid.ns.crowdid" type="hidden" value="https://developer.atlassian.com/display/CROWDDEV/CrowdID+OpenID+extensions#CrowdIDOpenIDextensions-login-page-parameters"/><input name="openid.return_to" type="hidden" value="https://bitbucket.org/socialauth/complete/atlassianid/?janrain_nonce=2019-03-12T00%3A29%3A56ZS6UuUL"/><input name="openid.realm" type="hidden" value="https://bitbucket.org"/><input name="openid.ns" type="hidden" value="http://specs.openid.net/auth/2.0"/><input name="openid.sreg.optional" type="hidden" value="fullname,nickname,email"/><input name="openid.claimed_id" type="hidden" value="http://specs.openid.net/auth/2.0/identifier_select"/><input name="openid.ns.sreg" type="hidden" value="http://openid.net/extensions/sreg/1.1"/><input name="openid.crowdid.application" type="hidden" value="bitbucket"/><input name="openid.assoc_handle" type="hidden" value="16874549"/><input name="openid.mode" type="hidden" value="checkid_setup"/><input name="openid.identity" type="hidden" value="http://specs.openid.net/auth/2.0/identifier_select"/><input type="submit" value="Continue"/></form>
-<script>
-var elements = document.forms[0].elements;
-for (var i = 0; i < elements.length; i++) {
-  elements[i].style.display = "none";
-}
-</script>
-</body>
+  <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+  </head>
+  <body>
+    <div id="upload-file-dialog" class="modal fade" role="dialog" aria-hidden="true" data-keyboard="false">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Upload File</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-5">
+                  <div class="row"><div class="col">&nbsp;</div></div>
+                  <div class="row">
+                    <div class="col">
+                      <div id="file-upload-fake" style="cursor:pointer;height:300px;border-radius:10px;border:3px dashed grey;"></div>
+                      <input type="file" id="file-upload" multiple hidden />
+                    </div>
+                  </div>
+                  <div class="row"><div class="col">&nbsp;</div></div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-6">
+                  <div class="row"><div class="col">&nbsp;</div></div>
+                  <div id="file-upload-progress" style="height:300px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="./js/index.js"></script>
 </html>

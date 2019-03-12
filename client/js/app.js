@@ -1,15 +1,58 @@
+const FileUploadHandler = require('./modules/handlers/uploader.js');
+const FileDownloadHandler = require('./modules/handlers/downloader.js');
 
-<html>
-<head>
-  <title>OpenID transaction in progress</title>
-</head>
-<body onload="document.forms[0].submit();">
-<form id="openid_message" action="https://id.atlassian.com/openid/v2/op" method="post" accept-charset="UTF-8" enctype="application/x-www-form-urlencoded"><input name="openid.ns.crowdid" type="hidden" value="https://developer.atlassian.com/display/CROWDDEV/CrowdID+OpenID+extensions#CrowdIDOpenIDextensions-login-page-parameters"/><input name="openid.return_to" type="hidden" value="https://bitbucket.org/socialauth/complete/atlassianid/?janrain_nonce=2019-03-12T00%3A30%3A30Zivt1VO"/><input name="openid.realm" type="hidden" value="https://bitbucket.org"/><input name="openid.ns" type="hidden" value="http://specs.openid.net/auth/2.0"/><input name="openid.sreg.optional" type="hidden" value="fullname,nickname,email"/><input name="openid.claimed_id" type="hidden" value="http://specs.openid.net/auth/2.0/identifier_select"/><input name="openid.ns.sreg" type="hidden" value="http://openid.net/extensions/sreg/1.1"/><input name="openid.crowdid.application" type="hidden" value="bitbucket"/><input name="openid.assoc_handle" type="hidden" value="16874549"/><input name="openid.mode" type="hidden" value="checkid_setup"/><input name="openid.identity" type="hidden" value="http://specs.openid.net/auth/2.0/identifier_select"/><input type="submit" value="Continue"/></form>
-<script>
-var elements = document.forms[0].elements;
-for (var i = 0; i < elements.length; i++) {
-  elements[i].style.display = "none";
-}
-</script>
-</body>
-</html>
+const Metamask = require('./modules/crypto/metamask.js');
+
+$(document).ready(async () => {
+
+  $('#file-upload').on('change', (e) => FileUploadHandler.handler(e));
+  $('#file-upload-progress').on('click', '.file-upload-progress-cancel', (e) => {
+    const parent = $(e.currentTarget).parent().parent();
+    const key = parent.find('.file-upload-progress-key').val();
+
+    const status = FileUploadHandler.getStatus(key);
+    switch (status) {
+      case 'COMPLETED':
+        alert('This file has already been uploaded');
+        parent.parent().parent().remove();
+        break;
+
+      case 'FAILED':
+        alert('This file upload has already failed');
+        parent.parent().parent().parent().remove();
+        break;
+
+      default:
+        if (confirm('Are you sure you want to cancel this upload?')) {
+          FileUploadHandler.destroy(key);
+          parent.parent().parent().parent().remove();
+        }
+    }
+  });
+
+  $('#file-upload-fake').on('click', () => $('#file-upload').click());
+
+  $('#file-upload-progress').on('click', '.file-upload-progress-pause', (e) => {
+    const key = $(e.currentTarget).parent().parent().find('.file-upload-progress-key').val();
+    FileUploadHandler.pause(key);
+
+    const html = '<i class="fas fa-play file-upload-progress-play" style="cursor:pointer;"></i>&nbsp;&nbsp;\
+                  <i class="fas fa-times file-upload-progress-cancel" style="cursor:pointer;"></i>';
+    $(e.currentTarget).parent().html(html);
+  });
+
+  $('#file-upload-progress').on('click', '.file-upload-progress-play', (e) => {
+    const key = $(e.currentTarget).parent().parent().find('.file-upload-progress-key').val();
+    FileUploadHandler.start(null, key);
+
+    const html = '<i class="fas fa-pause file-upload-progress-pause" style="cursor:pointer;"></i>&nbsp;&nbsp;\
+                  <i class="fas fa-times file-upload-progress-cancel" style="cursor:pointer;"></i>';
+    $(e.currentTarget).parent().html(html);
+  });
+
+  $('#upload-file-dialog').modal('show');
+
+  // FileDownloadHandler.start();
+  // const address = (await Metamask.loadWeb3())[0];
+  // const pubKey = await Metamask.personalSign(address, 'hello');
+});
