@@ -42,24 +42,16 @@ const Metamask = {
     }
   },
 
-  personalSign: (address, msg) => {
-    return new Promise((resolve, reject) => {
-      const opts = {
-        id: 1,
-        method: 'personal_sign',
-        params: [address, msg]
-      };
+  personalSign: async (address, msg) => {
+    try {
+      const signature = await window.web3.eth.personal.sign(msg, address, null);
 
-      window.web3.givenProvider.sendAsync(opts, (err, result) => {
-        if (!err) {
-          const signature = result.result;
-          Metamask.pubKey = getPubKey(msg, signature);
-          resolve(signature);
-        } else {
-          reject(err);
-        }
-      });
-    });
+      Metamask.pubKey = getPubKey(msg, signature);
+
+      return signature;
+    } catch (err) {
+      throw err;
+    }
   },
 };
 

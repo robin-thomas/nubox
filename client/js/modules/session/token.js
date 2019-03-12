@@ -81,7 +81,7 @@ const Token = {
         const {token, expiresIn} = await Token.refreshToken(address, refreshToken);
 
         // Update the cookie.
-        Cookie.update(token, expiresIn, refreshToken);
+        Cookie.update(address, token, expiresIn, refreshToken);
 
         return {token, expiresIn};
       } catch (err) {

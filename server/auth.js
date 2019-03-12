@@ -1,15 +1,16 @@
-const ethUtil = require('ethereumjs-util');
 const jwt = require('jsonwebtoken');
+const ethUtil = require('ethereumjs-util');
 
 const DB = require('./db.js');
 const Token = require('./token.js');
 const config = require('../config.json');
 
-const verifySignature = (msg, signature, address) => {
+const verifySignature = async (msg, signature, address) => {
   const msgHash = ethUtil.hashPersonalMessage(ethUtil.toBuffer(msg));
   const sigParams = ethUtil.fromRpcSig(ethUtil.toBuffer(signature));
   const pubKey = ethUtil.ecrecover(msgHash, sigParams.v, sigParams.r, sigParams.s);
   const sender = ethUtil.bufferToHex(ethUtil.publicToAddress(pubKey));
+
   return (sender === ethUtil.bufferToHex(address)) ? true : false;
 };
 
@@ -19,7 +20,7 @@ const Auth = {
     const sig = req.body.sig;
     const address = req.body.address;
 
-    if (verifySignature(msg, sig, address)) {
+    if (await verifySignature(msg, sig, address)) {
       const {token, expiresIn} = Token.genToken(address);
       const refreshToken = await Token.genRefreshToken(address);
 

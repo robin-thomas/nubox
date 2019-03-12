@@ -22,7 +22,7 @@ const Session = {
         Session.expiresIn = expiresIn;
         Session.refreshToken = refreshToken;
 
-        Cookie.update(token, expiresIn, refreshToken);
+        Cookie.new(address, token, expiresIn, refreshToken);
       }
     } catch (err) {
       throw err;
@@ -68,6 +68,7 @@ const Session = {
   isLoggedIn: () => {
     const session = Cookie.load();
     if (session === null) {
+      console.log('no session');
       return false;
     }
 

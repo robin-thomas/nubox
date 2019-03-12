@@ -20,10 +20,6 @@ const Cookie = {
       const str = cookieStr[i].trim();
       if (str.indexOf(name) === 0) {
         const cookieValue = str.substring(name.length).split(cookieTerminator);
-        Session.address = cookieValue[0];
-        Session.token = cookieValue[1];
-        Session.expiresIn = cookieValue[2];
-        Session.refreshToken = cookieValue[3];
 
         return {
           address: cookieValue[0],
@@ -32,12 +28,12 @@ const Cookie = {
           refreshToken: cookieValue[3],
         };
       }
-
-      return null;
     }
+
+    return null;
   },
 
-  update: (token, expiresIn, refreshToken) => {
+  update: (address, token, expiresIn, refreshToken) => {
     const expires = getExpiryString();
 
     const name = cookieName + '=';
@@ -49,6 +45,12 @@ const Cookie = {
         document.cookie = `${cookieName}=${cookie}${expires};path=/`;
       }
     }
+  },
+
+  new: (address, token, expiresIn, refreshToken) => {
+    const expires = getExpiryString();
+    const cookie = `${address}${cookieTerminator}${token}${cookieTerminator}${expiresIn}${cookieTerminator}${refreshToken}`;
+    document.cookie = `${cookieName}=${cookie}${expires};path=/`;
   },
 
   destroy: () => {
