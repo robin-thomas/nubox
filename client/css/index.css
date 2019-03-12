@@ -6,3 +6,32 @@ body {
   font-family: 'Open Sans', sans-serif;
   overflow: hidden;
 }
+
+#upload-file-dialog .modal-body > .container {
+  padding:0;
+}
+
+#file-upload-fake {
+  padding:8px 15px;
+  cursor:pointer;
+}
+
+#file-upload-progress {
+  height:300px;
+  max-width:100%;
+  overflow-x:hidden;
+}
+
+#upload-file-dialog .modal-footer .progress {
+  height:2px;
+  width:100%;
+}
+
+#file-upload-progress-footer {
+  font-size:13px;
+  line-height:40px;
+}
+
+#file-upload-progress-total-size-display {
+  text-align:right;
+}

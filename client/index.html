@@ -7,44 +7,44 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400">
     <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/style.css">
   </head>
   <body>
     <div id="upload-file-dialog" class="modal fade" role="dialog" aria-hidden="true" data-keyboard="false">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h6 class="modal-title" id="file-upload-fake" style="padding:8px 15px;cursor:pointer;background:#171a1d;color:#fff;">UPLOAD</h6>
+            <h6 class="modal-title" id="file-upload-fake">UPLOAD</h6>
             <input type="file" id="file-upload" multiple hidden />
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <div class="container" style="padding:0;">
+            <div class="container">
               <div class="row">
                 <div class="col">
-                  <div id="file-upload-progress" style="height:300px;max-width:100%;overflow-x:hidden;"></div>
+                  <div id="file-upload-progress"></div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="modal-footer" style="background:#171a1d;">
-            <div class="container" style="">
+          <div class="modal-footer">
+            <div class="container">
               <div class="row">
                 <div class="col">
-                  <div class="progress" style="height:2px;width:100%;">
+                  <div class="progress">
                     <div id="file-upload-progress-total" class="progress-bar progress-bar-striped bg-danger"
                          role="progressbar" style="width:0px" aria-valuenow="0"
                          aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
                 </div>
               </div>
-              <div class="row" style="color:#fff;font-size:13px;line-height:40px;">
+              <div id="file-upload-progress-footer" class="row">
                 <input type="hidden" value="" id="file-upload-progress-total-size" />
                 <div class="col-md-3" id="file-upload-progress-total-display"><b>0.0%</b></div>
                 <div class="col-md-3"></div>
-                <div class="col-md-6" id="file-upload-progress-total-size-display"
-                     style="text-align:right;">TOTAL <b>0</b></div>
+                <div class="col-md-6" id="file-upload-progress-total-size-display">TOTAL <b>0</b></div>
               </div>
             </div>
           </div>
