@@ -1,12 +1,45 @@
 #file-upload-fake {
-  background:#171a1d;
-  color:#fff;
+  background: #171a1d;
+  color: #fff;
 }
 
 #upload-file-dialog .modal-footer {
-  background:#171a1d;
+  background: #171a1d;
 }
 
 #file-upload-progress-footer {
-  color:#fff;
+  color: #fff;
+}
+
+#header {
+  background: #171a1d;
+  color: #fff;
+}
+
+#header .row, #header .col-md-1, #header .col-md-2 {
+  border-color: rgba(181,187,202,.1);
+}
+
+.wallet-toggle-button {
+  border-color: rgba(181,187,202,.1);
+}
+
+.wallet-toggle-button:after {
+  color: #b0bccc;
+}
+
+.wallet-label-top {
+  color: #b0bccc;
+}
+
+.wallet-label-bottom {
+  color: #fff;
+}
+
+.wallet-left {
+  background-color: #1c1e2d;
+}
+
+.wallet-left .row {
+  border-color: rgba(181,187,202,.1);
 }

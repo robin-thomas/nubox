@@ -35,3 +35,97 @@ body {
 #file-upload-progress-total-size-display {
   text-align:right;
 }
+
+#header {
+  width:100%;
+  height:50px;
+}
+
+#header .container, #header .row, #header .col-md-1, #header .col-md-3, #header .col-md-9 {
+  height: 100%;
+}
+
+#header .container-fluid > .row {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+#header .container-fluid > .row > .col-md-1 {
+  border-right-style: solid;
+  border-right-width: 1px;
+}
+
+#header #logo {
+  font-family: 'Audiowide', cursive;
+  font-size: 24px;
+  display: table-cell;
+  vertical-align: middle;
+  text-align:center
+}
+
+.wallet-toggle-button {
+  position: absolute;
+  line-height: 1;
+  letter-spacing: .33pt;
+  height: 51px;
+  padding: 10px 20px;
+  display: flex;
+  cursor: pointer;
+  right: 10px;
+  width: 200px;
+  overflow: hidden;
+  border-width: 0 0 0 1px;
+  border-style: solid;
+}
+
+.wallet-toggle-button:after {
+  content: '\f107';
+  font-family: 'Font Awesome 5 Free';
+  font-size: 1rem;
+  font-weight: 900;
+  margin-left: 7px;
+  transition: all .1s;
+}
+
+.wallet {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 25px;
+}
+
+.wallet-icon {
+  margin: 0;
+  width: 24px;
+  height: 24px;
+  background-image: url('../img/icon_wallet-unlocked.svg');
+}
+
+.wallet-label {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 10px;
+  text-align: left;
+  height: 24px;
+  white-space: nowrap;
+}
+
+.wallet-label-top {
+  font-size: .625rem;
+  margin: 0;
+}
+
+.wallet-label-bottom {
+  font-size: 15px;
+  margin: 0;
+  line-height: 19px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-weight: 500;
+  overflow: visible;
+}
+
+#wallet-logout-button {
+  display: none;
+}

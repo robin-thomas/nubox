@@ -52,7 +52,7 @@ $(document).ready(async () => {
     $(e.currentTarget).parent().html(html);
   });
 
-  $('#upload-file-dialog').modal('show');
+  // $('#upload-file-dialog').modal('show');
 
   // FileDownloadHandler.start();
   // const address = (await Metamask.loadWeb3())[0];
