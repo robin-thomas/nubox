@@ -16,6 +16,7 @@ $(document).ready(async () => {
 
   $('#add-new-contact').on('click', ContactsHandler.addNewContactDisplayHandler);
   confirmNewContactButton.on('click', () => ContactsHandler.addNewContactHandler(confirmNewContactButton));
+  $('#contacts-after-connect').on('click', '.fa-trash-alt', (e) => ContactsHandler.deleteContactHandler(e.target));
 
   $('#file-upload').on('change', (e) => FileUploadHandler.handler(e));
   $('#file-upload-progress').on('click', '.file-upload-progress-cancel', (e) => {

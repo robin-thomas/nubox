@@ -1,4 +1,5 @@
 const Contacts = require('../contacts.js');
+const Wallet = require('../crypto/metamask.js');
 
 const config = require('../../../../config.json');
 
@@ -63,27 +64,28 @@ const ContactsHandler = {
       const contactName = contact.nickname.split(' ')[0];
 
       const row = '<div class="row">\
-                    <div class="col-md-3">\
-                      <i class="fas fa-user-circle" style="font-size:3em;color:#17a2b8;"></i>\
+                    <div class="col-md-2">\
+                      <i class="fas fa-user-circle" style="font-size:1.5em;"></i>\
                     </div>\
-                    <div class="col-md-7" style="text-align:left;padding-left:0 !important">'
+                    <div class="col-md-7" style="text-align:left;">'
                      + contactName +
                     '</div>\
                     <div class="col-md-2">\
                       <input type="hidden" class="contact-name" value="' + contactName + '" />\
                       <input type="hidden" class="contact-address" value="' + contact.address + '" />\
-                      <i class="fas fa-times-circle" style="cursor:pointer;color:#17a2b8;" title="Delete contact"></i>\
+                      <i class="fas fa-trash-alt link-circle-hover" style="cursor:pointer;" title="Delete contact"></i>\
                     </div>\
                   </div>';
 
       rows += row;
     }
 
-    const html = '<div id="contacts-display">' + rows + '</div>';
+    const html = `<div id="contacts-display">${rows}</div>`;
     contactsAfterConnect.find('#contacts-dashboard-display').html(html);
 
     const el = new SimpleBar(contactsAfterConnect.find('#contacts-display')[0]);
     el.recalculate();
+    contactsAfterConnect.find('#contacts-display .fa-trash-alt').tooltip();
   },
 
   addNewContactHandler: async (btn, contact) => {
@@ -153,13 +155,9 @@ const ContactsHandler = {
 
     try {
       if (confirm('Are you sure you want to delete ' + contactName + ' from your contacts?')) {
-        // Check whether there are any expenses with this contact.
-        // If yes, we wont delete this contact.
-        const out = await Expenses.searchExpensesWithKeyword(Wallet.address, contactName, true);
-        if (out.length >= 1) {
-          throw new Error('Cannot delete, as you have previous expenses with ' + contactName + '!');
-        }
+        $(ele).tooltip('hide');
 
+        // TODO: handle files already shared with this contact.
         await Contacts.deleteContact({address: Wallet.address, contactAddress: contactAddress});
 
         ContactsHandler.contactsList = ContactsHandler.contactsList.filter(e => e.address !== contactAddress);

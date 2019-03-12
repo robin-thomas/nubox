@@ -54,6 +54,6 @@
   background: white;
 }
 
-.contacts .row {
-  border-color: rgba(181,187,202,.1);
+#contacts-display .row {
+  border-color: rgb(218, 220, 224);
 }

@@ -231,13 +231,14 @@ body {
   z-index: 2;
 }
 
-.contacts > .row {
+#contacts-display .row {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-style: solid;
   border-width: 1px;
-  border-style:solid;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  margin-left: 10px;
-  margin-right: 10px;
+  border-radius: 25px;
+  width: 250px;
+  margin: 5px 25px;
 }
 
 /* #contacts-after-connect .row {
