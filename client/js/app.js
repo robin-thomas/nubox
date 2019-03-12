@@ -1,16 +1,21 @@
 const WalletHandler = require('./modules/handlers/metamask.js');
+const ContactsHandler = require('./modules/handlers/contacts.js');
 const FileUploadHandler = require('./modules/handlers/uploader.js');
 const FileDownloadHandler = require('./modules/handlers/downloader.js');
 
 const Metamask = require('./modules/crypto/metamask.js');
 
 $(document).ready(async () => {
-  const confirmAddrButton = $('#confirm-eth-addr');
+  const confirmAddrButton       = $('#confirm-eth-addr'),
+        confirmNewContactButton = $('#confirm-add-contact');
 
   $('#wallet-login-button').on('click', async (e) => WalletHandler.walletConnectHandler(e));
   confirmAddrButton.on('click', () => WalletHandler.walletConnectConfirmHandler(confirmAddrButton));
   $('#wallet-logout-button').on('click', WalletHandler.walletLogoutHandler);
   $('#contacts-right-connect').on('click', async (e) => WalletHandler.walletConnectHandler(e));
+
+  $('#add-new-contact').on('click', ContactsHandler.addNewContactDisplayHandler);
+  confirmNewContactButton.on('click', () => ContactsHandler.addNewContactHandler(confirmNewContactButton));
 
   $('#file-upload').on('change', (e) => FileUploadHandler.handler(e));
   $('#file-upload-progress').on('click', '.file-upload-progress-cancel', (e) => {

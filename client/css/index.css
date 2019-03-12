@@ -227,7 +227,7 @@ body {
   cursor: pointer;
   position: absolute;
   right: 25px;
-  top: 50%;
+  bottom: 10px;
 }
 
 #footer {
