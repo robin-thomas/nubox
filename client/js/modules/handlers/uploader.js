@@ -60,6 +60,21 @@ const File = {
 const FileUploadHandler = {
   upload: null,
   uploadTimer: null,
+  jobQueue: [],
+
+  startJob: () => {
+    let runningJobCount = 0;
+    for (const key of Object.keys(FileUploadHandler.upload)) {
+      runningJobCount += (FileUploadHandler.upload[key].isRunning ? 1 : 0);
+    }
+
+    // Start the job is queue is not full.
+    if (runningJobCount < 1 && FileUploadHandler.jobQueue.length > 0) {
+      const key = FileUploadHandler.jobQueue.pop();
+      FileUploadHandler.upload[key].uploader.start();
+      FileUploadHandler.upload[key].isRunning = true;
+    }
+  },
 
   createFileUploadUI: (key, file) => {
     $('#file-upload-progress').find('.file-upload-progress-full-file-name');
@@ -157,13 +172,18 @@ const FileUploadHandler = {
           isFilesUploaded = false;
         }
 
-        if (!FileUploadHandler.upload[key].paused) {
+        // Update the progress only if the job is running.
+        if (FileUploadHandler.upload[key].isRunning) {
           $('#file-upload-progress').find('#' + key + ' .progress-bar').width(progress + '%');
-          if (progress === 100) {
-            delete FileUploadHandler.upload[key];
+          if (FileUploadHandler.upload[key].uploader.isComplete) {
+            // delete FileUploadHandler.upload[key];
+            FileUploadHandler.upload[key].isRunning = false;
           }
         }
       }
+
+      // Check for jobs in the queue and start one if possible.
+      FileUploadHandler.startJob();
 
       // Destroy the time since all files has been uploaded.
       if (isFilesUploaded) {
@@ -174,7 +194,6 @@ const FileUploadHandler = {
       let totalSize = $('#upload-file-dialog').find('#file-upload-progress-total-size').val();
       totalSize = parseInt(totalSize);
       totalSize = isNaN(totalSize) ? 0 : totalSize;
-      console.log(totalOffset, totalSize);
 
       let totalProgress = (totalSize === 0) ? 0 : ((totalOffset / totalSize) * 100.0);
       totalProgress = totalProgress.toFixed(2) + '%';
@@ -194,7 +213,7 @@ const FileUploadHandler = {
     if (FileUploadHandler.upload[key] === undefined) {
       FileUploadHandler.upload[key] = {
         uploader: new FileUploader(file, key, pubKey),
-        paused: false,
+        isRunning: false,
       };
     }
 
@@ -203,15 +222,14 @@ const FileUploadHandler = {
       FileUploadHandler.uploadTimer = setInterval(FileUploadHandler.timer, 1000);
     }
 
-    // Start the job.
-    FileUploadHandler.upload[key].uploader.start();
-    FileUploadHandler.upload[key].paused = false;
+    // Start the job if queue is not full.
+    FileUploadHandler.jobQueue.unshift(key);
   },
 
   pause: (key) => {
     if (FileUploadHandler.upload[key] !== undefined) {
       FileUploadHandler.upload[key].uploader.pause();
-      FileUploadHandler.upload[key].paused = true;
+      FileUploadHandler.upload[key].isRunning = false;
     }
   },
 
