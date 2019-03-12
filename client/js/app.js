@@ -14,11 +14,13 @@ $(document).ready(async () => {
     switch (status) {
       case 'COMPLETED':
         alert('This file has already been uploaded');
-        parent.parent().parent().remove();
+        FileUploadHandler.destroy(key);
+        parent.parent().parent().parent().remove();
         break;
 
       case 'FAILED':
         alert('This file upload has already failed');
+        FileUploadHandler.destroy(key);
         parent.parent().parent().parent().remove();
         break;
 

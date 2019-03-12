@@ -44,7 +44,8 @@ class FileUploader {
   getMessage(e) {
     const msg = e.data;
 
-    const progressStatusDiv = $('#file-upload-progress ' + '#' + this.key).find('.file-upload-progress-status');
+    const keyDiv = $('#file-upload-progress ' + '#' + this.key);
+    const progressStatusDiv = keyDiv.find('.file-upload-progress-status');
 
     switch(msg.type) {
       case 'status':
@@ -62,8 +63,8 @@ class FileUploader {
         this.isComplete = true;
         this.results = msg.results;
 
-        console.log(msg.results);
-        progressStatusDiv.css('color', '#dc3545').html('Completed');
+        progressStatusDiv.css('color', '#28a745').html('Completed');
+        keyDiv.find('.file-upload-progress-btn').html('');
         break;
 
       case 'error':
@@ -74,7 +75,8 @@ class FileUploader {
           this.isComplete = true;
           this.results = null;
 
-          // TODO: Update the UI to remove the pause/play buttons.
+          const html = '<i class="fas fa-times file-upload-progress-cancel" style="cursor:pointer;"></i>';
+          keyDiv.find('.file-upload-progress-btn').html(html);
         }
         break;
     }
