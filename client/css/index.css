@@ -79,7 +79,7 @@ body {
   font-size: 24px;
   display: table-cell;
   vertical-align: middle;
-  text-align: center
+  text-align: center;
 }
 
 .wallet-toggle-button {
@@ -147,6 +147,87 @@ body {
 
 #wallet-logout-button {
   display: none;
+}
+
+#content {
+  position:absolute;
+  top: 50px;
+  width: 100%;
+  height: calc(100% - 100px);
+}
+
+#contacts-connect  {
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#contacts-right-connect {
+  border-radius: 10px;
+  border-width: 1px;
+  border-style: solid;
+  padding: 3% 5%;
+  cursor: pointer;
+}
+
+.contacts {
+  width: 350px;
+  height: calc(100vh - 100px);
+  position: absolute;
+  right: 0;
+  text-align: center;
+  padding: 1%;
+  border-width: 0 0 0 1px;
+  border-style: solid;
+}
+
+.contacts > .row {
+  border-width: 1px;
+  border-style:solid;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+#contacts-after-connect .row {
+  border: 0 !important;
+}
+
+#contacts-after-connect {
+  display: none;
+  z-index: 10;
+  padding: 0 !important;
+}
+
+#contacts-after-connect .container-fluid {
+  height: 60%;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(181,187,202,.1);
+  padding-right: 0 !important;
+}
+
+#contacts-display {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#contacts-after-connect .fa-circle {
+  position: absolute;
+  font-size: 400px;
+  z-index: -1;
+  right: -100px;
+  color: #12131f;
+}
+
+#add-new-contact {
+  font-size: 3em;
+  cursor: pointer;
+  position: absolute;
+  right: 25px;
+  top: 50%;
 }
 
 #footer {

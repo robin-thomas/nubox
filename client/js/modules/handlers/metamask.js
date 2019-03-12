@@ -1,9 +1,14 @@
 const Wallet = require('../crypto/metamask.js');
 const Session = require('../session/session.js');
+const ContactsHandler = require('./contacts.js');
+const Contacts = require('../contacts.js');
 
 const walletConnectDialog = $('#wallet-connect-dialog');
 
-const walletAddreses        = $('#eth-addresses'),
+const contactsBeforeConnect = $('#contacts-before-connect'),
+      contactsConnect       = $('#contacts-connect'),
+      contactsAfterConnect  = $('#contacts-after-connect'),
+      walletAddreses        = $('#eth-addresses'),
       walletLoginButton     = $('#wallet-login-button'),
       walletLogoutButton    = $('#wallet-logout-button'),
       walletAddressDisplay  = walletLogoutButton.find('.wallet-label-bottom');
@@ -46,7 +51,10 @@ const WalletHandler = {
     if (!isLoggedIn && !btn) {
       $('#cookie-login-loading').fadeOut();
       $('#header').fadeIn();
+      $('#content').fadeIn();
       $('#footer').fadeIn();
+
+      ContactsHandler.createContactsBeforeConnect();
       return;
     }
 
@@ -69,6 +77,9 @@ const WalletHandler = {
         $('#cookie-login-loading').fadeIn();
       }
 
+      ContactsHandler.contactsList = await Contacts.loadContacts(Wallet.address);
+      ContactsHandler.contactsDisplayHandler();
+
       const addressDisplay = Wallet.address.substr(0, 5) + '...' + Wallet.address.substr(37);
       walletAddressDisplay.text(addressDisplay);
       walletConnectDialog.modal('hide');
@@ -80,8 +91,15 @@ const WalletHandler = {
         }
       });
 
+      contactsBeforeConnect.fadeOut();
+      contactsConnect.fadeOut();
+      contactsAfterConnect.fadeIn();
+
       if (isLoggedIn) {
         $('#cookie-login-loading').fadeOut();
+        $('#header').fadeIn();
+        $('#content').fadeIn();
+        $('#footer').fadeIn();
       }
     } catch (err) {
       if (!isLoggedIn) {
@@ -107,6 +125,10 @@ const WalletHandler = {
   logout: () => {
     walletLogoutButton.fadeOut();
     walletLoginButton.css('display', 'flex').hide().fadeIn();
+
+    contactsAfterConnect.fadeOut();
+    contactsConnect.fadeIn();
+    contactsBeforeConnect.fadeIn();
 
     Session.logout();
   }

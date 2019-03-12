@@ -23,6 +23,8 @@ const Session = {
         Session.refreshToken = refreshToken;
 
         Cookie.new(address, token, expiresIn, refreshToken);
+      } else {
+        throw new Error('Unable to create a signature with Metamask');
       }
     } catch (err) {
       throw err;
@@ -31,7 +33,7 @@ const Session = {
 
   api: async (apiName, data) => {
     try {
-      await Token.updateTokenIfRequired(data.address);
+      await Token.updateTokenIfRequired(data.address, Session.refreshToken, Session.expiresIn);
 
       let headers = config.api[apiName].headers;
       headers = Token.setToken(headers, Session.token);

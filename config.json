@@ -44,6 +44,42 @@
       "path": "/refresh",
       "method": "POST",
       "headers": { "Content-Type": "application/json" }
+    },
+    "addContact": {
+      "name": "addContact",
+      "path": "/contacts/new",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-access-token": "%token"
+      }
+    },
+    "searchContacts": {
+      "name": "searchContacts",
+      "path": "/contacts/search",
+      "method": "GET",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-access-token": "%token"
+      }
+    },
+    "getAllContacts": {
+      "name": "getAllContacts",
+      "path": "/contacts",
+      "method": "GET",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-access-token": "%token"
+      }
+    },
+    "deleteContact": {
+      "name": "deleteContact",
+      "path": "/contacts",
+      "method": "DELETE",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-access-token": "%token"
+      }
     }
   }
 }

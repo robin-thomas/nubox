@@ -10,6 +10,7 @@ $(document).ready(async () => {
   $('#wallet-login-button').on('click', async (e) => WalletHandler.walletConnectHandler(e));
   confirmAddrButton.on('click', () => WalletHandler.walletConnectConfirmHandler(confirmAddrButton));
   $('#wallet-logout-button').on('click', WalletHandler.walletLogoutHandler);
+  $('#contacts-right-connect').on('click', async (e) => WalletHandler.walletConnectHandler(e));
 
   $('#file-upload').on('change', (e) => FileUploadHandler.handler(e));
   $('#file-upload-progress').on('click', '.file-upload-progress-cancel', (e) => {
