@@ -28,7 +28,7 @@ class FileUploader {
     $('#file-upload-progress ' + '#' + this.key).find('.file-upload-progress-status').html('Uploading');
 
     const html = '<i class="fas fa-pause file-upload-progress-pause" style="cursor:pointer;"></i>&nbsp;&nbsp;\
-                  <i class="fas fa-times file-upload-progress-cancel" style="cursor:pointer;"></i>';
+                  <i class="fas fa-trash-alt file-upload-progress-cancel" style="cursor:pointer;"></i>';
     $('#file-upload-progress ' + '#' + this.key).find('.file-upload-progress-btn').html(html);
   }
 
@@ -53,7 +53,7 @@ class FileUploader {
         break;
 
       case 'processing':
-        this.offset += msg.blockLength;
+        this.offset = msg.blockLength;
         progressStatusDiv.css('color', 'grey').html('Uploading');
         break;
 
@@ -75,7 +75,7 @@ class FileUploader {
           this.isComplete = true;
           this.results = null;
 
-          const html = '<i class="fas fa-times file-upload-progress-cancel" style="cursor:pointer;"></i>';
+          const html = '<i class="fas fa-trash-alt file-upload-progress-cancel" style="cursor:pointer;"></i>';
           keyDiv.find('.file-upload-progress-btn').html(html);
         }
         break;

@@ -4,6 +4,25 @@ const FileUploader = require('../upload/uploader.js');
 const Metamask = require('../crypto/metamask.js');
 
 const File = {
+  updateTotalFilesSize: (files) => {
+    // Calculate the total file size.
+    let currentSize = $('#upload-file-dialog').find('#file-upload-progress-total-size').val();
+    currentSize = parseInt(currentSize);
+    currentSize = isNaN(currentSize) ? 0 : currentSize;
+
+    let newSize = files.map(e => e.size).reduce((a, b) => a + b, 0);
+    newSize = parseInt(newSize);
+    newSize = isNaN(newSize) ? 0 : newSize;
+
+    // Convert it into human-readable form.
+    const totalSize = currentSize + newSize;
+    $('#upload-file-dialog').find('#file-upload-progress-total-size').val(totalSize);
+    const size = File.getFileSize(totalSize);
+
+    // Update the UI.
+    $('#upload-file-dialog').find('#file-upload-progress-total-size-display > b').html(size);
+  },
+
   doesFileKeyExists: (key) => {
     return (FileUploadHandler.upload !== null && FileUploadHandler.upload[key] !== undefined) ?
       true : false;
@@ -48,10 +67,10 @@ const FileUploadHandler = {
     const fileName = File.getFileName(file.name);
     const fileSize = File.getFileSize(file.size);
 
-    let row = `<div class="row" id="${key}">
+    let row = `<div class="row no-gutters" id="${key}">
                   <input type="hidden" class="file-upload-progress-full-file-name" value="${fileName}"/>
                   <div class="col-md-2">
-                    <i class="fas fa-file-alt" style="font-size:46px;"></i>
+                    <i class="fas fa-file-alt" style="font-size:47px;"></i>
                   </div>
                   <div class="col-md-10">
                     <div class="row">
@@ -76,7 +95,7 @@ const FileUploadHandler = {
                       </div>
                     </div>
                     <div class="row">
-                      <div class="progress" style="height:2px;margin:15px;width:100%;">
+                      <div class="progress" style="height:2px;margin:3px 15px 25px 15px;width:100%;">
                         <div class="progress-bar bg-danger" role="progressbar" style="width:0px" aria-valuenow="0"
                              aria-valuemin="0" aria-valuemax="100"></div>
                       </div>
@@ -86,7 +105,7 @@ const FileUploadHandler = {
 
     const simpleBarContent = $('#file-upload-progress').find('.simplebar-content');
     const container = simpleBarContent.find('#file-upload-simplebar-container');
-    if (container.length > 1) {
+    if (container.length >= 1) {
       container.append(row);
     } else {
       simpleBarContent.append(`<div id="file-upload-simplebar-container" class="container">${row}</div>`);
@@ -96,6 +115,7 @@ const FileUploadHandler = {
   handler: (e) => {
     const files = e.target.files;
     const el = new SimpleBar($('#file-upload-progress')[0]);
+    let processedFiles = [];
 
     // Check if the file is in the upload UI.
     // If not, start the job.
@@ -105,11 +125,16 @@ const FileUploadHandler = {
       if (!File.doesFileKeyExists(key)) {
         FileUploadHandler.createFileUploadUI(key, file);
         FileUploadHandler.start(file, key);
+        processedFiles.push(file);
       } else if (files.length === 1) {
         alert('File is already present in the UI');
 
         // TODO: scroll the UI to the existing file in the UI.
       }
+    }
+
+    if (processedFiles.length >= 1) {
+      File.updateTotalFilesSize(processedFiles);
     }
 
     el.recalculate();
@@ -121,16 +146,40 @@ const FileUploadHandler = {
       clearInterval(FileUploadHandler.uploadTimer);
       FileUploadHandler.upload = FileUploadHandler.uploadTimer = null;
     } else {
-      for (const key of keys) {
-        if (!FileUploadHandler.upload[key].paused) {
-          const progress = FileUploadHandler.upload[key].uploader.getProgress();
-          $('#file-upload-progress').find('#' + key + ' .progress-bar').width(progress + '%');
+      let totalOffset = 0;
+      let isFilesUploaded = true;
 
+      for (const key of keys) {
+        const progress = FileUploadHandler.upload[key].uploader.getProgress();
+        totalOffset += (progress * FileUploadHandler.upload[key].uploader.file.size) / 100;
+
+        if (FileUploadHandler.upload[key].uploader.isComplete !== true) {
+          isFilesUploaded = false;
+        }
+
+        if (!FileUploadHandler.upload[key].paused) {
+          $('#file-upload-progress').find('#' + key + ' .progress-bar').width(progress + '%');
           if (progress === 100) {
             delete FileUploadHandler.upload[key];
           }
         }
       }
+
+      // Destroy the time since all files has been uploaded.
+      if (isFilesUploaded) {
+        clearInterval(FileUploadHandler.uploadTimer);
+        FileUploadHandler.uploadTimer = null;
+      }
+
+      let totalSize = $('#upload-file-dialog').find('#file-upload-progress-total-size').val();
+      totalSize = parseInt(totalSize);
+      totalSize = isNaN(totalSize) ? 0 : totalSize;
+      console.log(totalOffset, totalSize);
+
+      let totalProgress = (totalSize === 0) ? 0 : ((totalOffset / totalSize) * 100.0);
+      totalProgress = totalProgress.toFixed(2) + '%';
+      $('#upload-file-dialog').find('#file-upload-progress-total').width(totalProgress);
+      $('#upload-file-dialog').find('#file-upload-progress-total-display > b').html(totalProgress);
     }
   },
 
@@ -141,22 +190,21 @@ const FileUploadHandler = {
     // Set it as new job if required.
     if (FileUploadHandler.upload === null) {
       FileUploadHandler.upload = {};
-      FileUploadHandler.upload[key] = {
-        uploader: new FileUploader(file, key, pubKey),
-        paused: false,
-      };
-
-      // Need to set the timer.
-      FileUploadHandler.uploadTimer = setInterval(FileUploadHandler.timer, 1000);
-    } else if (FileUploadHandler.upload[key] === undefined) {
+    }
+    if (FileUploadHandler.upload[key] === undefined) {
       FileUploadHandler.upload[key] = {
         uploader: new FileUploader(file, key, pubKey),
         paused: false,
       };
     }
 
+    // Need to set the timer.
+    if (FileUploadHandler.uploadTimer === null) {
+      FileUploadHandler.uploadTimer = setInterval(FileUploadHandler.timer, 1000);
+    }
+
     // Start the job.
-    // FileUploadHandler.upload[key].uploader.start();
+    FileUploadHandler.upload[key].uploader.start();
     FileUploadHandler.upload[key].paused = false;
   },
 
