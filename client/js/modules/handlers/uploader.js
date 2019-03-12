@@ -3,23 +3,40 @@ const crypto = require("crypto");
 const FileUploader = require('../upload/uploader.js');
 const Metamask = require('../crypto/metamask.js');
 
-const getFileName = (fileName) => {
-  const index = fileName.lastIndexOf('.');
+const File = {
+  doesFileKeyExists: (key) => {
+    return (FileUploadHandler.upload !== null && FileUploadHandler.upload[key] !== undefined) ?
+      true : false;
+  },
 
-  const ext = fileName.substr(index + 1);
+  getFileKey: (file) => {
+    return Buffer.from(JSON.stringify({
+      lastMod: file.lastModified,
+      lastModDate: file.lastModifiedDate,
+      size: file.size,
+      name: file.name,
+      type: file.type,
+    })).toString('hex');
+  },
 
-  let name = fileName.substr(0, index);
-  if (name.length > 12) {
-    name = name.substr(0, 4) + '...' + name.substr(name.length - 5);
-  }
+  getFileName: (fileName) => {
+    const index = fileName.lastIndexOf('.');
 
-  return name + '.' + ext;
-};
+    const ext = fileName.substr(index + 1);
 
-const getFileSize = (bytes) => {
-  const size = ['B','kB','MB','GB'];
-  const factor = Math.floor((bytes.toString().length - 1) / 3);
-  return (bytes / Math.pow(1024, factor)).toFixed(2) + size[factor];
+    let name = fileName.substr(0, index);
+    if (name.length > 12) {
+      name = name.substr(0, 4) + '...' + name.substr(name.length - 5);
+    }
+
+    return name + '.' + ext;
+  },
+
+  getFileSize: (bytes) => {
+    const size = ['B','kB','MB','GB'];
+    const factor = Math.floor((bytes.toString().length - 1) / 3);
+    return (bytes / Math.pow(1024, factor)).toFixed(2) + size[factor];
+  },
 };
 
 const FileUploadHandler = {
@@ -27,7 +44,11 @@ const FileUploadHandler = {
   uploadTimer: null,
 
   createFileUploadUI: (key, file) => {
+    $('#file-upload-progress').find('.file-upload-progress-full-file-name');
+
+
     let row = '<div class="row" id="{fileKey}">\
+                  <input type="hidden" class="file-upload-progress-full-file-name" value="{fileName}"/>\
                   <div class="col-md-2">\
                     <i class="fas fa-file-alt" style="font-size:46px;"></i>\
                   </div>\
@@ -62,21 +83,32 @@ const FileUploadHandler = {
                   </div>\
                  </div>';
 
+    // TODO: improve the below code to replace multiple occurances of same string.
     row = row.replace('{fileKey}', key);
     row = row.replace('{fileKey}', key);
-    row = row.replace('{fileName}', getFileName(file.name));
-    row = row.replace('{fileSize}', getFileSize(file.size));
+    row = row.replace('{fileName}', File.getFileName(file.name));
+    row = row.replace('{fileName}', File.getFileName(file.name));
+    row = row.replace('{fileSize}', File.getFileSize(file.size));
 
     $('#file-upload-progress').append(row);
   },
 
   handler: (e) => {
     const files = e.target.files;
-    for (const file of files) {
-      const key = crypto.randomBytes(20).toString('hex');
-      FileUploadHandler.createFileUploadUI(key, file);
 
-      FileUploadHandler.start(file, key);
+    // Check if the file is in the upload UI.
+    // If not, start the job.
+    for (const file of files) {
+      const key = File.getFileKey(file);
+
+      if (!File.doesFileKeyExists(key)) {
+        FileUploadHandler.createFileUploadUI(key, file);
+        FileUploadHandler.start(file, key);
+      } else if (files.length === 1) {
+        alert('File is already present in the UI');
+
+        // TODO: scroll the UI to the existing file in the UI.
+      }
     }
   },
 
@@ -121,7 +153,7 @@ const FileUploadHandler = {
     }
 
     // Start the job.
-    FileUploadHandler.upload[key].uploader.start();
+    // FileUploadHandler.upload[key].uploader.start();
     FileUploadHandler.upload[key].paused = false;
   },
 
