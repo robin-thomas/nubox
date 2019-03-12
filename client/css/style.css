@@ -15,29 +15,12 @@
   color: #fff;
 }
 
-#header {
-  background: #171a1d;
-  color: #fff;
-}
-
 #header .row, #header .col-md-1, #header .col-md-2 {
-  border-color: rgba(181,187,202,.1);
+  border-color: rgb(218, 220, 224);
 }
 
 .wallet-toggle-button {
-  border-color: rgba(181,187,202,.1);
-}
-
-.wallet-toggle-button:after {
-  color: #b0bccc;
-}
-
-.wallet-label-top {
-  color: #b0bccc;
-}
-
-.wallet-label-bottom {
-  color: #fff;
+  border-color: rgb(218, 220, 224);
 }
 
 .wallet-left {
@@ -52,6 +35,14 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+#dashboard-right {
+  border-left-color: rgb(218, 220, 224);
+}
+
+#contacts-dashboard-header {
+  border-bottom-color: rgb(218, 220, 224);
+}
+
 #contacts-right-connect {
   border-color: rgba(181,187,202,.1);
   color: #fff;
@@ -59,22 +50,10 @@
 }
 
 .contacts {
-  background: #1c1e2d;
-  color: white;
-  box-shadow: inset 0 -1px 0 0 hsla(0,0%,100%,.02), inset 0 1px 0 0 hsla(0,0%,100%,.02), inset 0 0 0 1px hsla(0,0%,100%,.02);
-  border-color: rgba(181,187,202,0.1);
+  border-color: rgb(218, 220, 224);
+  background: white;
 }
 
 .contacts .row {
   border-color: rgba(181,187,202,.1);
-}
-
-#add-new-contact {
-  color: #17a2b8;
-}
-
-#footer {
-  border-color: rgba(181,187,202,.1);
-  background-color: #171a1d;
-  z-index: 99;
 }

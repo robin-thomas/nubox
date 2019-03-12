@@ -80,7 +80,7 @@ const ContactsHandler = {
     }
 
     const html = '<div id="contacts-display">' + rows + '</div>';
-    contactsAfterConnect.find('div').html(html);
+    contactsAfterConnect.find('#contacts-dashboard-display').html(html);
 
     const el = new SimpleBar(contactsAfterConnect.find('#contacts-display')[0]);
     el.recalculate();

@@ -7,6 +7,15 @@ body {
   overflow: hidden;
 }
 
+.link-circle-hover {
+  transition: all 0.3s;
+}
+
+.link-circle-hover:hover {
+  border-radius:50%;
+  box-shadow: 0 0 0 0.6em rgb(218, 220, 224), inset 0 0 0 1em rgb(218, 220, 224);
+}
+
 #cookie-login-loading {
   color: #17a2b8;
   position: absolute;
@@ -117,7 +126,7 @@ body {
   margin: 0;
   width: 24px;
   height: 24px;
-  background-image: url('../img/icon_wallet-unlocked.svg');
+  font-size: 1.5rem;
 }
 
 .wallet-label {
@@ -153,7 +162,7 @@ body {
   position:absolute;
   top: 50px;
   width: 100%;
-  height: calc(100% - 100px);
+  height: calc(100% - 50px);
 }
 
 #contacts-connect  {
@@ -171,15 +180,55 @@ body {
   cursor: pointer;
 }
 
-.contacts {
-  width: 350px;
-  height: calc(100vh - 100px);
+#dashboard-right {
+  width: 50px;
+  height: calc(100vh - 50px);
   position: absolute;
   right: 0;
+  border-left-width: 1px;
+  border-left-style: solid;
+  display: table;
+  padding: 20px 0;
+}
+
+#dashboard-right > .row > .col {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+#dashboard-right > .row > .col > i {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+#contacts-dashboard-header {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  padding: 15px 0;
+}
+
+#contacts-dashboard-title {
+  text-transform: uppercase;
+  text-align: left;
+}
+
+#close-contacts-dashboard {
+  font-size: 22px;
+  cursor: pointer;
+  text-align: right;
+}
+
+.contacts {
+  width: 300px;
+  height: calc(100vh - 50px);
+  position: absolute;
+  right: -300px;
   text-align: center;
   padding: 1%;
   border-width: 0 0 0 1px;
   border-style: solid;
+  z-index: 2;
 }
 
 .contacts > .row {
@@ -191,9 +240,9 @@ body {
   margin-right: 10px;
 }
 
-#contacts-after-connect .row {
+/* #contacts-after-connect .row {
   border: 0 !important;
-}
+} */
 
 #contacts-after-connect {
   display: none;

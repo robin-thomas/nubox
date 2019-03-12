@@ -120,7 +120,7 @@
           <div class="col-md-2">
             <div class="wallet-toggle-button" id="wallet-login-button">
               <div class="wallet">
-                <div class="wallet-icon"></div>
+                <div class="wallet-icon"><i class="far fa-user"></i></div>
                 <div class="wallet-label">
                   <div class="wallet-label-top">Not connected</div>
                   <div class="wallet-label-bottom">Connect a wallet</div>
@@ -129,7 +129,7 @@
             </div>
             <div class="wallet-toggle-button" id="wallet-logout-button">
               <div class="wallet">
-                <div class="wallet-icon"></div>
+                <div class="wallet-icon"><i class="far fa-user"></i></div>
                 <div class="wallet-label">
                   <div class="wallet-label-top">Connected</div>
                   <div class="wallet-label-bottom"></div>
@@ -141,6 +141,20 @@
       </div>
     </div>
     <div id="content">
+      <div class="contacts" id="contacts-after-connect">
+        <div class="container">
+          <div id="contacts-dashboard-header" class="row">
+            <div class="col-md-9">
+              <div id="contacts-dashboard-title">Contacts</div>
+            </div>
+            <div class="col-md-3">
+              <i id="close-contacts-dashboard" class="fas fa-times link-circle-hover"></i>
+            </div>
+          </div>
+          <div id="contacts-dashboard-display" class="row"></div>
+        </div>
+        <i id="add-new-contact" data-toggle="tooltip" class="fa fa-address-book" title="Add new contact"></i>
+      </div>
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-9"></div>
@@ -149,15 +163,17 @@
             <div class="contacts" id="contacts-connect">
               <div id="contacts-right-connect">Connect a wallet</div>
             </div>
-            <div class="contacts" id="contacts-after-connect">
-              <div></div>
-              <i id="add-new-contact" class="fa fa-address-book" title="Add new contact"></i>
+            <div id="dashboard-right">
+              <div class="row">
+                <div class="col" data-toggle="tooltip" title="Contacts">
+                  <i id="open-contacts-dashboard" class="fas fa-user link-circle-hover"></i>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div id="footer"></div>
   </body>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>

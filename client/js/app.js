@@ -67,6 +67,19 @@ $(document).ready(async () => {
   // Check if already logged in.
   WalletHandler.walletConnectConfirmHandler();
 
+  $('[data-toggle="tooltip"]').tooltip();
+
+  $('#open-contacts-dashboard').on('click', () => {
+    $('#contacts-after-connect').animate({
+      right: 0,
+    }, 300);
+  });
+  $('#close-contacts-dashboard').on('click', () => {
+    $('#contacts-after-connect').animate({
+      right: '-300px',
+    }, 300);
+  });
+
   // $('#upload-file-dialog').modal('show');
 
   // FileDownloadHandler.start();
