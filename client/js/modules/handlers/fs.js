@@ -57,6 +57,7 @@ const drawFolder = (file) => {
                 <a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i>&nbsp;&nbsp;Download</a>
                 <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i>&nbsp;&nbsp;Delete</a>
                 <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i>&nbsp;&nbsp;Rename</a>
+                <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i>&nbsp;&nbsp;Move</a>
               </ul>`;
     }
   });
@@ -128,7 +129,58 @@ const FSHandler = {
     } catch (err) {
       throw err;
     }
-  }
+  },
+
+  renameFile: async (e) => {
+    const key = $(e.target).parent().find('.fs-file-key').val();
+    const path = Buffer.from(key, 'hex').toString();
+    const fileName = Path.basename(path);
+
+    let newFileName = '';
+    while (true) {
+      newFileName = prompt('Rename: ', fileName);
+
+      // User hit the cancel button.
+      if (newFileName === null) {
+        return;
+      } else if (newFileName.trim().length >= 1) {
+        break;
+      }
+    };
+
+    const newPathBase = Path.dirname(path);
+    const newPath = newPathBase + (newPathBase.endsWith('/') ? '' : '/') + newFileName;
+
+    try {
+      const newFile = await FS.renameFile(Wallet.address, path, newPath);
+
+      delete FSHandler.fs[path];
+      FSHandler.fs[newFile.path] = newFile;
+
+      // Update the UI.
+      const newKey = Buffer.from(newPath).toString('hex');
+      const hidden = $('#content-fs').find(`.fs-file-total > input[type="hidden"][value=${key}]`);
+      hidden.val(newKey);
+      hidden.parent().find('.fs-file-name').html(newFileName);
+
+      hidden.parent().find('[data-toggle="popover"]').popover('dispose');
+      hidden.parent().find('[data-toggle="popover"]').popover({
+        trigger: 'manual',
+        html: true,
+        content: function() {
+          return `<ul id="popover-content" class="list-group">
+                    <input class="fs-file-key" type="hidden" value="${newKey}" />
+                    <a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i>&nbsp;&nbsp;Download</a>
+                    <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i>&nbsp;&nbsp;Delete</a>
+                    <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i>&nbsp;&nbsp;Rename</a>
+                    <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i>&nbsp;&nbsp;Move</a>
+                  </ul>`;
+        }
+      });
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 module.exports = FSHandler;

@@ -37,10 +37,7 @@ $(document).ready(async () => {
 
   $(document).on('click', '.popover .fs-download', FSHandler.downloadFile);
   $(document).on('click', '.popover .fs-delete', FSHandler.deleteFile);
-
-  $(document).on('click', '.popover .fs-rename', (e) => {
-    console.log(e);
-  });
+  $(document).on('click', '.popover .fs-rename', FSHandler.renameFile);
 
   $(document).on('click', () => {
     const popover = $(document).find('.popover');
@@ -48,7 +45,7 @@ $(document).ready(async () => {
       const id = popover.first().attr('id');
       $('#content-fs').find(`[aria-describedBy="${id}"]`).popover('toggle');
     }
-  })
+  });
 
   $('#file-upload').on('change', (e) => FileUploadHandler.handler(e));
   $('#file-upload-progress').on('click', '.file-upload-progress-cancel', (e) => {

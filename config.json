@@ -98,6 +98,15 @@
         "Content-Type": "application/json",
         "x-access-token": "%token"
       }
+    },
+    "renameFile": {
+      "name": "renameFile",
+      "path": "/fs/file/rename",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-access-token": "%token"
+      }
     }
   }
 }

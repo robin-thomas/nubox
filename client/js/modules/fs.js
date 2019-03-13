@@ -20,6 +20,18 @@ const FS = {
       throw err;
     }
   },
+
+  renameFile: async (address, path, newPath) => {
+    try {
+      return await Session.api(config.api.renameFile.name, {
+        address: address,
+        path: path,
+        newPath: newPath,
+      });
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 module.exports = FS;

@@ -1,3 +1,5 @@
+const Path = require('path');
+
 const DB = require('./db.js');
 
 const FS = {
@@ -27,6 +29,20 @@ const FS = {
     }
   },
 
+  getFile: async (address, path) => {
+    const query = {
+      sql: 'SELECT * FROM fs WHERE address = ? AND path = ?',
+      timeout: 6 * 1000, // 6s
+      values: [ address, path ],
+    };
+
+    try {
+      return await DB.query(query);
+    } catch (err) {
+      throw err;
+    }
+  },
+
   deleteFile: async (address, path) => {
     const query = {
       sql: 'SELECT * FROM fs WHERE address = ? AND path = ?',
@@ -35,9 +51,32 @@ const FS = {
     };
 
     try {
-      const out = await DB.query(query);
-      console.log(out);
+      await DB.query(query);
     } catch (err) {
+      throw err;
+    }
+  },
+
+  renameFile: async (address, path, newPath) => {
+    const query = {
+      sql: 'UPDATE fs SET path = ? WHERE address = ? AND path = ?',
+      timeout: 6 * 1000, // 6s
+      values: [ newPath, address, path ],
+    };
+
+    try {
+      await DB.query(query);
+
+      const result = await FS.getFile(address, newPath);
+
+      return {
+        path: result[0].path,
+        ipfs: JSON.parse(result[0].ipfs_hash).hash,
+        isFile: result[0].file,
+        created: result[0].timestamp,
+      };
+    } catch (err) {
+      console.log(err);
       throw err;
     }
   },

@@ -133,4 +133,24 @@ app.delete(config.api.deleteFile.path, Auth.validate, async (req, res) => {
   }
 });
 
+app.post(config.api.renameFile.path, Auth.validate, async (req, res) => {
+  const address = req.body.address;
+  const path = req.body.path;
+  const newPath = req.body.newPath;
+
+  try {
+    const out = await FS.renameFile(address, path, newPath);
+
+    res.status(200).send({
+      status: 'ok',
+      msg: out
+    });
+  } catch (err) {
+    res.status(500).send({
+      status: 'not ok',
+      msg: err.message
+    });
+  }
+});
+
 app.listen(port, () => console.log(`app listening on ${port}`));
