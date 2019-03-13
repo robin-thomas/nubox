@@ -10,10 +10,6 @@ const FS = {
     }
   },
 
-  getFile: (address, path) => {
-
-  },
-
   deleteFile: async (address, path) => {
     try {
       await Session.api(config.api.deleteFile.name, {

@@ -1,10 +1,11 @@
-const path = require('path');
+const Path = require('path');
 
 const FS = require('../fs.js');
 const Wallet = require('../crypto/metamask.js');
+const DownloadHandler = require('./downloader.js');
 
 const drawFolder = (file) => {
-  const name = path.basename(file.path);
+  const name = Path.basename(file.path);
 
   // Find the last row.
   let row = $('#content-fs').find('.container > .row');
@@ -103,6 +104,16 @@ const FSHandler = {
     }
 
     return children;
+  },
+
+  downloadFile: (e) => {
+    const key = $(e.currentTarget).parent().find('.fs-file-key').val();
+    const path = Buffer.from(key, 'hex').toString();
+
+    const fileName = Path.basename(path);
+    const ipfsList = FSHandler.fs[path].ipfs;
+
+    DownloadHandler.start(ipfsList, fileName, Wallet.pubKey);
   },
 
   deleteFile: async (e) => {

@@ -15,7 +15,7 @@ const FS = {
       for (const result of out) {
         results[result.path] = {
           path: result.path,
-          ipfs: JSON.parse(result.ipfs_hash),
+          ipfs: JSON.parse(result.ipfs_hash).hash,
           isFile: result.file,
           created: result.timestamp,
         };

@@ -1,5 +1,5 @@
 const FileDownloader = require('../download/downloader.js');
-
+//
 const FileDownloadHandler = {
   start: (ipfsList, fileName, privKey) => {
     // ipfsList = [
@@ -21,18 +21,18 @@ const FileDownloadHandler = {
     //   "QmUoirRJe3WvUp8Dg4gCU1PhATF46MzfehUDV8VfLbVj1P"
     // ];
 
-    ipfsList = [
-      "Qmcy5hk512YjtpyTYt9GyDyeW1ZGxvwk5adSrpsYGTMMDC",
-      "QmZTytHTAML54NURmaKA5LFJ6QvEkv2BWFvvKMGUvgdrBe",
-      "QmT9coEGB6z1p9SmNDwLhAd2ATqj5ZnARUf4W5YYKpFasW",
-      "QmdwJEeX8xReU6pWceCkM2egpMoDKwMD5TcfJGZV2VCiQt",
-      "QmVeNsYrujHAbBPNu2ns7KLhqDdkz97GbbupvgnaBypNSV",
-      "QmaezVhPog8r6a1jBVeX157dR96iTywBSZxgcQQ1W36ZUv"
-    ];
+    // ipfsList = [
+    //   "Qmcy5hk512YjtpyTYt9GyDyeW1ZGxvwk5adSrpsYGTMMDC",
+    //   "QmZTytHTAML54NURmaKA5LFJ6QvEkv2BWFvvKMGUvgdrBe",
+    //   "QmT9coEGB6z1p9SmNDwLhAd2ATqj5ZnARUf4W5YYKpFasW",
+    //   "QmdwJEeX8xReU6pWceCkM2egpMoDKwMD5TcfJGZV2VCiQt",
+    //   "QmVeNsYrujHAbBPNu2ns7KLhqDdkz97GbbupvgnaBypNSV",
+    //   "QmaezVhPog8r6a1jBVeX157dR96iTywBSZxgcQQ1W36ZUv"
+    // ];
 
     privKey = '0x61F4819F5DF93AC0BA16B923C640C7CD408DD486ACED6C859DE47EA36E7D0FD7';
 
-    fileName = 'hello.jpg';
+    // fileName = 'hello.jpg';
 
     new FileDownloader(ipfsList, fileName, privKey).start();
   },

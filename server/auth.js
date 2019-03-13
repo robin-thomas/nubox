@@ -48,7 +48,6 @@ const Auth = {
         req.user = decoded.user;
         next();
       } else {
-
         res.status(400).send({
           status: 'not ok',
           msg: 'Failed to authenticate the token',

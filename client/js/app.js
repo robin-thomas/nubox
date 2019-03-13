@@ -28,8 +28,6 @@ $(document).ready(async () => {
       $('#content-fs').find(`[aria-describedBy="${id}"]`).popover('toggle');
     }
 
-    console.log(e);
-
     $(e.target).popover('toggle');
   });
 
@@ -37,11 +35,7 @@ $(document).ready(async () => {
     e.preventDefault();
   });
 
-  $(document).on('click', '.popover .fs-download', (e) => {
-    const key = $(e.currentTarget).parent().find('.fs-file-key').val();
-    const path = Buffer.from(key, 'hex').toString();
-  });
-
+  $(document).on('click', '.popover .fs-download', FSHandler.downloadFile);
   $(document).on('click', '.popover .fs-delete', FSHandler.deleteFile);
 
   $(document).on('click', '.popover .fs-rename', (e) => {
