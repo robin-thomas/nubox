@@ -5,6 +5,7 @@ const _ = require('lodash');
 const config = require('./config.json');
 const Auth = require('./server/auth.js');
 const Contacts = require('./server/contacts.js');
+const FS = require('./server/fs.js');
 
 const app = express();
 const port = !_.isUndefined(process.env.PORT) ? process.env.PORT : 4000;
@@ -86,6 +87,24 @@ app.delete(config.api.deleteContact.path, Auth.validate, async (req, res) => {
     res.status(200).send({
       status: 'ok',
       msg: null
+    });
+  } catch (err) {
+    res.status(500).send({
+      status: 'not ok',
+      msg: err.message
+    });
+  }
+});
+
+app.get(config.api.getFsStructure.path, Auth.validate, async (req, res) => {
+  const address = req.query.address;
+
+  try {
+    const structure = await FS.getFsStructure(address);
+
+    res.status(200).send({
+      status: 'ok',
+      msg: structure
     });
   } catch (err) {
     res.status(500).send({

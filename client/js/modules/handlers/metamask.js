@@ -2,6 +2,7 @@ const Wallet = require('../crypto/metamask.js');
 const Session = require('../session/session.js');
 const ContactsHandler = require('./contacts.js');
 const Contacts = require('../contacts.js');
+const FSHandler = require('./fs.js');
 
 const walletConnectDialog = $('#wallet-connect-dialog');
 
@@ -76,6 +77,8 @@ const WalletHandler = {
       } else {
         $('#cookie-login-loading').fadeIn();
       }
+
+      await FSHandler.drawFS(Wallet.address);
 
       ContactsHandler.contactsList = await Contacts.loadContacts(Wallet.address);
       ContactsHandler.contactsDisplayHandler();

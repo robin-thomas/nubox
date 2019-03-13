@@ -18,6 +18,31 @@ $(document).ready(async () => {
   confirmNewContactButton.on('click', () => ContactsHandler.addNewContactHandler(confirmNewContactButton));
   $('#contacts-after-connect').on('click', '.fa-trash-alt', (e) => ContactsHandler.deleteContactHandler(e.target));
 
+  $('#content-fs').on('contextmenu', '.fs-file-icon', (e) => {
+    e.preventDefault();
+
+    // Close other open ones first.
+    const popover = $(document).find('.popover');
+    if (popover.length >= 1) {
+      const id = popover.first().attr('id');
+      $('#content-fs').find(`[aria-describedBy="${id}"]`).popover('toggle');
+    }
+
+    $(e.target).popover('toggle');
+  });
+
+  $('#content-fs').on('contextmenu', (e) => {
+    e.preventDefault();
+  });
+
+  $('#content-fs').on('click', () => {
+    const popover = $(document).find('.popover');
+    if (popover.length >= 1) {
+      const id = popover.first().attr('id');
+      $('#content-fs').find(`[aria-describedBy="${id}"]`).popover('toggle');
+    }
+  })
+
   $('#file-upload').on('change', (e) => FileUploadHandler.handler(e));
   $('#file-upload-progress').on('click', '.file-upload-progress-cancel', (e) => {
     const parent = $(e.currentTarget).parent().parent();
