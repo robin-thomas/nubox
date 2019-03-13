@@ -114,4 +114,23 @@ app.get(config.api.getFsStructure.path, Auth.validate, async (req, res) => {
   }
 });
 
+app.delete(config.api.deleteFile.path, Auth.validate, async (req, res) => {
+  const address = req.body.address;
+  const path = req.body.path;
+
+  try {
+    await FS.deleteFile(address, path);
+
+    res.status(200).send({
+      status: 'ok',
+      msg: ''
+    });
+  } catch (err) {
+    res.status(500).send({
+      status: 'not ok',
+      msg: err.message
+    });
+  }
+});
+
 app.listen(port, () => console.log(`app listening on ${port}`));

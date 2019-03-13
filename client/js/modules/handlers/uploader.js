@@ -1,4 +1,4 @@
-const crypto = require("crypto");
+const crypto = require('crypto');
 
 const FileUploader = require('../upload/uploader.js');
 const Metamask = require('../crypto/metamask.js');

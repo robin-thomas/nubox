@@ -13,6 +13,17 @@ const FS = {
   getFile: (address, path) => {
 
   },
+
+  deleteFile: async (address, path) => {
+    try {
+      await Session.api(config.api.deleteFile.name, {
+        address: address,
+        path: path,
+      });
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 module.exports = FS;

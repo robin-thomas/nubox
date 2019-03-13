@@ -26,6 +26,21 @@ const FS = {
       throw err;
     }
   },
+
+  deleteFile: async (address, path) => {
+    const query = {
+      sql: 'SELECT * FROM fs WHERE address = ? AND path = ?',
+      timeout: 6 * 1000, // 6s
+      values: [ address, path ],
+    };
+
+    try {
+      const out = await DB.query(query);
+      console.log(out);
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 module.exports = FS;

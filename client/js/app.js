@@ -1,4 +1,5 @@
 const WalletHandler = require('./modules/handlers/metamask.js');
+const FSHandler = require('./modules/handlers/fs.js');
 const ContactsHandler = require('./modules/handlers/contacts.js');
 const FileUploadHandler = require('./modules/handlers/uploader.js');
 const FileDownloadHandler = require('./modules/handlers/downloader.js');
@@ -21,12 +22,13 @@ $(document).ready(async () => {
   $('#content-fs').on('contextmenu', '.fs-file-icon', (e) => {
     e.preventDefault();
 
-    // Close other open ones first.
     const popover = $(document).find('.popover');
     if (popover.length >= 1) {
       const id = popover.first().attr('id');
       $('#content-fs').find(`[aria-describedBy="${id}"]`).popover('toggle');
     }
+
+    console.log(e);
 
     $(e.target).popover('toggle');
   });
@@ -35,7 +37,18 @@ $(document).ready(async () => {
     e.preventDefault();
   });
 
-  $('#content-fs').on('click', () => {
+  $(document).on('click', '.popover .fs-download', (e) => {
+    const key = $(e.currentTarget).parent().find('.fs-file-key').val();
+    const path = Buffer.from(key, 'hex').toString();
+  });
+
+  $(document).on('click', '.popover .fs-delete', FSHandler.deleteFile);
+
+  $(document).on('click', '.popover .fs-rename', (e) => {
+    console.log(e);
+  });
+
+  $(document).on('click', () => {
     const popover = $(document).find('.popover');
     if (popover.length >= 1) {
       const id = popover.first().attr('id');

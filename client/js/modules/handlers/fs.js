@@ -1,6 +1,7 @@
 const path = require('path');
 
 const FS = require('../fs.js');
+const Wallet = require('../crypto/metamask.js');
 
 const drawFolder = (file) => {
   const name = path.basename(file.path);
@@ -19,7 +20,9 @@ const drawFolder = (file) => {
     }
   }
 
-  const folder = `<div class="col-md-2">
+  const key = Buffer.from(file.path).toString('hex');
+  const folder = `<div class="fs-file-total col-md-2">
+                    <input type="hidden" value="${key}" />
                     <div class="row">
                       <div class="col">
                         <i class="fas ${file.isFile ? 'fa-file-alt fs-file-icon' : 'fa-folder fs-folder-icon'}"
@@ -31,16 +34,28 @@ const drawFolder = (file) => {
                     </div>
                   </div>`;
   row.append(folder);
-  row.append(folder);
 
-  $(row).find('[data-toggle="popover"]').popover({
+  row.append(`<div class="col-md-2">
+                    <div class="row">
+                      <div class="col">
+                        <i class="fas ${file.isFile ? 'fa-file-alt fs-file-icon' : 'fa-folder fs-folder-icon'}"
+                           data-toggle="popover"></i>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col fs-file-name">${name}</div>
+                    </div>
+                  </div>`);
+
+  $(row).find('[data-toggle="popover"]').first().popover({
     trigger: 'manual',
     html: true,
     content: function() {
       return `<ul id="popover-content" class="list-group">
-                <a href="#" class="list-group-item"><i class="fas fa-download"></i>&nbsp;&nbsp;Download</a>
-                <a href="#" class="list-group-item"><i class="far fa-trash-alt"></i>&nbsp;&nbsp;Delete</a>
-                <a href="#" class="list-group-item"><i class="far fa-edit"></i>&nbsp;&nbsp;Rename</a>
+                <input class="fs-file-key" type="hidden" value="${key}" />
+                <a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i>&nbsp;&nbsp;Download</a>
+                <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i>&nbsp;&nbsp;Delete</a>
+                <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i>&nbsp;&nbsp;Rename</a>
               </ul>`;
     }
   });
@@ -88,6 +103,20 @@ const FSHandler = {
     }
 
     return children;
+  },
+
+  deleteFile: async (e) => {
+    const key = $(e.currentTarget).parent().find('.fs-file-key').val();
+    const path = Buffer.from(key, 'hex').toString();
+
+    try {
+      await FS.deleteFile(Wallet.address, path);
+
+      // Delete from UI.
+      $('#content-fs').find(`.fs-file-total > input[type="hidden"][value=${key}]`).parent().remove();
+    } catch (err) {
+      throw err;
+    }
   }
 };
 

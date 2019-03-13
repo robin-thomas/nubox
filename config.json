@@ -89,6 +89,15 @@
         "Content-Type": "application/json",
         "x-access-token": "%token"
       }
+    },
+    "deleteFile": {
+      "name": "deleteFile",
+      "path": "/fs/file",
+      "method": "DELETE",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-access-token": "%token"
+      }
     }
   }
 }
