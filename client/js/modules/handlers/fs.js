@@ -181,6 +181,17 @@ const FSHandler = {
       throw err;
     }
   },
+
+  // TODO: set the handler to create a folder.
+  createFolder: async (e) => {
+    const path = '';
+
+    FSHandler.fs[path] = {
+      path: path,
+      ipfs: [],
+      isFile: false,
+    };
+  }
 };
 
 module.exports = FSHandler;

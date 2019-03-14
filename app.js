@@ -153,6 +153,25 @@ app.post(config.api.renameFile.path, Auth.validate, async (req, res) => {
   }
 });
 
+app.post(config.api.createFiles.path, Auth.validate, async (req, res) => {
+  const address = req.body.address;
+  const updates = req.body.updates;
+
+  try {
+    const out = await FS.createFiles(address, updates);
+
+    res.status(200).send({
+      status: 'ok',
+      msg: out
+    });
+  } catch (err) {
+    res.status(500).send({
+      status: 'not ok',
+      msg: err.message
+    });
+  }
+});
+
 app.post(config.api.createFolder.path, Auth.validate, async (req, res) => {
   const address = req.body.address;
   const path = req.body.path;

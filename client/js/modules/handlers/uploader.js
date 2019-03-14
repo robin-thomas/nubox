@@ -1,5 +1,7 @@
 const crypto = require('crypto');
 
+const FS = require('../fs.js');
+const FSHandler = require('./fs.js');
 const FileUploader = require('../upload/uploader.js');
 const Metamask = require('../crypto/metamask.js');
 
@@ -156,6 +158,8 @@ const FileUploadHandler = {
   },
 
   timer: () => {
+    let updates = [];
+
     const keys = Object.keys(FileUploadHandler.upload);
     if (keys.length === 0) {
       clearInterval(FileUploadHandler.uploadTimer);
@@ -178,9 +182,28 @@ const FileUploadHandler = {
           if (FileUploadHandler.upload[key].uploader.isComplete) {
             // delete FileUploadHandler.upload[key];
             FileUploadHandler.upload[key].isRunning = false;
+
+            // Add to send as update to the server in batches.
+            const record = {
+              path: FileUploadHandler.upload[key].uploader.path,
+              ipfs: FileUploadHandler.upload[key].uploader.results,
+            };
+            updates.push(record);
+
+            FSHandler.fs[record.path] = {
+              path: record.path,
+              ipfs: record.ipfs,
+              isFile: true,
+            };
+
+            // TODO: update the fs UI.
+
           }
         }
       }
+
+      // send the updates to the server.
+      FS.createFiles(address, updates);
 
       // Check for jobs in the queue and start one if possible.
       FileUploadHandler.startJob();
@@ -203,8 +226,7 @@ const FileUploadHandler = {
   },
 
   start: (file, key) => {
-    const pubKey = '0xc078e62617f3265998d52bf7e778c6576d8d06d51bc90ae94a609f22107a3b551e7356acbfda378e5d4f5085d8125475aeb3ce99bfa18cfd7174c608edd2670c';
-    // const pubKey = Metamask.pubKey;
+    const pubKey = Metamask.pubKey;
 
     // Set it as new job if required.
     if (FileUploadHandler.upload === null) {

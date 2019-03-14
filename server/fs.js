@@ -80,6 +80,26 @@ const FS = {
     }
   },
 
+  createFiles: async (address, updates) => {
+    try {
+      for (const file of updates) {
+        const ipfs = JSON.stringify({
+          hash: file.ipfs,
+        });
+
+        const query = {
+          sql: 'INSERT INTO fs(address, path, ipfs_hash)',
+          timeout: 6 * 1000, // 6s
+          values: [ address, file.path, ipfs ],
+        };
+
+        await DB.query(query);
+      }
+    } catch (err) {
+      throw err;
+    }
+  },
+
   createFolder: async (address, path) => {
     const query = {
       sql: 'INSERT INTO fs(address, path, ipfs_hash, file)',

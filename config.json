@@ -108,6 +108,15 @@
         "x-access-token": "%token"
       }
     },
+    "createFiles": {
+      "name": "createFiles",
+      "path": "/fs/file/create",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-access-token": "%token"
+      }
+    },
     "createFolder": {
       "name": "createFolder",
       "path": "/fs/folder/create",

@@ -33,6 +33,19 @@ const FS = {
     }
   },
 
+  createFiles: async (address, updates) => {
+    try {
+      try {
+        return await Session.api(config.api.createFiles.name, {
+          address: address,
+          updates: updates,
+        });
+      } catch (err) {
+        throw err;
+      }
+    }
+  },
+
   createFolder: async (address, path) => {
     try {
       try {
