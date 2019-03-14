@@ -45,6 +45,11 @@ $(document).ready(async () => {
   $(document).on('click', '.popover .fs-delete', FSHandler.deleteFile);
   $(document).on('click', '.popover .fs-rename', FSHandler.renameFile);
   $(document).on('click', '.popover .fs-new-folder', FSHandler.createFolder);
+  $(document).on('click', '.popover .fs-new-file', (e) => {
+    const id = $(document).find('.popover').first().attr('id');
+    $('#account-dashboard').find(`[aria-describedBy="${id}"]`).popover('hide');
+    $('#upload-file-dialog').modal('show');
+  });
 
   $(document).on('click', () => {
     const popover = $(document).find('.popover');
@@ -112,9 +117,7 @@ $(document).ready(async () => {
     content: function() {
       return `<ul id="popover-content" class="list-group">
                 <a href="#" class="fs-new-folder list-group-item"><i class="fas fa-folder-plus"></i>&nbsp;&nbsp;New Folder</a>
-                <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i>&nbsp;&nbsp;Delete</a>
-                <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i>&nbsp;&nbsp;Rename</a>
-                <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i>&nbsp;&nbsp;Move</a>
+                <a href="#" class="fs-new-file list-group-item"><i class="fas fa-file-upload"></i>&nbsp;&nbsp;File Upload</a>
               </ul>`;
     }
   });
@@ -130,13 +133,4 @@ $(document).ready(async () => {
     }, 300);
   });
 
-  // $('#new-file-upload').on('click', () => {
-  //   $('#upload-file-dialog').modal('show');
-  // });
-
-  // $('#upload-file-dialog').modal('show');
-
-  // FileDownloadHandler.start();
-  // const address = (await Metamask.loadWeb3())[0];
-  // const pubKey = await Metamask.personalSign(address, 'hello');
 });
