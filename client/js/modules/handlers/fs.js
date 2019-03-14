@@ -4,7 +4,7 @@ const FS = require('../fs.js');
 const Wallet = require('../crypto/metamask.js');
 const DownloadHandler = require('./downloader.js');
 
-const drawFolder = (file) => {
+const drawFile = (file) => {
   const name = Path.basename(file.path);
 
   // Find the last row.
@@ -17,7 +17,7 @@ const drawFolder = (file) => {
     row = row.last();
     if (row.find('.col-md-2').length === 6) {
       $('#content-fs').find('.container').append('<div class="row no-gutters"></div>');
-      row = $('#content-fs').find('.container > .row').first();
+      row = $('#content-fs').find('.container > .row').last();
     }
   }
 
@@ -26,7 +26,7 @@ const drawFolder = (file) => {
                     <input type="hidden" value="${key}" />
                     <div class="row">
                       <div class="col">
-                        <i class="fas ${file.isFile ? 'fa-file-alt fs-file-icon' : 'fa-folder fs-folder-icon'}"
+                        <i class="fas ${file.isFile ? 'fa-file-alt' : 'fa-folder'} fs-file-icon"
                            data-toggle="popover"></i>
                       </div>
                     </div>
@@ -35,18 +35,6 @@ const drawFolder = (file) => {
                     </div>
                   </div>`;
   row.append(folder);
-
-  row.append(`<div class="col-md-2">
-                    <div class="row">
-                      <div class="col">
-                        <i class="fas ${file.isFile ? 'fa-file-alt fs-file-icon' : 'fa-folder fs-folder-icon'}"
-                           data-toggle="popover"></i>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col fs-file-name">${name}</div>
-                    </div>
-                  </div>`);
 
   $(row).find('[data-toggle="popover"]').first().popover({
     trigger: 'manual',
@@ -65,6 +53,7 @@ const drawFolder = (file) => {
 
 const FSHandler = {
   fs: null,
+  path: '/',
 
   drawFS: async (address, path = '/') => {
     try {
@@ -79,12 +68,7 @@ const FSHandler = {
       const structure = FSHandler.getStructure(path);
       for (const key of Object.keys(structure)) {
         const file = FSHandler.fs[key];
-
-        if (file.isFile) {
-          drawFolder(file);
-        } else {
-          drawFolder(file);
-        }
+        drawFile(file);
       }
     } catch (err) {
       throw err;
@@ -182,15 +166,47 @@ const FSHandler = {
     }
   },
 
-  // TODO: set the handler to create a folder.
   createFolder: async (e) => {
-    const path = '';
+    try {
+      // Close the popover.
+      $('#new-file-upload').popover('hide');
 
-    FSHandler.fs[path] = {
-      path: path,
-      ipfs: [],
-      isFile: false,
-    };
+      let path = '';
+      let folderName = '';
+
+      while (true) {
+        folderName = prompt('Folder Name: ');
+
+        // user clicked "cancel".
+        if (folderName === null) {
+          return;
+        }
+
+        path = FSHandler.path + (FSHandler.path.endsWith('/') ? '' : '/') + folderName;
+
+        if (folderName.trim().length >= 1 &&
+            folderName.indexOf('/') === -1 &&
+            FSHandler.fs[path] === undefined &&
+            /^[_a-zA-Z][_a-zA-Z0-9]+$/.test(folderName)) {
+          break;
+        }
+      }
+
+      // Update the server.
+      await FS.createFolder(Wallet.address, path);
+
+      const file = {
+        path: path,
+        ipfs: [],
+        isFile: false,
+      };
+      FSHandler.fs[path] = file;
+
+      // Update the UI.
+      drawFile(file);
+    } catch (err) {
+      alert(err);
+    }
   }
 };
 

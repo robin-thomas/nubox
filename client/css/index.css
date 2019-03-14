@@ -205,6 +205,10 @@ body {
   padding: 25px;
 }
 
+#content-fs > .container > .row {
+  margin-bottom: 40px;
+}
+
 #content-fs .col {
   text-align: center;
 }
@@ -213,14 +217,9 @@ body {
   font-size: 15px;
 }
 
-.fs-folder-icon {
-  font-size: 60px;
-  cursor: pointer;
-  padding: 10px;
-}
-
 .fs-file-icon {
   font-size: 60px;
+  cursor: pointer;
   padding: 10px;
 }
 

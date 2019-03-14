@@ -15,6 +15,7 @@ const DB = {
     return new Promise((resolve, reject) => {
       connection.query(query, (error, results) => {
         if (error) {
+          console.log(error);
           reject('DB service is down');
         } else {
           resolve(results);

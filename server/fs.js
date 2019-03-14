@@ -102,7 +102,8 @@ const FS = {
 
   createFolder: async (address, path) => {
     const query = {
-      sql: 'INSERT INTO fs(address, path, ipfs_hash, file)',
+      sql: 'INSERT INTO fs(address, path, ipfs_hash, file) \
+            VALUES(?, ?, ?, ?)',
       timeout: 6 * 1000, // 6s
       values: [ address, path, '{\"hash\":[]}', false ],
     };

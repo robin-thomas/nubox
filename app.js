@@ -177,11 +177,11 @@ app.post(config.api.createFolder.path, Auth.validate, async (req, res) => {
   const path = req.body.path;
 
   try {
-    const out = await FS.createFolder(address, path);
+    await FS.createFolder(address, path);
 
     res.status(200).send({
       status: 'ok',
-      msg: out
+      msg: ''
     });
   } catch (err) {
     res.status(500).send({

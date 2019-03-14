@@ -33,17 +33,24 @@ $(document).ready(async () => {
 
   $('#content-fs').on('contextmenu', (e) => {
     e.preventDefault();
+
+    const popover = $(document).find('.popover');
+    if (popover.length >= 1) {
+      const id = popover.first().attr('id');
+      $('#account-dashboard').find(`[aria-describedBy="${id}"]`).popover('hide');
+    }
   });
 
   $(document).on('click', '.popover .fs-download', FSHandler.downloadFile);
   $(document).on('click', '.popover .fs-delete', FSHandler.deleteFile);
   $(document).on('click', '.popover .fs-rename', FSHandler.renameFile);
+  $(document).on('click', '.popover .fs-new-folder', FSHandler.createFolder);
 
   $(document).on('click', () => {
     const popover = $(document).find('.popover');
     if (popover.length >= 1) {
       const id = popover.first().attr('id');
-      $('#content-fs').find(`[aria-describedBy="${id}"]`).popover('toggle');
+      $('#content-fs').find(`[aria-describedBy="${id}"]`).popover('hide');
     }
   });
 
@@ -98,6 +105,19 @@ $(document).ready(async () => {
   WalletHandler.walletConnectConfirmHandler();
 
   $('[data-toggle="tooltip"]').tooltip();
+  $('#new-file-upload').popover({
+    trigger: 'click',
+    placement: 'bottom',
+    html: true,
+    content: function() {
+      return `<ul id="popover-content" class="list-group">
+                <a href="#" class="fs-new-folder list-group-item"><i class="fas fa-folder-plus"></i>&nbsp;&nbsp;New Folder</a>
+                <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i>&nbsp;&nbsp;Delete</a>
+                <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i>&nbsp;&nbsp;Rename</a>
+                <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i>&nbsp;&nbsp;Move</a>
+              </ul>`;
+    }
+  });
 
   $('#open-contacts-dashboard').on('click', () => {
     $('#contacts-after-connect').animate({
@@ -110,9 +130,9 @@ $(document).ready(async () => {
     }, 300);
   });
 
-  $('#new-file-upload').on('click', () => {
-    $('#upload-file-dialog').modal('show');
-  });
+  // $('#new-file-upload').on('click', () => {
+  //   $('#upload-file-dialog').modal('show');
+  // });
 
   // $('#upload-file-dialog').modal('show');
 
