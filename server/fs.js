@@ -76,7 +76,22 @@ const FS = {
         created: result[0].timestamp,
       };
     } catch (err) {
-      console.log(err);
+      throw err;
+    }
+  },
+
+  createFolder: async (address, path) => {
+    const query = {
+      sql: 'INSERT INTO fs(address, path, ipfs_hash, file)',
+      timeout: 6 * 1000, // 6s
+      values: [ address, path, '{\"hash\":[]}', false ],
+    };
+
+    try {
+      await DB.query(query);
+
+      return await FS.getFile(address, path);
+    } catch (err) {
       throw err;
     }
   },

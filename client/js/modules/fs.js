@@ -32,6 +32,19 @@ const FS = {
       throw err;
     }
   },
+
+  createFolder: async (address, path) => {
+    try {
+      try {
+        return await Session.api(config.api.createFolder.name, {
+          address: address,
+          path: path,
+        });
+      } catch (err) {
+        throw err;
+      }
+    }
+  },
 };
 
 module.exports = FS;
