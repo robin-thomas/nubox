@@ -205,8 +205,8 @@ body {
   padding: 25px;
 }
 
-#content-fs > .container > .row {
-  margin-bottom: 40px;
+#content-fs .simplebar-content > .container > .row {
+  margin-bottom: 100px;
 }
 
 #content-fs .col {

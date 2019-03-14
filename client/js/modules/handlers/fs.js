@@ -6,18 +6,19 @@ const DownloadHandler = require('./downloader.js');
 
 const drawFile = (file) => {
   const name = Path.basename(file.path);
+  const el = new SimpleBar($('#content-fs')[0]);
 
   // Find the last row.
-  let row = $('#content-fs').find('.container > .row');
+  let row = $('#content-fs .simplebar-content').find('.container > .row');
   if (row === null || row === undefined || row.length < 1) {
-    $('#content-fs').find('.container').html('<div class="row no-gutters"></div>');
-    row = $('#content-fs').find('.container > .row').first();
+    $('#content-fs .simplebar-content').find('.container').html('<div class="row no-gutters"></div>');
+    row = $('#content-fs .simplebar-content').find('.container > .row').first();
   } else {
     // Check if enough columns are already present.
     row = row.last();
     if (row.find('.col-md-2').length === 6) {
-      $('#content-fs').find('.container').append('<div class="row no-gutters"></div>');
-      row = $('#content-fs').find('.container > .row').last();
+      $('#content-fs .simplebar-content').find('.container').append('<div class="row no-gutters"></div>');
+      row = $('#content-fs .simplebar-content').find('.container > .row').last();
     }
   }
 
@@ -49,6 +50,8 @@ const drawFile = (file) => {
               </ul>`;
     }
   });
+
+  el.recalculate();
 };
 
 const FSHandler = {
@@ -185,9 +188,8 @@ const FSHandler = {
         path = FSHandler.path + (FSHandler.path.endsWith('/') ? '' : '/') + folderName;
 
         if (folderName.trim().length >= 1 &&
-            folderName.indexOf('/') === -1 &&
             FSHandler.fs[path] === undefined &&
-            /^[_a-zA-Z][_a-zA-Z0-9]+$/.test(folderName)) {
+            /^[_a-zA-Z][_a-zA-Z0-9]*$/.test(folderName)) {
           break;
         }
       }
