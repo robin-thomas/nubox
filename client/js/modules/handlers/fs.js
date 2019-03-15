@@ -7,6 +7,29 @@ const DownloadHandler = require('./downloader.js');
 const FSHandler = {
   fs: null,
   path: '/',
+  pathStack: ['/'],
+
+  drawFSHeader: () => {
+    // Get the last 6 folders nested deep.
+    const arr = (FSHandler.pathStack.length <= 6) ? FSHandler.pathStack : FSHandler.pathStack.slice(FSHandler.pathStack.length - 6);
+
+    $('#content-fs-header').find('.row').html('');
+    for (const folder of arr) {
+      let folderName = Path.basename(folder);
+      if (folderName == null || folderName === undefined ||
+          folderName === '/' || folderName.trim().length === 0) {
+        folderName = 'nuBox';
+      }
+
+      const path = Buffer.from(folder).toString('hex');
+
+      const row = `<div class="col-md-2 d-table">
+                    <input type="hidden" value="${path}" />
+                    <span class="d-table-cell align-middle">${folderName}</span>
+                  </div>`;
+      $('#content-fs-header').find('.row').append(row);
+    }
+  },
 
   drawFile: (file) => {
     const name = Path.basename(file.path);
@@ -75,6 +98,9 @@ const FSHandler = {
         const file = FSHandler.fs[key];
         FSHandler.drawFile(file);
       }
+
+      // Draw the header.
+      FSHandler.drawFSHeader();
     } catch (err) {
       throw err;
     }
@@ -248,6 +274,21 @@ const FSHandler = {
     // Update the UI.
     await FSHandler.drawFS(Wallet.address, newPath);
     FSHandler.path = newPath;
+    FSHandler.pathStack.push(newPath);
+    FSHandler.drawFSHeader();
+  },
+
+  openFolderFromHeader: async (e) => {
+    const key = $(e.currentTarget).find('input[type="hidden"]').val();
+    const path = Buffer.from(key, 'hex').toString();
+
+    // Update the UI.
+    await FSHandler.drawFS(Wallet.address, path);
+    FSHandler.path = path;
+
+    const index = FSHandler.pathStack.indexOf(path);
+    FSHandler.pathStack = FSHandler.pathStack.slice(0, index + 1);
+    FSHandler.drawFSHeader();
   },
 };
 

@@ -43,8 +43,16 @@
   color: #dc3545;
 }
 
-#content-fs-header {
-  border-bottom-color: rgb(218, 220, 224);
+#content-fs {
+  background: rgba(0,0,0,0.04);
+}
+
+#content-fs-header > .container-fluid > .row > .col-md-2 {
+  background: rgba(218, 220, 224, 1);
+}
+
+#content-fs-header > .container-fluid > .row > .col-md-2:hover {
+  background: rgba(0,0,0,0.2);
 }
 
 #contacts-connect {

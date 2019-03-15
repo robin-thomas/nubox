@@ -51,6 +51,7 @@ $(document).ready(async () => {
     $('#upload-file-dialog').modal('show');
   });
   $(document).on('dblclick', '.fa-folder', FSHandler.openFolder);
+  $('#content-fs-header .row').on('click', '.col-md-2', FSHandler.openFolderFromHeader);
 
   $(document).on('click', () => {
     const popover = $(document).find('.popover');
