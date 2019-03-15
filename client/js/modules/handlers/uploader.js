@@ -184,20 +184,25 @@ const FileUploadHandler = {
             FileUploadHandler.upload[key].isRunning = false;
 
             // Add to send as update to the server in batches.
+            const fileName = FileUploadHandler.upload[key].uploader.file.name;
+            const fileSize = FileUploadHandler.upload[key].uploader.file.size;
+            const path = FSHandler.path + (FSHandler.path.endsWith('/') ? '' : '/') + fileName;
             const record = {
-              path: FileUploadHandler.upload[key].uploader.path,
+              path: path,
+              size: fileSize,
               ipfs: FileUploadHandler.upload[key].uploader.results,
             };
             updates.push(record);
 
-            FSHandler.fs[record.path] = {
+            const newFile = {
               path: record.path,
               ipfs: record.ipfs,
               isFile: true,
-            };
+            }
+            FSHandler.fs[record.path] = newFile;
 
-            // TODO: update the fs UI.
-
+            // update the fs UI.
+            FSHandler.drawFile(newFile);
           }
         }
       }

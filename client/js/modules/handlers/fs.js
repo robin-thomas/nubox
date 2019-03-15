@@ -4,59 +4,59 @@ const FS = require('../fs.js');
 const Wallet = require('../crypto/metamask.js');
 const DownloadHandler = require('./downloader.js');
 
-const drawFile = (file) => {
-  const name = Path.basename(file.path);
-  const el = new SimpleBar($('#content-fs')[0]);
-
-  // Find the last row.
-  let row = $('#content-fs .simplebar-content').find('.container > .row');
-  if (row === null || row === undefined || row.length < 1) {
-    $('#content-fs .simplebar-content').find('.container').html('<div class="row no-gutters"></div>');
-    row = $('#content-fs .simplebar-content').find('.container > .row').first();
-  } else {
-    // Check if enough columns are already present.
-    row = row.last();
-    if (row.find('.col-md-2').length === 6) {
-      $('#content-fs .simplebar-content').find('.container').append('<div class="row no-gutters"></div>');
-      row = $('#content-fs .simplebar-content').find('.container > .row').last();
-    }
-  }
-
-  const key = Buffer.from(file.path).toString('hex');
-  const folder = `<div class="fs-file-total col-md-2">
-                    <input type="hidden" value="${key}" />
-                    <div class="row">
-                      <div class="col">
-                        <i class="fas ${file.isFile ? 'fa-file-alt' : 'fa-folder'} fs-file-icon"
-                           data-toggle="popover"></i>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col fs-file-name">${name}</div>
-                    </div>
-                  </div>`;
-  row.append(folder);
-
-  $(row).find('[data-toggle="popover"]').first().popover({
-    trigger: 'manual',
-    html: true,
-    content: function() {
-      return `<ul id="popover-content" class="list-group">
-                <input class="fs-file-key" type="hidden" value="${key}" />
-                <a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i>&nbsp;&nbsp;Download</a>
-                <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i>&nbsp;&nbsp;Delete</a>
-                <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i>&nbsp;&nbsp;Rename</a>
-                <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i>&nbsp;&nbsp;Move</a>
-              </ul>`;
-    }
-  });
-
-  el.recalculate();
-};
-
 const FSHandler = {
   fs: null,
   path: '/',
+
+  drawFile: (file) => {
+    const name = Path.basename(file.path);
+    const el = new SimpleBar($('#content-fs')[0]);
+
+    // Find the last row.
+    let row = $('#content-fs .simplebar-content').find('.container > .row');
+    if (row === null || row === undefined || row.length < 1) {
+      $('#content-fs .simplebar-content').find('.container').html('<div class="row no-gutters"></div>');
+      row = $('#content-fs .simplebar-content').find('.container > .row').first();
+    } else {
+      // Check if enough columns are already present.
+      row = row.last();
+      if (row.find('.col-md-2').length === 6) {
+        $('#content-fs .simplebar-content').find('.container').append('<div class="row no-gutters"></div>');
+        row = $('#content-fs .simplebar-content').find('.container > .row').last();
+      }
+    }
+
+    const key = Buffer.from(file.path).toString('hex');
+    const folder = `<div class="fs-file-total col-md-2">
+                      <input type="hidden" value="${key}" />
+                      <div class="row">
+                        <div class="col">
+                          <i class="fas ${file.isFile ? 'fa-file-alt' : 'fa-folder'} fs-file-icon"
+                             data-toggle="popover"></i>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col fs-file-name">${name}</div>
+                      </div>
+                    </div>`;
+    row.append(folder);
+
+    $(row).find('[data-toggle="popover"]').first().popover({
+      trigger: 'manual',
+      html: true,
+      content: function() {
+        return `<ul id="popover-content" class="list-group">
+                  <input class="fs-file-key" type="hidden" value="${key}" />
+                  <a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i>&nbsp;&nbsp;Download</a>
+                  <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i>&nbsp;&nbsp;Delete</a>
+                  <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i>&nbsp;&nbsp;Rename</a>
+                  <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i>&nbsp;&nbsp;Move</a>
+                </ul>`;
+      }
+    });
+
+    el.recalculate();
+  },
 
   drawFS: async (address, path = '/') => {
     try {
@@ -71,7 +71,7 @@ const FSHandler = {
       const structure = FSHandler.getStructure(path);
       for (const key of Object.keys(structure)) {
         const file = FSHandler.fs[key];
-        drawFile(file);
+        FSHandler.drawFile(file);
       }
     } catch (err) {
       throw err;
@@ -205,7 +205,7 @@ const FSHandler = {
       FSHandler.fs[path] = file;
 
       // Update the UI.
-      drawFile(file);
+      FSHandler.drawFile(file);
     } catch (err) {
       alert(err);
     }

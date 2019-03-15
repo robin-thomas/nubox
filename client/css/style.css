@@ -31,6 +31,10 @@
   border-color: rgba(181,187,202,.1);
 }
 
+#account-dashboard {
+  border-color: rgb(218, 220, 224);
+}
+
 #account-dashboard #new-file-upload {
   border-color: #dc3545;
 }

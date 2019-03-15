@@ -171,6 +171,8 @@ body {
   left:0;
   height: calc(100vh - 50px);
   padding: 25px;
+  border-right-style: solid;
+  border-right-width: 1px;
 }
 
 #account-dashboard #new-file-upload {
@@ -180,14 +182,12 @@ body {
   padding: 2px;
   cursor: pointer;
   display: table;
-  width: 100%;
+  width: 70%;
   color: #dc3545;
 }
 
 #new-file-upload .fa-plus-circle {
   font-size: 62px;
-  display: table-cell;
-  vertical-align: middle;
 }
 
 #new-file-upload span {
@@ -203,6 +203,7 @@ body {
   position: absolute;
   left: 300px;
   padding: 25px;
+  background: rgba(0,0,0,0.04);
 }
 
 #content-fs .simplebar-content > .container > .row {
