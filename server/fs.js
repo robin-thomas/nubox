@@ -52,6 +52,8 @@ const FS = {
 
     try {
       await DB.query(query);
+
+      // TODO: if its a folder, need to delete all of its descendants.
     } catch (err) {
       throw err;
     }
@@ -66,6 +68,8 @@ const FS = {
 
     try {
       await DB.query(query);
+
+      // TODO: if its a folder, need to change the path of all its descendants.
 
       const result = await FS.getFile(address, newPath);
 

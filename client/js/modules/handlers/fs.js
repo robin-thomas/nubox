@@ -41,13 +41,13 @@ const FSHandler = {
                     </div>`;
     row.append(folder);
 
-    $(row).find('[data-toggle="popover"]').first().popover({
+    $(row).find('[data-toggle="popover"]').last().popover({
       trigger: 'manual',
       html: true,
       content: function() {
         return `<ul id="popover-content" class="list-group">
                   <input class="fs-file-key" type="hidden" value="${key}" />
-                  <a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i>&nbsp;&nbsp;Download</a>
+                  ${file.isFile ? '<a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i>&nbsp;&nbsp;Download</a>' : ''}
                   <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i>&nbsp;&nbsp;Delete</a>
                   <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i>&nbsp;&nbsp;Rename</a>
                   <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i>&nbsp;&nbsp;Move</a>
