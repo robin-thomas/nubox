@@ -47,10 +47,10 @@ const FSHandler = {
       content: function() {
         return `<ul id="popover-content" class="list-group">
                   <input class="fs-file-key" type="hidden" value="${key}" />
-                  ${file.isFile ? '<a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i>&nbsp;&nbsp;Download</a>' : ''}
-                  <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i>&nbsp;&nbsp;Delete</a>
-                  <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i>&nbsp;&nbsp;Rename</a>
-                  <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i>&nbsp;&nbsp;Move</a>
+                  ${file.isFile ? '<a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i><span>Download</span></a>' : ''}
+                  <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i><span>Delete</span></a>
+                  <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i><span>Rename</span></a>
+                  <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i><span>Move</span></a>
                 </ul>`;
       }
     });
@@ -95,7 +95,14 @@ const FSHandler = {
   },
 
   downloadFile: (e) => {
-    const key = $(e.currentTarget).parent().find('.fs-file-key').val();
+    e.preventDefault();
+
+    let ele = $(e.target);
+    while (!ele.hasClass('list-group-item')) {
+      ele = ele.parent();
+    }
+
+    const key = ele.parent().find('.fs-file-key').val();
     const path = Buffer.from(key, 'hex').toString();
 
     const fileName = Path.basename(path);
@@ -105,21 +112,38 @@ const FSHandler = {
   },
 
   deleteFile: async (e) => {
-    const key = $(e.currentTarget).parent().find('.fs-file-key').val();
+    e.preventDefault();
+
+    let ele = $(e.target);
+    while (!ele.hasClass('list-group-item')) {
+      ele = ele.parent();
+    }
+
+    const key = ele.parent().find('.fs-file-key').val();
     const path = Buffer.from(key, 'hex').toString();
+    const fileName = Path.basename(path);
 
-    try {
-      await FS.deleteFile(Wallet.address, path);
+    if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
+      try {
+        await FS.deleteFile(Wallet.address, path);
 
-      // Delete from UI.
-      $('#content-fs').find(`.fs-file-total > input[type="hidden"][value=${key}]`).parent().remove();
-    } catch (err) {
-      throw err;
+        // Delete from UI.
+        $('#content-fs').find(`.fs-file-total > input[type="hidden"][value=${key}]`).parent().remove();
+      } catch (err) {
+        throw err;
+      }
     }
   },
 
   renameFile: async (e) => {
-    const key = $(e.target).parent().find('.fs-file-key').val();
+    e.preventDefault();
+
+    let ele = $(e.target);
+    while (!ele.hasClass('list-group-item')) {
+      ele = ele.parent();
+    }
+
+    const key = ele.parent().find('.fs-file-key').val();
     const path = Buffer.from(key, 'hex').toString();
     const fileName = Path.basename(path);
 
@@ -130,7 +154,7 @@ const FSHandler = {
       // User hit the cancel button.
       if (newFileName === null) {
         return;
-      } else if (newFileName.trim().length >= 1) {
+      } else if (newFileName.trim().length >= 1 && newFileName !== fileName) {
         break;
       }
     };
@@ -157,10 +181,10 @@ const FSHandler = {
         content: function() {
           return `<ul id="popover-content" class="list-group">
                     <input class="fs-file-key" type="hidden" value="${newKey}" />
-                    <a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i>&nbsp;&nbsp;Download</a>
-                    <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i>&nbsp;&nbsp;Delete</a>
-                    <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i>&nbsp;&nbsp;Rename</a>
-                    <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i>&nbsp;&nbsp;Move</a>
+                    ${newFile.isFile ? '<a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i><span>Download</span></a>' : ''}
+                    <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i><span>Delete</span></a>
+                    <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i><span>Rename</span></a>
+                    <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i><span>Move</span></a>
                   </ul>`;
         }
       });
@@ -170,6 +194,8 @@ const FSHandler = {
   },
 
   createFolder: async (e) => {
+    e.preventDefault();
+
     try {
       // Close the popover.
       $('#new-file-upload').popover('hide');

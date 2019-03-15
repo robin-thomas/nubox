@@ -224,6 +224,13 @@ body {
   padding: 10px;
 }
 
+.popover {
+  width: 250px;
+  font-size: 15px;
+  box-shadow: 0 0 2em rgba(0,0,0,0.3);
+  border: none;
+}
+
 .popover-body {
   padding: 0 !important;
   border: 0 !important;
@@ -239,6 +246,10 @@ body {
   color: #555;
   text-decoration: none;
   background-color: #f5f5f5;
+}
+
+.popover-body .list-group-item > i {
+  width: 25px;
 }
 
 #contacts-connect  {
