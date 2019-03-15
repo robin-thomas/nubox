@@ -9,7 +9,7 @@ const Token = {
   isValidRefreshToken: async (address, refreshToken) => {
     const query = {
       sql: 'SELECT COUNT(id) AS count FROM auth \
-            WHERE address = ? AND refresh_token = ? AND expiry > NOW()',
+            WHERE address = ? AND refresh_token = ? AND expiry > UTC_TIMESTAMP()',
       timeout: 6 * 1000, // 6s
       values: [ address, refreshToken ],
     };
@@ -23,7 +23,7 @@ const Token = {
   },
 
   genToken: (address) => {
-    const expiresIn = moment().add(config.jwt.expiresInHours, 'hours').format('YYYY-MM-DD HH:mm:ss');
+    const expiresIn = moment().utc().add(config.jwt.expiresInHours, 'hours').format('YYYY-MM-DD HH:mm:ss');
     const token = jwt.sign({user: address}, config.jwt.secret, {expiresIn: config.jwt.expiresIn});
 
     return {
@@ -34,7 +34,7 @@ const Token = {
 
   genRefreshToken: async (address) => {
     const refreshToken = crypto.randomBytes(15).toString('hex');
-    const expiry = moment().add(1, 'M').format('YYYY-MM-DD HH:mm:ss');
+    const expiry = moment().utc().add(1, 'M').format('YYYY-MM-DD HH:mm:ss');
 
     const query = {
       sql: 'INSERT INTO auth(address, refresh_token, expiry) \

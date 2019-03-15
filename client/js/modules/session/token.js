@@ -1,6 +1,8 @@
 const fetch = require('node-fetch');
+const moment = require('moment');
 
 const Cookie = require('./cookie.js');
+const Metamask = require('../crypto/metamask.js');
 
 const config = require('../../../../config.json');
 
@@ -19,9 +21,12 @@ const Token = {
         throw new Error(json.msg);
       }
 
+      const expiresInUTC = moment.utc(json.expiresIn).toDate();
+      const expiresInLocal = moment(expiresInUTC).local().format('YYYY-MM-DD HH:mm:ss');
+
       return {
         token: json.token,
-        expiresIn: json.expiresIn,
+        expiresIn: expiresInLocal,
         refreshToken: json.refreshToken
       };
     } catch (err) {
@@ -51,9 +56,12 @@ const Token = {
         throw new Error(json.msg);
       }
 
+      const expiresInUTC = moment.utc(json.expiresIn).toDate();
+      const expiresInLocal = moment(expiresInUTC).local().format('YYYY-MM-DD HH:mm:ss');
+
       return {
         token: json.token,
-        expiresIn: json.expiresIn,
+        expiresIn: expiresInLocal,
       };
     } catch (err) {
       throw err;
@@ -81,7 +89,7 @@ const Token = {
         const {token, expiresIn} = await Token.refreshToken(address, refreshToken);
 
         // Update the cookie.
-        Cookie.update(address, token, expiresIn, refreshToken);
+        Cookie.update(address, token, expiresIn, refreshToken, Metamask.pubKey);
 
         return {token, expiresIn};
       } catch (err) {

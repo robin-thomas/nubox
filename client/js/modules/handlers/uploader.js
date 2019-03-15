@@ -199,6 +199,7 @@ const FileUploadHandler = {
               path: record.path,
               ipfs: record.ipfs,
               isFile: true,
+              fileSize: record.size,
             }
             FSHandler.fs[record.path] = newFile;
 
@@ -235,6 +236,7 @@ const FileUploadHandler = {
 
   start: (file, key) => {
     const pubKey = Metamask.pubKey;
+    console.log(pubKey);
 
     // Set it as new job if required.
     if (FileUploadHandler.upload === null) {

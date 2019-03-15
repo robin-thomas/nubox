@@ -255,6 +255,7 @@ const FSHandler = {
         path: path,
         ipfs: [],
         isFile: false,
+        fileSize: 0,
       };
       FSHandler.fs[path] = file;
 

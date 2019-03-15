@@ -4,6 +4,7 @@ CREATE TABLE `fs` (
   `path` TEXT NOT NULL,
   `ipfs_hash` TEXT NOT NULL,
   `file` BOOLEAN NOT NULL DEFAULT true,
+  `file_size` INTEGER(11) NOT NULL DEFAULT 0,
   `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY(id)
 );

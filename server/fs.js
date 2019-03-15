@@ -20,6 +20,7 @@ const FS = {
           ipfs: JSON.parse(result.ipfs_hash).hash,
           isFile: result.file,
           created: result.timestamp,
+          fileSize: result.file_size,
         };
       }
 
@@ -92,9 +93,9 @@ const FS = {
         });
 
         const query = {
-          sql: 'INSERT INTO fs(address, path, ipfs_hash) VALUES(?,?,?)',
+          sql: 'INSERT INTO fs(address, path, ipfs_hash, file_size) VALUES(?,?,?,?)',
           timeout: 6 * 1000, // 6s
-          values: [ address, file.path, ipfs ],
+          values: [ address, file.path, ipfs, file.fileSize ],
         };
 
         await DB.query(query);
