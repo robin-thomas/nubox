@@ -95,7 +95,7 @@ const FS = {
         const query = {
           sql: 'INSERT INTO fs(address, path, ipfs_hash, file_size) VALUES(?,?,?,?)',
           timeout: 6 * 1000, // 6s
-          values: [ address, file.path, ipfs, file.fileSize ],
+          values: [ address, file.path, ipfs, file.size ],
         };
 
         await DB.query(query);

@@ -1,68 +1,20 @@
 const crypto = require('crypto');
 
 const FS = require('../fs.js');
+const File = require('../upload/file.js');
 const FSHandler = require('./fs.js');
 const FileUploader = require('../upload/uploader.js');
 const Metamask = require('../crypto/metamask.js');
-
-const File = {
-  updateTotalFilesSize: (files) => {
-    // Calculate the total file size.
-    let currentSize = $('#upload-file-dialog').find('#file-upload-progress-total-size').val();
-    currentSize = parseInt(currentSize);
-    currentSize = isNaN(currentSize) ? 0 : currentSize;
-
-    let newSize = files.map(e => e.size).reduce((a, b) => a + b, 0);
-    newSize = parseInt(newSize);
-    newSize = isNaN(newSize) ? 0 : newSize;
-
-    // Convert it into human-readable form.
-    const totalSize = currentSize + newSize;
-    $('#upload-file-dialog').find('#file-upload-progress-total-size').val(totalSize);
-    const size = File.getFileSize(totalSize);
-
-    // Update the UI.
-    $('#upload-file-dialog').find('#file-upload-progress-total-size-display > b').html(size);
-  },
-
-  doesFileKeyExists: (key) => {
-    return (FileUploadHandler.upload !== null && FileUploadHandler.upload[key] !== undefined) ?
-      true : false;
-  },
-
-  getFileKey: (file) => {
-    return Buffer.from(JSON.stringify({
-      lastMod: file.lastModified,
-      size: file.size,
-      name: file.name,
-      type: file.type,
-    })).toString('hex');
-  },
-
-  getFileName: (fileName) => {
-    const index = fileName.lastIndexOf('.');
-
-    const ext = fileName.substr(index + 1);
-
-    let name = fileName.substr(0, index);
-    if (name.length > 10) {
-      name = name.substr(0, 3) + '...' + name.substr(name.length - 4);
-    }
-
-    return name + '.' + ext;
-  },
-
-  getFileSize: (bytes) => {
-    const size = ['B','kB','MB','GB'];
-    const factor = Math.floor((bytes.toString().length - 1) / 3);
-    return (bytes / Math.pow(1024, factor)).toFixed(2) + size[factor];
-  },
-};
 
 const FileUploadHandler = {
   upload: null,
   uploadTimer: null,
   jobQueue: [],
+
+  doesFileKeyExists: (key) => {
+    return (FileUploadHandler.upload !== null && FileUploadHandler.upload[key] !== undefined) ?
+      true : false;
+  },
 
   startJob: () => {
     let runningJobCount = 0;
@@ -139,7 +91,7 @@ const FileUploadHandler = {
     for (const file of files) {
       const key = File.getFileKey(file);
 
-      if (!File.doesFileKeyExists(key)) {
+      if (!FileUploadHandler.doesFileKeyExists(key)) {
         FileUploadHandler.createFileUploadUI(key, file);
         FileUploadHandler.start(file, key);
         processedFiles.push(file);
@@ -202,6 +154,7 @@ const FileUploadHandler = {
               fileSize: record.size,
             }
             FSHandler.fs[record.path] = newFile;
+            FSHandler.fsSize += newFile.fileSize;
 
             // update the fs UI.
             FSHandler.drawFile(newFile);
@@ -212,6 +165,7 @@ const FileUploadHandler = {
       // send the updates to the server.
       if (updates.length >= 1) {
         FS.createFiles(Metamask.address, updates);
+        FSHandler.updateStorageUI();
       }
 
       // Check for jobs in the queue and start one if possible.
@@ -236,7 +190,6 @@ const FileUploadHandler = {
 
   start: (file, key) => {
     const pubKey = Metamask.pubKey;
-    console.log(pubKey);
 
     // Set it as new job if required.
     if (FileUploadHandler.upload === null) {

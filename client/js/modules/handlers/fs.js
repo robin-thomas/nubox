@@ -1,11 +1,13 @@
 const Path = require('path');
 
 const FS = require('../fs.js');
+const File = require('../upload/file.js');
 const Wallet = require('../crypto/metamask.js');
 const DownloadHandler = require('./downloader.js');
 
 const FSHandler = {
   fs: null,
+  fsSize: 0,
   path: '/',
   pathStack: ['/'],
 
@@ -81,10 +83,31 @@ const FSHandler = {
     el.recalculate();
   },
 
+  getTotalFileSize: () => {
+    let size = 0;
+
+    for (const key of Object.keys(FSHandler.fs)) {
+      const file = FSHandler.fs[key];
+
+      if (file.isFile) {
+        size += file.fileSize;
+      }
+    }
+
+    return size;
+  },
+
+  updateStorageUI: () => {
+    const totalSize = File.getFileSize(FSHandler.fsSize);
+    $('#account-dashboard .fs-total-storage').html(totalSize);
+  },
+
   drawFS: async (address, path = '/') => {
     try {
       if (FSHandler.fs === null) {
         FSHandler.fs = await FS.getFsStructure(address);
+        FSHandler.fsSize = FSHandler.getTotalFileSize();
+        FSHandler.updateStorageUI();
       }
 
       path = (path.endsWith('/') ? path : path + '/');
@@ -154,6 +177,10 @@ const FSHandler = {
     if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
       try {
         await FS.deleteFile(Wallet.address, path);
+
+        FSHandler.fsSize -= FSHandler.fs[path].fileSize;
+        delete FSHandler.fs[path];
+        FSHandler.updateStorageUI();
 
         // Delete from UI.
         $('#content-fs-content').find(`.fs-file-total > input[type="hidden"][value=${key}]`).parent().remove();

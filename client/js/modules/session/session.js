@@ -33,7 +33,12 @@ const Session = {
 
   api: async (apiName, data) => {
     try {
-      await Token.updateTokenIfRequired(data.address, Session.refreshToken, Session.expiresIn);
+      const newSession = await Token.updateTokenIfRequired(data.address, Session.refreshToken, Session.expiresIn);
+      if (newSession !== null && newSession !== undefined &&
+          newSession.token !== undefined) {
+        Session.token = newSession.token;
+        Session.expiresIn = newSession.expiresIn;
+      }
 
       let headers = config.api[apiName].headers;
       headers = Token.setToken(headers, Session.token);
