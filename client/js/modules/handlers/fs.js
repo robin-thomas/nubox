@@ -10,19 +10,19 @@ const FSHandler = {
 
   drawFile: (file) => {
     const name = Path.basename(file.path);
-    const el = new SimpleBar($('#content-fs')[0]);
+    const el = new SimpleBar($('#content-fs-content')[0]);
 
     // Find the last row.
-    let row = $('#content-fs .simplebar-content').find('.container > .row');
+    let row = $('#content-fs-content .simplebar-content').find('.container > .row');
     if (row === null || row === undefined || row.length < 1) {
-      $('#content-fs .simplebar-content').find('.container').html('<div class="row no-gutters"></div>');
-      row = $('#content-fs .simplebar-content').find('.container > .row').first();
+      $('#content-fs-content .simplebar-content').find('.container').html('<div class="row no-gutters"></div>');
+      row = $('#content-fs-content .simplebar-content').find('.container > .row').first();
     } else {
       // Check if enough columns are already present.
       row = row.last();
       if (row.find('.col-md-2').length === 6) {
-        $('#content-fs .simplebar-content').find('.container').append('<div class="row no-gutters"></div>');
-        row = $('#content-fs .simplebar-content').find('.container > .row').last();
+        $('#content-fs-content .simplebar-content').find('.container').append('<div class="row no-gutters"></div>');
+        row = $('#content-fs-content .simplebar-content').find('.container > .row').last();
       }
     }
 
@@ -64,8 +64,10 @@ const FSHandler = {
         FSHandler.fs = await FS.getFsStructure(address);
       }
 
+      path = (path.endsWith('/') ? path : path + '/');
+
       // Reset the current fs screen.
-      $('#content-fs').html('<div class="container"></div>');
+      $('#content-fs-content').html('<div class="container"></div>');
 
       // Draw the files.
       const structure = FSHandler.getStructure(path);
@@ -128,7 +130,7 @@ const FSHandler = {
         await FS.deleteFile(Wallet.address, path);
 
         // Delete from UI.
-        $('#content-fs').find(`.fs-file-total > input[type="hidden"][value=${key}]`).parent().remove();
+        $('#content-fs-content').find(`.fs-file-total > input[type="hidden"][value=${key}]`).parent().remove();
       } catch (err) {
         throw err;
       }
@@ -170,7 +172,7 @@ const FSHandler = {
 
       // Update the UI.
       const newKey = Buffer.from(newPath).toString('hex');
-      const hidden = $('#content-fs').find(`.fs-file-total > input[type="hidden"][value=${key}]`);
+      const hidden = $('#content-fs-content').find(`.fs-file-total > input[type="hidden"][value=${key}]`);
       hidden.val(newKey);
       hidden.parent().find('.fs-file-name').html(newFileName);
 
@@ -235,7 +237,18 @@ const FSHandler = {
     } catch (err) {
       alert(err);
     }
-  }
+  },
+
+  openFolder: async (e) => {
+    const key = $(e.currentTarget).parent().parent().parent().find('input[type="hidden"]').val();
+    const path = Buffer.from(key, 'hex').toString();
+    const folderName = Path.basename(path);
+    const newPath = FSHandler.path + (FSHandler.path.endsWith('/') ? '' : '/') + folderName;
+
+    // Update the UI.
+    await FSHandler.drawFS(Wallet.address, newPath);
+    FSHandler.path = newPath;
+  },
 };
 
 module.exports = FSHandler;

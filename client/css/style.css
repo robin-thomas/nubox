@@ -43,6 +43,10 @@
   color: #dc3545;
 }
 
+#content-fs-header {
+  border-bottom-color: rgb(218, 220, 224);
+}
+
 #contacts-connect {
   background: rgba(255, 255, 255, 0.1);
 }

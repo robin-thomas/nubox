@@ -50,6 +50,7 @@ $(document).ready(async () => {
     $('#account-dashboard').find(`[aria-describedBy="${id}"]`).popover('hide');
     $('#upload-file-dialog').modal('show');
   });
+  $(document).on('dblclick', '.fa-folder', FSHandler.openFolder);
 
   $(document).on('click', () => {
     const popover = $(document).find('.popover');
