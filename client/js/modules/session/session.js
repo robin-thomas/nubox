@@ -22,7 +22,7 @@ const Session = {
         Session.expiresIn = expiresIn;
         Session.refreshToken = refreshToken;
 
-        Cookie.new(address, token, expiresIn, refreshToken);
+        Cookie.new(address, token, expiresIn, refreshToken, Metamask.pubKey);
       } else {
         throw new Error('Unable to create a signature with Metamask');
       }
@@ -78,6 +78,7 @@ const Session = {
     Session.token = session.token;
     Session.expiresIn = session.expiresIn;
     Session.refreshToken = session.refreshToken;
+    Metamask.pubKey = session.pubKey;
 
     return true;
   },

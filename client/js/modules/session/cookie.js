@@ -26,6 +26,7 @@ const Cookie = {
           token: cookieValue[1],
           expiresIn: cookieValue[2],
           refreshToken: cookieValue[3],
+          pubKey: cookieValue[4],
         };
       }
     }
@@ -33,7 +34,7 @@ const Cookie = {
     return null;
   },
 
-  update: (address, token, expiresIn, refreshToken) => {
+  update: (address, token, expiresIn, refreshToken, pubKey) => {
     const expires = getExpiryString();
 
     const name = cookieName + '=';
@@ -41,15 +42,17 @@ const Cookie = {
     for (let i = 0; i < cookieStr.length; ++i) {
       const str = cookieStr[i].trim();
       if (str.indexOf(name) === 0) {
-        const cookie = `${address}${cookieTerminator}${token}${cookieTerminator}${expiresIn}${cookieTerminator}${refreshToken}`;
+        let cookie = `${address}${cookieTerminator}${token}${cookieTerminator}${expiresIn}${cookieTerminator}`;
+        cookie += `${refreshToken}${cookieTerminator}${pubKey}`;
         document.cookie = `${cookieName}=${cookie}${expires};path=/`;
       }
     }
   },
 
-  new: (address, token, expiresIn, refreshToken) => {
+  new: (address, token, expiresIn, refreshToken, pubKey) => {
     const expires = getExpiryString();
-    const cookie = `${address}${cookieTerminator}${token}${cookieTerminator}${expiresIn}${cookieTerminator}${refreshToken}`;
+    let cookie = `${address}${cookieTerminator}${token}${cookieTerminator}${expiresIn}${cookieTerminator}`;
+    cookie += `${refreshToken}${cookieTerminator}${pubKey}`;
     document.cookie = `${cookieName}=${cookie}${expires};path=/`;
   },
 

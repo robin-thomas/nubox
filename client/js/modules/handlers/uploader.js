@@ -179,7 +179,8 @@ const FileUploadHandler = {
         // Update the progress only if the job is running.
         if (FileUploadHandler.upload[key].isRunning) {
           $('#file-upload-progress').find('#' + key + ' .progress-bar').width(progress + '%');
-          if (FileUploadHandler.upload[key].uploader.isComplete) {
+
+          if (FileUploadHandler.upload[key].uploader.isComplete === true) {
             // delete FileUploadHandler.upload[key];
             FileUploadHandler.upload[key].isRunning = false;
 
@@ -208,7 +209,9 @@ const FileUploadHandler = {
       }
 
       // send the updates to the server.
-      FS.createFiles(address, updates);
+      if (updates.length >= 1) {
+        FS.createFiles(Metamask.address, updates);
+      }
 
       // Check for jobs in the queue and start one if possible.
       FileUploadHandler.startJob();

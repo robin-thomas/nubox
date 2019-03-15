@@ -52,8 +52,6 @@ const WalletHandler = {
     if (!isLoggedIn && !btn) {
       $('#cookie-login-loading').fadeOut();
       $('#header').fadeIn();
-      $('#content').fadeIn();
-      $('#footer').fadeIn();
 
       ContactsHandler.createContactsBeforeConnect();
       return;
@@ -97,12 +95,11 @@ const WalletHandler = {
       contactsBeforeConnect.fadeOut();
       contactsConnect.fadeOut();
       contactsAfterConnect.fadeIn();
+      $('#content').fadeIn();
 
       if (isLoggedIn) {
         $('#cookie-login-loading').fadeOut();
         $('#header').fadeIn();
-        $('#content').fadeIn();
-        $('#footer').fadeIn();
       }
     } catch (err) {
       if (!isLoggedIn) {
@@ -132,6 +129,8 @@ const WalletHandler = {
     contactsAfterConnect.fadeOut();
     contactsConnect.fadeIn();
     contactsBeforeConnect.fadeIn();
+
+    $('#content').fadeOut();
 
     Session.logout();
   }

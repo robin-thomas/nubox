@@ -45,7 +45,7 @@ const FS = {
 
   deleteFile: async (address, path) => {
     const query = {
-      sql: 'SELECT * FROM fs WHERE address = ? AND path = ?',
+      sql: 'DELETE FROM fs WHERE address = ? AND path = ?',
       timeout: 6 * 1000, // 6s
       values: [ address, path ],
     };
@@ -92,7 +92,7 @@ const FS = {
         });
 
         const query = {
-          sql: 'INSERT INTO fs(address, path, ipfs_hash)',
+          sql: 'INSERT INTO fs(address, path, ipfs_hash) VALUES(?,?,?)',
           timeout: 6 * 1000, // 6s
           values: [ address, file.path, ipfs ],
         };

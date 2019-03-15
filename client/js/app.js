@@ -68,7 +68,6 @@ $(document).ready(async () => {
     switch (status) {
       case 'COMPLETED':
         alert('This file has already been uploaded');
-        FileUploadHandler.destroy(key);
         parent.parent().parent().parent().remove();
         break;
 

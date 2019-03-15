@@ -98,6 +98,7 @@ module.exports = function (self) {
         // Wait for all blocks to be processed.
         return await Promise.all(promises);
       } catch (err) {
+        console.log(err);
         throw err;
       }
     },
