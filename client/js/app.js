@@ -46,6 +46,7 @@ $(document).ready(async () => {
   $(document).on('click', '.popover .fs-rename', FSHandler.renameFile);
   $(document).on('click', '.popover .fs-new-folder', FSHandler.createFolder);
   $(document).on('click', '.popover .fs-new-file', (e) => {
+    e.preventDefault();
     const id = $(document).find('.popover').first().attr('id');
     $('#account-dashboard').find(`[aria-describedBy="${id}"]`).popover('hide');
     $('#upload-file-dialog').modal('show');

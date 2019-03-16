@@ -115,8 +115,16 @@ const FSHandler = {
       // Reset the current fs screen.
       $('#content-fs-content').html('<div class="container"></div>');
 
-      // Draw the files.
+      // Display empty folder banner if required.
       const structure = FSHandler.getStructure(path);
+      if (structure === null || structure === undefined ||
+          Object.keys(structure).length === 0) {
+        $('#fs-empty-folder-display').show();
+      } else {
+        $('#fs-empty-folder-display').hide();
+      }
+
+      // Draw the files.
       for (const key of Object.keys(structure)) {
         const file = FSHandler.fs[key];
         FSHandler.drawFile(file);
@@ -137,7 +145,8 @@ const FSHandler = {
 
       // check if its a child (one level below).
       const index = file.path.indexOf(path);
-      if (index === 0 && file.path.indexOf('/', index + 1) === -1) {
+      if (index === 0 &&
+          file.path.indexOf('/', path.length) === -1) {
         children[key] = file;
       }
     }
