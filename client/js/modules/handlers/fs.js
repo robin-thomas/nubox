@@ -190,6 +190,7 @@ const FSHandler = {
         FSHandler.fsSize -= FSHandler.fs[path].fileSize;
         delete FSHandler.fs[path];
         FSHandler.updateStorageUI();
+        FSHandler.drawFS(Wallet.address, path);
 
         // Delete from UI.
         $('#content-fs-content').find(`.fs-file-total > input[type="hidden"][value=${key}]`).parent().remove();

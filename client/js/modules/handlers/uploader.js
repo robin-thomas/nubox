@@ -133,6 +133,7 @@ const FileUploadHandler = {
           $('#file-upload-progress').find('#' + key + ' .progress-bar').width(progress + '%');
 
           if (FileUploadHandler.upload[key].uploader.isComplete === true) {
+            $('#fs-empty-folder-display').hide();
             // delete FileUploadHandler.upload[key];
             FileUploadHandler.upload[key].isRunning = false;
 
