@@ -173,17 +173,31 @@
         </div>
         <div id="content-fs-content"></div>
       </div>
-      <div class="contacts" id="contacts-after-connect">
+      <div class="dashboard-right" id="contacts-dashboard">
         <div class="container">
-          <div id="contacts-dashboard-header" class="row">
-            <div class="col-md-9">
-              <div id="contacts-dashboard-title">Contacts</div>
+          <div class="dashboard-header row">
+            <div class="col-md-10">
+              <div class="dashboard-title">Contacts</div>
             </div>
-            <div class="col-md-3">
-              <i id="close-contacts-dashboard" class="fas fa-times link-circle-hover"></i>
+            <div class="col-md-2">
+              <i id="close-contacts-dashboard" class="dashboard-close fas fa-times link-circle-hover"></i>
             </div>
           </div>
           <div id="contacts-dashboard-display" class="row"></div>
+        </div>
+        <i id="add-new-contact" data-toggle="tooltip" class="fa fa-address-book" title="Add new contact"></i>
+      </div>
+      <div class="dashboard-right" id="activity-dashboard">
+        <div class="container">
+          <div class="dashboard-header row">
+            <div class="col-md-10">
+              <div class="dashboard-title">Activity</div>
+            </div>
+            <div class="col-md-2">
+              <i id="close-activity-dashboard" class="dashboard-close fas fa-times link-circle-hover"></i>
+            </div>
+          </div>
+          <div id="activity-dashboard-display" class="row"></div>
         </div>
         <i id="add-new-contact" data-toggle="tooltip" class="fa fa-address-book" title="Add new contact"></i>
       </div>
@@ -191,6 +205,11 @@
         <div class="row">
           <div class="col" data-toggle="tooltip" title="Contacts">
             <i id="open-contacts-dashboard" class="fas fa-user link-circle-hover"></i>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col" data-toggle="tooltip" title="Activity">
+            <i id="open-activity-dashboard" class="fas fa-info-circle link-circle-hover"></i>
           </div>
         </div>
       </div>

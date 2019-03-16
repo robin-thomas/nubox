@@ -351,6 +351,10 @@ body {
   padding: 20px 0;
 }
 
+#dashboard-right > .row {
+  margin-bottom: 20px;
+}
+
 #dashboard-right > .row > .col {
   display: table-cell;
   vertical-align: middle;
@@ -362,30 +366,30 @@ body {
   font-size: 20px;
 }
 
-#contacts-dashboard-header {
+.dashboard-header {
   border-bottom-width: 1px;
   border-bottom-style: solid;
   padding: 15px 0;
 }
 
-#contacts-dashboard-title {
+.dashboard-title {
   text-transform: uppercase;
   text-align: left;
 }
 
-#close-contacts-dashboard {
+.dashboard-close {
   font-size: 22px;
   cursor: pointer;
   text-align: right;
 }
 
-.contacts {
+.dashboard-right {
   width: 300px;
   height: calc(100vh - 50px);
   position: absolute;
   right: -300px;
   text-align: center;
-  padding: 1%;
+  padding: 0 !important;
   border-width: 0 0 0 1px;
   border-style: solid;
   z-index: 2;
@@ -401,30 +405,13 @@ body {
   margin: 5px 25px;
 }
 
-/* #contacts-after-connect .row {
-  border: 0 !important;
-} */
-
-#contacts-after-connect {
-  display: none;
-  z-index: 10;
-  padding: 0 !important;
-}
-
-#contacts-after-connect .container-fluid {
-  height: 60%;
-  overflow: hidden;
-  border-bottom: 1px solid rgba(181,187,202,.1);
-  padding-right: 0 !important;
-}
-
 #contacts-display {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
 }
 
-#contacts-after-connect .fa-circle {
+#contacts-dashboard .fa-circle {
   position: absolute;
   font-size: 400px;
   z-index: -1;

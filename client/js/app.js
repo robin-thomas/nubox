@@ -125,12 +125,23 @@ $(document).ready(async () => {
   });
 
   $('#open-contacts-dashboard').on('click', () => {
-    $('#contacts-after-connect').animate({
+    $('#contacts-dashboard').animate({
       right: 0,
     }, 300);
   });
   $('#close-contacts-dashboard').on('click', () => {
-    $('#contacts-after-connect').animate({
+    $('#contacts-dashboard').animate({
+      right: '-300px',
+    }, 300);
+  });
+
+  $('#open-activity-dashboard').on('click', () => {
+    $('#activity-dashboard').animate({
+      right: 0,
+    }, 300);
+  });
+  $('#close-activity-dashboard').on('click', () => {
+    $('#activity-dashboard').animate({
       right: '-300px',
     }, 300);
   });

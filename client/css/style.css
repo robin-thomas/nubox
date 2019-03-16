@@ -63,17 +63,11 @@
   border-left-color: rgb(218, 220, 224);
 }
 
-#contacts-dashboard-header {
+.dashboard-header {
   border-bottom-color: rgb(218, 220, 224);
 }
 
-#contacts-right-connect {
-  border-color: rgba(181,187,202,.1);
-  color: #fff;
-  background: #12131f;
-}
-
-.contacts {
+.dashboard-right {
   border-color: rgb(218, 220, 224);
   background: white;
 }

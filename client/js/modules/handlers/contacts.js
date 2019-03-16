@@ -4,7 +4,7 @@ const Wallet = require('../crypto/metamask.js');
 const config = require('../../../../config.json');
 
 const contactsBeforeConnect = $('#contacts-before-connect'),
-      contactsAfterConnect  = $('#contacts-after-connect'),
+      contactsAfterConnect  = $('#contacts-dashboard'),
       expenseContacts       = $('#expense-contacts'),
       newContactAddress     = $('#new-contact-address'),
       newContactNickname    = $('#new-contact-nickname');
