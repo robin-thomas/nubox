@@ -1,11 +1,13 @@
 const Path = require('path');
 
 const DB = require('./db.js');
+const Activity = require('./activity.js');
 
 const FS = {
   getFsStructure: async (address) => {
     const query = {
-      sql: 'SELECT * FROM fs WHERE address = ?',
+      sql: 'SELECT *, CONVERT_TZ(timestamp, @@session.time_zone, "+00:00") AS timestamp_utc \
+            FROM fs WHERE address = ?',
       timeout: 6 * 1000, // 6s
       values: [ address ],
     };
@@ -19,7 +21,7 @@ const FS = {
           path: result.path,
           ipfs: JSON.parse(result.ipfs_hash).hash,
           isFile: result.file,
-          created: result.timestamp,
+          created: result.timestamp_utc,
           fileSize: result.file_size,
         };
       }
@@ -52,7 +54,15 @@ const FS = {
     };
 
     try {
+      const record = await FS.getFile(address, path);
+
       await DB.query(query);
+
+      await Activity.addActivity(address, [{
+        path: path,
+        fileId: record[0].id,
+        action: 'DELETE',
+      }]);
 
       // TODO: if its a folder, need to delete all of its descendants.
     } catch (err) {
@@ -74,6 +84,12 @@ const FS = {
 
       const result = await FS.getFile(address, newPath);
 
+      await Activity.addActivity(address, [{
+        path: path,
+        fileId: result[0].id,
+        action: 'RENAME',
+      }]);
+
       return {
         path: result[0].path,
         ipfs: JSON.parse(result[0].ipfs_hash).hash,
@@ -87,6 +103,8 @@ const FS = {
 
   createFiles: async (address, updates) => {
     try {
+      let results = [];
+
       for (const file of updates) {
         const ipfs = JSON.stringify({
           hash: file.ipfs,
@@ -99,7 +117,19 @@ const FS = {
         };
 
         await DB.query(query);
+
+        const record = FS.getFile(address, file.path);
+
+        await Activity.addActivity(address, [{
+          path: path,
+          fileId: record[0].id,
+          action: 'CREATE',
+        }]);
+
+        results.push(record);
       }
+
+      return results;
     } catch (err) {
       throw err;
     }
@@ -116,7 +146,16 @@ const FS = {
     try {
       await DB.query(query);
 
-      return await FS.getFile(address, path);
+      const record = await FS.getFile(address, path);
+
+      await Activity.addActivity(address, [{
+        path: path,
+        fileId: record[0].id,
+        action: 'CREATE',
+      }]);
+
+      return record;
+
     } catch (err) {
       throw err;
     }

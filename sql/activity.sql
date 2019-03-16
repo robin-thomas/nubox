@@ -1,0 +1,9 @@
+CREATE TABLE `activity` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `address` VARCHAR(42) NOT NULL,
+  `path` TEXT NOT NULL,
+  `file_id` INT NOT NULL,
+  `action` ENUM('CREATE','RENAME','DELETE') NOT NULL,
+  `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(id)
+);
