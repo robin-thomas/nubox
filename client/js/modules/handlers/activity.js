@@ -80,8 +80,8 @@ const ActivityHandler = {
         $('#activity-dashboard-display').append(row);
       }
 
-      // const el = new SimpleBar($('#activity-dashboard-display')[0]);
-      // el.recalculate();
+      const el = new SimpleBar($('#activity-dashboard-display')[0]);
+      el.recalculate();
     } catch (err) {
       throw err;
     }

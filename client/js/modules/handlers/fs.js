@@ -189,9 +189,14 @@ const FSHandler = {
         await FS.deleteFile(Wallet.address, path);
 
         FSHandler.fsSize -= FSHandler.fs[path].fileSize;
+        const newFile = FSHandler.fs[path];
         delete FSHandler.fs[path];
         FSHandler.updateStorageUI();
         FSHandler.drawFS(Wallet.address, FSHandler.path);
+
+        if (!newFile.isFile) {
+          FSHandler.deleteFileForChildren(path);
+        }
 
         ActivityHandler.load(Wallet.address);
 
@@ -203,38 +208,79 @@ const FSHandler = {
     }
   },
 
-  renameFile: async (e) => {
-    e.preventDefault();
-
-    let ele = $(e.target);
-    while (!ele.hasClass('list-group-item')) {
-      ele = ele.parent();
+  deleteFileForChildren: (path) => {
+    for (const childPath of Object.keys(FSHandler.fs)) {
+      if (childPath.startsWith(path + '/')) {
+        delete FSHandler.fs[childPath];
+      }
     }
+  },
 
-    const key = ele.parent().find('.fs-file-key').val();
-    const path = Buffer.from(key, 'hex').toString();
+  getNewNameForRename: (path) => {
+    const pathBase = Path.dirname(path);
     const fileName = Path.basename(path);
 
+    let newPath = '';
     let newFileName = '';
     while (true) {
       newFileName = prompt('Rename: ', fileName);
 
       // User hit the cancel button.
       if (newFileName === null) {
-        return;
-      } else if (newFileName.trim().length >= 1 && newFileName !== fileName) {
-        break;
+        return null;
       }
-    };
 
-    const newPathBase = Path.dirname(path);
-    const newPath = newPathBase + (newPathBase.endsWith('/') ? '' : '/') + newFileName;
+      // Make sure that the filename matches the name syntax.
+      if (newFileName.trim().length < 1 ||
+          !/^[_a-zA-Z][_a-zA-Z0-9\.]*$/.test(newFileName)) {
+        continue;
+      }
+
+      // check that this name hasn't been taken in this level.
+      newPath = pathBase + (pathBase.endsWith('/') ? '' : '/') + newFileName;
+      console.log(newPath);
+
+      if (FSHandler.fs[newPath] !== undefined) {
+        continue;
+      }
+
+      break;
+    }
+
+    return newPath;
+  },
+
+  renameFile: async (e) => {
+    e.preventDefault();
+
+    // Get the file path.
+    let ele = $(e.target);
+    while (!ele.hasClass('list-group-item')) {
+      ele = ele.parent();
+    }
+    const key = ele.parent().find('.fs-file-key').val();
+    const path = Buffer.from(key, 'hex').toString();
+
+    // Get the new file path.
+    const newPath = FSHandler.getNewNameForRename(path);
+    if (newPath === null) {
+      return;
+    }
+    const newFileName = Path.basename(newPath);
 
     try {
-      const newFile = await FS.renameFile(Wallet.address, path, newPath);
+      await FS.renameFile(Wallet.address, path, newPath);
 
+      // Update the FS.
+      let newFile = FSHandler.fs[path];
+      newFile.path = newPath;
       delete FSHandler.fs[path];
       FSHandler.fs[newFile.path] = newFile;
+
+      // Update the children if its a folder.
+      if (!newFile.isFile) {
+        FSHandler.renameFileForChildren(path, newPath);
+      }
 
       // Update the UI.
       ActivityHandler.load(Wallet.address);
@@ -242,7 +288,6 @@ const FSHandler = {
       const hidden = $('#content-fs-content').find(`.fs-file-total > input[type="hidden"][value=${key}]`);
       hidden.val(newKey);
       hidden.parent().find('.fs-file-name').html(newFileName);
-
       hidden.parent().find('[data-toggle="popover"]').popover('dispose');
       hidden.parent().find('[data-toggle="popover"]').popover({
         trigger: 'manual',
@@ -262,6 +307,20 @@ const FSHandler = {
     }
   },
 
+  renameFileForChildren: (path, newPath) => {
+    for (const childPath of Object.keys(FSHandler.fs)) {
+      if (childPath.startsWith(path + '/')) {
+        let newFile = FSHandler.fs[childPath];
+        newFile.path = newPath + childPath.substr(path.length);
+
+        console.log(newFile.path);
+
+        delete FSHandler.fs[childPath];
+        FSHandler.fs[newFile.path] = newFile;
+      }
+    }
+  },
+
   createFolder: async (e) => {
     e.preventDefault();
 
@@ -269,9 +328,9 @@ const FSHandler = {
       // Close the popover.
       $('#new-file-upload').popover('hide');
 
+      // Get a name for the new folder.
       let path = '';
       let folderName = '';
-
       while (true) {
         folderName = prompt('Folder Name: ');
 
@@ -284,7 +343,7 @@ const FSHandler = {
 
         if (folderName.trim().length >= 1 &&
             FSHandler.fs[path] === undefined &&
-            /^[_a-zA-Z][_a-zA-Z0-9]*$/.test(folderName)) {
+            /^[_a-zA-Z][_a-zA-Z0-9\.]*$/.test(folderName)) {
           break;
         }
       }

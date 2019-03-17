@@ -3,12 +3,13 @@ const Work = require('webworkify');
 const config = require('../../../../config.json');
 
 class FileUploader {
-  constructor(file, key, pubKey) {
+  constructor(file, key, pubKey, path) {
     this.file = file;
     this.blockSize = config.upload.blocksize;
     this.offset = 0;
     this.key = key;
     this.pubKey = pubKey;
+    this.path = path;
     this.isComplete = false;
     this.results = null;
   }

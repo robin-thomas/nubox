@@ -141,7 +141,7 @@ const FileUploadHandler = {
             // Add to send as update to the server in batches.
             const fileName = FileUploadHandler.upload[key].uploader.file.name;
             const fileSize = FileUploadHandler.upload[key].uploader.file.size;
-            const path = FSHandler.path + (FSHandler.path.endsWith('/') ? '' : '/') + fileName;
+            const path = FileUploadHandler.upload[key].uploader.path;
             const record = {
               path: path,
               size: fileSize,
@@ -199,8 +199,9 @@ const FileUploadHandler = {
       FileUploadHandler.upload = {};
     }
     if (FileUploadHandler.upload[key] === undefined) {
+      const path = FSHandler.path + (FSHandler.path.endsWith('/') ? '' : '/') + file.name;
       FileUploadHandler.upload[key] = {
-        uploader: new FileUploader(file, key, pubKey),
+        uploader: new FileUploader(file, key, pubKey, path),
         isRunning: false,
       };
     }

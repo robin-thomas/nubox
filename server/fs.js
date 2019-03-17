@@ -59,7 +59,29 @@ const FS = {
         action: 'DELETE',
       }]);
 
-      // TODO: if its a folder, need to delete all of its descendants.
+      if (!record[0].file) {
+        await FS.deleteFileForDescendants(address, path);
+      }
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  deleteFileForDescendants: async (address, path) => {
+    try {
+      const records = await DB.query({
+        sql: 'SELECT * FROM fs WHERE path LIKE ? AND address = ?',
+        timeout: 6 * 1000, // 6s
+        values: [ `${path}/%`, address ],
+      });
+
+      for (const record of records) {
+        await DB.query({
+          sql: 'DELETE FROM fs WHERE id = ?',
+          timeout: 6 * 1000, // 6s
+          values: [ record.id ],
+        });
+      }
     } catch (err) {
       throw err;
     }
@@ -73,9 +95,11 @@ const FS = {
         values: [ newPath, address, path ],
       });
 
-      // TODO: if its a folder, need to change the path of all its descendants.
-
       const result = await FS.getFile(address, newPath);
+
+      if (!result[0].file) {
+        await FS.renameFileForDescendants(address, path, newPath);
+      }
 
       await Activity.addActivity(address, [{
         path: path,
@@ -94,10 +118,30 @@ const FS = {
     }
   },
 
+  renameFileForDescendants: async (address, path, newPath) => {
+    try {
+      const records = await DB.query({
+        sql: 'SELECT * FROM fs WHERE path LIKE ? AND address = ?',
+        timeout: 6 * 1000, // 6s
+        values: [ `${path}/%`, address ],
+      });
+
+      for (const record of records) {
+        const newChildPath = newPath + record.path.substr(path.length);
+
+        await DB.query({
+          sql: 'UPDATE fs SET path = ? WHERE id = ?',
+          timeout: 6 * 1000, // 6s
+          values: [ newChildPath, record.id ],
+        });
+      }
+    } catch (err) {
+      throw err;
+    }
+  },
+
   createFiles: async (address, updates) => {
     try {
-      let results = [];
-
       for (const file of updates) {
         const ipfs = JSON.stringify({
           hash: file.ipfs,
@@ -111,14 +155,10 @@ const FS = {
 
         await Activity.addActivity(address, [{
           path: file.path,
-          fileId: 1,
+          file: 1,
           action: 'CREATE',
         }]);
-
-        results.push(record);
       }
-
-      return results;
     } catch (err) {
       throw err;
     }
@@ -136,11 +176,9 @@ const FS = {
 
       await Activity.addActivity(address, [{
         path: path,
-        fileId: 0,
+        file: 0,
         action: 'CREATE',
       }]);
-
-      return record;
 
     } catch (err) {
       throw err;
