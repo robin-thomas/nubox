@@ -125,6 +125,15 @@
         "Content-Type": "application/json",
         "x-access-token": "%token"
       }
+    },
+    "getActivity": {
+      "name": "getActivity",
+      "path": "/fs/activity",
+      "method": "GET",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-access-token": "%token"
+      }
     }
   }
 }

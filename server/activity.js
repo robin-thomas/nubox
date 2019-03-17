@@ -1,13 +1,15 @@
 const Path = require('path');
+const moment = require('moment-timezone');
 
 const DB = require('./db.js');
 
 const Activity = {
-  getActivity: async (address) => {
+  getActivity: async (address, timezone) => {
     try {
       const query = {
-        sql: 'SELECT a.*, f.* FROM activity AS a WHERE address = ? \
+        sql: 'SELECT a.*, f.*, CONVERT_TZ(a.timestamp, @@session.time_zone, "+00:00") AS timestamp_utc FROM activity AS a \
               LEFT JOIN fs AS f ON a.file_id = f.id \
+              WHERE a.address = ? \
               ORDER BY a.timestamp DESC',
         timeout: 6 * 1000, // 6s
         values: [ address ],
@@ -15,34 +17,37 @@ const Activity = {
       };
       const records = await DB.query(query);
 
-      let activity = [];
+      let activity = {};
 
       for (const record of records) {
         const oldFileName = Path.basename(record.a.path);
-        const newFileName = Path.basename(record.f.path);
+        const newFileName = (record.a.action === 'DELETE' ? Path.basename(record.f.path) : null);
 
-        let content = '';
-        switch (record.a.action) {
-          case 'CREATE':
-            action = record.f.file ? 'uploaded' : 'created';
-            content = `You ${action} ${oldFileName}`;
-            break;
-          case 'RENAME':
-            content = `You renamed ${oldFileName} to ${newFileName}`;
-            break;
-          case 'DELETE':
-            content = `You deleted ${oldFileName}`;
-            break;
+        const utcDate = moment.utc(record[''].timestamp_utc).toDate();
+        const date = moment(utcDate).tz(timezone).format('YYYY-MM-DD');
+        const time = moment(utcDate).tz(timezone).format('hh:mm A');
+
+        if (activity[date] === undefined) {
+          activity[date] = {};
         }
 
-        activity.push({
-          content: content,
-          timestamp: record.a.timestamp,
+        if (activity[date][record.a.action] === undefined) {
+          activity[date][record.a.action] = [];
+        }
+
+        let action = record.a.action;
+        if (action === 'CREATE') {
+          action = record.f.file ? 'UPLOAD' : 'CREATE';
+        }
+
+        activity[date][action].push({
+          oldFileName: oldFileName,
+          newFileName: newFileName,
+          time: time,
         });
       }
 
       return activity;
-
     } catch (err) {
       throw err;
     }

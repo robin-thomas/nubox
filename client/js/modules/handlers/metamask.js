@@ -1,6 +1,7 @@
 const Wallet = require('../crypto/metamask.js');
 const Session = require('../session/session.js');
 const ContactsHandler = require('./contacts.js');
+const ActivityHandler = require('./activity.js');
 const Contacts = require('../contacts.js');
 const FSHandler = require('./fs.js');
 
@@ -80,6 +81,7 @@ const WalletHandler = {
 
       ContactsHandler.contactsList = await Contacts.loadContacts(Wallet.address);
       ContactsHandler.contactsDisplayHandler();
+      ActivityHandler.load(Wallet.address);
 
       const addressDisplay = Wallet.address.substr(0, 5) + '...' + Wallet.address.substr(37);
       walletAddressDisplay.text(addressDisplay);
