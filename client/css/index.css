@@ -395,6 +395,10 @@ body {
   z-index: 2;
 }
 
+#activity-dashboard-display {
+  height: calc(100vh - 10px);
+}
+
 #contacts-display .row {
   padding-top: 12px;
   padding-bottom: 12px;

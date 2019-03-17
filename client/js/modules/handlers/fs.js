@@ -211,9 +211,13 @@ const FSHandler = {
   deleteFileForChildren: (path) => {
     for (const childPath of Object.keys(FSHandler.fs)) {
       if (childPath.startsWith(path + '/')) {
+        if (FSHandler.fs[childPath].isFile) {
+          FSHandler.fsSize -= FSHandler.fs[childPath].fileSize;
+        }
         delete FSHandler.fs[childPath];
       }
     }
+    FSHandler.updateStorageUI();
   },
 
   getNewNameForRename: (path) => {
@@ -238,8 +242,6 @@ const FSHandler = {
 
       // check that this name hasn't been taken in this level.
       newPath = pathBase + (pathBase.endsWith('/') ? '' : '/') + newFileName;
-      console.log(newPath);
-
       if (FSHandler.fs[newPath] !== undefined) {
         continue;
       }
