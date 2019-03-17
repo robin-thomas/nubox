@@ -4,6 +4,7 @@ const FS = require('../fs.js');
 const File = require('../upload/file.js');
 const Wallet = require('../crypto/metamask.js');
 const DownloadHandler = require('./downloader.js');
+const ActivityHandler = require('./activity.js');
 
 const FSHandler = {
   fs: null,
@@ -190,7 +191,9 @@ const FSHandler = {
         FSHandler.fsSize -= FSHandler.fs[path].fileSize;
         delete FSHandler.fs[path];
         FSHandler.updateStorageUI();
-        FSHandler.drawFS(Wallet.address, path);
+        FSHandler.drawFS(Wallet.address, FSHandler.path);
+
+        ActivityHandler.load(Wallet.address);
 
         // Delete from UI.
         $('#content-fs-content').find(`.fs-file-total > input[type="hidden"][value=${key}]`).parent().remove();
@@ -234,6 +237,7 @@ const FSHandler = {
       FSHandler.fs[newFile.path] = newFile;
 
       // Update the UI.
+      ActivityHandler.load(Wallet.address);
       const newKey = Buffer.from(newPath).toString('hex');
       const hidden = $('#content-fs-content').find(`.fs-file-total > input[type="hidden"][value=${key}]`);
       hidden.val(newKey);
@@ -298,6 +302,7 @@ const FSHandler = {
 
       // Update the UI.
       FSHandler.drawFile(file);
+      ActivityHandler.load(Wallet.address);
     } catch (err) {
       alert(err);
     }

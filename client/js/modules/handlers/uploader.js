@@ -5,6 +5,7 @@ const File = require('../upload/file.js');
 const FSHandler = require('./fs.js');
 const FileUploader = require('../upload/uploader.js');
 const Metamask = require('../crypto/metamask.js');
+const ActivityHandler = require('./activity.js');
 
 const FileUploadHandler = {
   upload: null,
@@ -176,6 +177,7 @@ const FileUploadHandler = {
       if (isFilesUploaded) {
         clearInterval(FileUploadHandler.uploadTimer);
         FileUploadHandler.uploadTimer = null;
+        ActivityHandler.load(Metamask.address);
       }
 
       let totalSize = $('#upload-file-dialog').find('#file-upload-progress-total-size').val();

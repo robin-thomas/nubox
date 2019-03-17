@@ -5,17 +5,16 @@ const Activity = require('./activity.js');
 
 const FS = {
   getFsStructure: async (address) => {
-    const query = {
-      sql: 'SELECT *, CONVERT_TZ(timestamp, @@session.time_zone, "+00:00") AS timestamp_utc \
-            FROM fs WHERE address = ?',
-      timeout: 6 * 1000, // 6s
-      values: [ address ],
-    };
-
     try {
       let results = {};
 
-      const out = await DB.query(query);
+      const out = await DB.query({
+        sql: 'SELECT *, CONVERT_TZ(timestamp, @@session.time_zone, "+00:00") AS timestamp_utc \
+              FROM fs WHERE address = ?',
+        timeout: 6 * 1000, // 6s
+        values: [ address ],
+      });
+
       for (const result of out) {
         results[result.path] = {
           path: result.path,
@@ -33,34 +32,30 @@ const FS = {
   },
 
   getFile: async (address, path) => {
-    const query = {
-      sql: 'SELECT * FROM fs WHERE address = ? AND path = ?',
-      timeout: 6 * 1000, // 6s
-      values: [ address, path ],
-    };
-
     try {
-      return await DB.query(query);
+      return await DB.query({
+        sql: 'SELECT * FROM fs WHERE address = ? AND path = ?',
+        timeout: 6 * 1000, // 6s
+        values: [ address, path ],
+      });
     } catch (err) {
       throw err;
     }
   },
 
   deleteFile: async (address, path) => {
-    const query = {
-      sql: 'DELETE FROM fs WHERE address = ? AND path = ?',
-      timeout: 6 * 1000, // 6s
-      values: [ address, path ],
-    };
-
     try {
       const record = await FS.getFile(address, path);
 
-      await DB.query(query);
+      await DB.query({
+        sql: 'DELETE FROM fs WHERE address = ? AND path = ?',
+        timeout: 6 * 1000, // 6s
+        values: [ address, path ],
+      });
 
       await Activity.addActivity(address, [{
         path: path,
-        fileId: record[0].id,
+        file: record[0].file,
         action: 'DELETE',
       }]);
 
@@ -71,14 +66,12 @@ const FS = {
   },
 
   renameFile: async (address, path, newPath) => {
-    const query = {
-      sql: 'UPDATE fs SET path = ? WHERE address = ? AND path = ?',
-      timeout: 6 * 1000, // 6s
-      values: [ newPath, address, path ],
-    };
-
     try {
-      await DB.query(query);
+      await DB.query({
+        sql: 'UPDATE fs SET path = ? WHERE address = ? AND path = ?',
+        timeout: 6 * 1000, // 6s
+        values: [ newPath, address, path ],
+      });
 
       // TODO: if its a folder, need to change the path of all its descendants.
 
@@ -86,7 +79,7 @@ const FS = {
 
       await Activity.addActivity(address, [{
         path: path,
-        fileId: result[0].id,
+        file: result[0].file,
         action: 'RENAME',
       }]);
 
@@ -110,19 +103,15 @@ const FS = {
           hash: file.ipfs,
         });
 
-        const query = {
+        await DB.query({
           sql: 'INSERT INTO fs(address, path, ipfs_hash, file_size) VALUES(?,?,?,?)',
           timeout: 6 * 1000, // 6s
           values: [ address, file.path, ipfs, file.size ],
-        };
-
-        await DB.query(query);
-
-        const record = FS.getFile(address, file.path);
+        });
 
         await Activity.addActivity(address, [{
-          path: path,
-          fileId: record[0].id,
+          path: file.path,
+          fileId: 1,
           action: 'CREATE',
         }]);
 
@@ -136,21 +125,18 @@ const FS = {
   },
 
   createFolder: async (address, path) => {
-    const query = {
-      sql: 'INSERT INTO fs(address, path, ipfs_hash, file) \
-            VALUES(?, ?, ?, ?)',
-      timeout: 6 * 1000, // 6s
-      values: [ address, path, '{\"hash\":[]}', false ],
-    };
-
     try {
-      await DB.query(query);
+      await DB.query({
+        sql: 'INSERT INTO fs(address, path, ipfs_hash, file) \
+              VALUES(?, ?, ?, ?)',
+        timeout: 6 * 1000, // 6s
+        values: [ address, path, '{\"hash\":[]}', false ],
 
-      const record = await FS.getFile(address, path);
+      });
 
       await Activity.addActivity(address, [{
         path: path,
-        fileId: record[0].id,
+        fileId: 0,
         action: 'CREATE',
       }]);
 

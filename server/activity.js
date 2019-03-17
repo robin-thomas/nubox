@@ -7,23 +7,21 @@ const Activity = {
   getActivity: async (address, timezone) => {
     try {
       const query = {
-        sql: 'SELECT a.*, f.*, CONVERT_TZ(a.timestamp, @@session.time_zone, "+00:00") AS timestamp_utc FROM activity AS a \
-              LEFT JOIN fs AS f ON a.file_id = f.id \
-              WHERE a.address = ? \
-              ORDER BY a.timestamp DESC',
+        sql: 'SELECT *, \
+              CONVERT_TZ(timestamp, @@session.time_zone, "+00:00") AS timestamp_utc FROM activity \
+              WHERE address = ? \
+              ORDER BY timestamp DESC',
         timeout: 6 * 1000, // 6s
         values: [ address ],
-        nestTables: true,
       };
       const records = await DB.query(query);
 
       let activity = {};
 
       for (const record of records) {
-        const oldFileName = Path.basename(record.a.path);
-        const newFileName = (record.a.action === 'DELETE' ? Path.basename(record.f.path) : null);
+        const oldFileName = Path.basename(record.path);
 
-        const utcDate = moment.utc(record[''].timestamp_utc).toDate();
+        const utcDate = moment.utc(record.timestamp_utc).toDate();
         const date = moment(utcDate).tz(timezone).format('YYYY-MM-DD');
         const time = moment(utcDate).tz(timezone).format('hh:mm A');
 
@@ -31,19 +29,19 @@ const Activity = {
           activity[date] = {};
         }
 
-        if (activity[date][record.a.action] === undefined) {
-          activity[date][record.a.action] = [];
+        let action = record.action;
+        if (action === 'CREATE') {
+          action = record.file ? 'UPLOAD' : 'CREATE';
         }
 
-        let action = record.a.action;
-        if (action === 'CREATE') {
-          action = record.f.file ? 'UPLOAD' : 'CREATE';
+        if (activity[date][action] === undefined) {
+          activity[date][action] = [];
         }
 
         activity[date][action].push({
           oldFileName: oldFileName,
-          newFileName: newFileName,
           time: time,
+          file: record.file,
         });
       }
 
@@ -57,10 +55,10 @@ const Activity = {
     try {
       for (const act of activity) {
         const query = {
-          sql: 'INSERT INTO activity(address, path, file_id, action) \
+          sql: 'INSERT INTO activity(address, path, file, action) \
                 VALUES(?,?,?,?)',
           timeout: 6 * 1000, // 6s
-          values: [ address, act.path, act.fileId, act.action ],
+          values: [ address, act.path, act.file, act.action ],
         };
 
         await DB.query(query);
