@@ -6,6 +6,30 @@ const Wallet = require('../crypto/metamask.js');
 const DownloadHandler = require('./downloader.js');
 const ActivityHandler = require('./activity.js');
 
+const Droppable = async (event, ui) => {
+  const dropped = ui.draggable;
+  const key = $(dropped).find('input[type="hidden"]').val();
+  const path = Buffer.from(key, 'hex').toString();
+
+  const folderKey = $(event.target).find('input[type="hidden"]').val();
+  const folderPath = Buffer.from(folderKey, 'hex').toString();
+
+  // Get the new path.
+  let newFilePath = folderPath;
+  newFilePath += (newFilePath.endsWith('/') ? '' : '/') + Path.basename(path);
+
+  // Update the server.
+  const newFile = await FS.renameFile(Wallet.address, path, newFilePath);
+  delete FSHandler.fs[path];
+  FSHandler.fs[newFilePath] = newFile;
+
+  // Update the activity
+  ActivityHandler.load(Wallet.address);
+
+  // Update the UI.
+  $(dropped).remove();
+}
+
 const FSHandler = {
   fs: null,
   fsSize: 0,
@@ -22,15 +46,21 @@ const FSHandler = {
       if (folderName == null || folderName === undefined ||
           folderName === '/' || folderName.trim().length === 0) {
         folderName = 'nuBox';
+      } else if (folderName.length > 12) {
+        folderName = `${folderName.substr(0, 4)}...${folderName.substr(folderName.length - 5)}`; 
       }
 
       const path = Buffer.from(folder).toString('hex');
 
-      const row = `<div class="col-md-2 d-table">
+      const row = `<div class="col-md-2 d-table droppable">
                     <input type="hidden" value="${path}" />
                     <span class="d-table-cell align-middle">${folderName}</span>
                   </div>`;
       $('#content-fs-header').find('.row').append(row);
+      $('#content-fs-header').find('.droppable').droppable({
+        accept: '.draggable',
+        drop: Droppable,
+      });
     }
   },
 
@@ -141,30 +171,7 @@ const FSHandler = {
       // Make all the folders droppable.
       $('#content-fs-content').find('.droppable').droppable({
         accept: '.draggable',
-        drop: async function(event, ui) {
-          const dropped = ui.draggable;
-          const key = $(dropped).find('input[type="hidden"]').val();
-          const path = Buffer.from(key, 'hex').toString();
-
-          const folderKey = $(event.target).find('input[type="hidden"]').val();
-          const folderPath = Buffer.from(folderKey, 'hex').toString();
-
-          // Get the new path.
-          let newFilePath = Path.dirname(path);
-          newFilePath += (newFilePath.endsWith('/') ? '' : '/') + Path.basename(folderPath);
-          newFilePath += (newFilePath.endsWith('/') ? '' : '/') + Path.basename(path);
-
-          // Update the server.
-          const newFile = await FS.renameFile(Wallet.address, path, newFilePath);
-          delete FSHandler.fs[path];
-          FSHandler.fs[newFilePath] = newFile;
-
-          // Update the activity
-          ActivityHandler.load(Wallet.address);
-
-          // Update the UI.
-          $(dropped).remove();
-        },
+        drop: Droppable,
       });
 
       // Draw the header.
