@@ -53,7 +53,7 @@ const FSHandler = {
     }
 
     const key = Buffer.from(file.path).toString('hex');
-    const folder = `<div class="fs-file-total col-md-2">
+    const folder = `<div class="fs-file-total col-md-2 ${file.isFile ? 'draggable' : 'droppable'}">
                       <input type="hidden" value="${key}" />
                       <div class="row">
                         <div class="col">
@@ -131,6 +131,38 @@ const FSHandler = {
         const file = FSHandler.fs[key];
         FSHandler.drawFile(file);
       }
+
+      // Make all the files draggable.
+      $('#content-fs-content').find('.draggable').draggable({
+        cursor: 'crosshair',
+        revert: 'invalid',
+      });
+
+      // Make all the folders droppable.
+      $('#content-fs-content').find('.droppable').droppable({
+        accept: '.draggable',
+        drop: async function(event, ui) {
+          const dropped = ui.draggable;
+          const key = $(dropped).find('input[type="hidden"]').val();
+          const path = Buffer.from(key, 'hex').toString();
+
+          const folderKey = $(event.target).find('input[type="hidden"]').val();
+          const folderPath = Buffer.from(folderKey, 'hex').toString();
+
+          // Get the new path.
+          let newFilePath = Path.dirname(path);
+          newFilePath += (newFilePath.endsWith('/') ? '' : '/') + Path.basename(folderPath);
+          newFilePath += (newFilePath.endsWith('/') ? '' : '/') + Path.basename(path);
+
+          // Update the server.
+          const newFile = await FS.renameFile(Wallet.address, path, newFilePath);
+          delete FSHandler.fs[path];
+          FSHandler.fs[newFilePath] = newFile;
+
+          // Update the UI.
+          $(dropped).remove();
+        },
+      });
 
       // Draw the header.
       FSHandler.drawFSHeader();
