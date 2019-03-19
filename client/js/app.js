@@ -41,6 +41,7 @@ $(document).ready(async () => {
     }
   });
 
+  $(document).on('click', '.popover .fs-info', FSHandler.fileInfo);
   $(document).on('click', '.popover .fs-download', FSHandler.downloadFile);
   $(document).on('click', '.popover .fs-delete', FSHandler.deleteFile);
   $(document).on('click', '.popover .fs-rename', FSHandler.renameFile);

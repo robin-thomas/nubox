@@ -140,34 +140,33 @@ const FileUploadHandler = {
 
             // Add to send as update to the server in batches.
             const fileName = FileUploadHandler.upload[key].uploader.file.name;
-            const fileSize = FileUploadHandler.upload[key].uploader.file.size;
-            const path = FileUploadHandler.upload[key].uploader.path;
             const record = {
-              path: path,
-              size: fileSize,
+              path: FileUploadHandler.upload[key].uploader.path,
+              fileSize: FileUploadHandler.upload[key].uploader.file.size,
+              fileType: FileUploadHandler.upload[key].uploader.file.type,
               ipfs: FileUploadHandler.upload[key].uploader.results,
+              isFile: true,
             };
             updates.push(record);
 
-            const newFile = {
-              path: record.path,
-              ipfs: record.ipfs,
-              isFile: true,
-              fileSize: record.size,
-            }
-            FSHandler.fs[record.path] = newFile;
-            FSHandler.fsSize += newFile.fileSize;
-
             // update the fs UI.
-            FSHandler.drawFile(newFile);
+            FSHandler.drawFile(record);
           }
         }
       }
 
       // send the updates to the server.
       if (updates.length >= 1) {
-        FS.createFiles(Metamask.address, updates);
-        FSHandler.updateStorageUI();
+        FS.createFiles(Metamask.address, updates)
+          .then((files) => {
+            for (const file of files) {
+              FSHandler.fs[file.path] = file;
+              FSHandler.fsSize += file.fileSize;
+            }
+
+            FSHandler.updateStorageUI();
+            ActivityHandler.load(Metamask.address);
+          });
       }
 
       // Check for jobs in the queue and start one if possible.
@@ -177,7 +176,6 @@ const FileUploadHandler = {
       if (isFilesUploaded) {
         clearInterval(FileUploadHandler.uploadTimer);
         FileUploadHandler.uploadTimer = null;
-        ActivityHandler.load(Metamask.address);
       }
 
       let totalSize = $('#upload-file-dialog').find('#file-upload-progress-total-size').val();

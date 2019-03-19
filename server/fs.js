@@ -9,7 +9,9 @@ const FS = {
       let results = {};
 
       const out = await DB.query({
-        sql: 'SELECT *, CONVERT_TZ(timestamp, @@session.time_zone, "+00:00") AS timestamp_utc \
+        sql: 'SELECT *, \
+              CONVERT_TZ(created, @@session.time_zone, "+00:00") AS created_utc, \
+              CONVERT_TZ(modified, @@session.time_zone, "+00:00") AS modified_utc \
               FROM fs WHERE address = ?',
         timeout: 6 * 1000, // 6s
         values: [ address ],
@@ -19,9 +21,11 @@ const FS = {
         results[result.path] = {
           path: result.path,
           ipfs: JSON.parse(result.ipfs_hash).hash,
-          isFile: result.file,
-          created: result.timestamp_utc,
+          isFile: result.is_file,
+          created: result.created_utc,
+          modified: result.modified_utc,
           fileSize: result.file_size,
+          fileType: result.file_type,
         };
       }
 
@@ -33,11 +37,28 @@ const FS = {
 
   getFile: async (address, path) => {
     try {
-      return await DB.query({
-        sql: 'SELECT * FROM fs WHERE address = ? AND path = ?',
+      const out = await DB.query({
+        sql: 'SELECT *, \
+              CONVERT_TZ(created, @@session.time_zone, "+00:00") AS created_utc, \
+              CONVERT_TZ(modified, @@session.time_zone, "+00:00") AS modified_utc \
+              FROM fs WHERE address = ? AND path = ?',
         timeout: 6 * 1000, // 6s
         values: [ address, path ],
       });
+
+      if (out.length === 0) {
+        throw new Error('Unable to find the record');
+      }
+
+      return {
+        path: result[0].path,
+        ipfs: JSON.parse(result[0].ipfs_hash).hash,
+        isFile: result[0].is_file,
+        created: result[0].created_utc,
+        modified: result[0].modified_utc,
+        fileSize: result[0].file_size,
+        fileType: result[0].file_type,
+      };
     } catch (err) {
       throw err;
     }
@@ -55,11 +76,11 @@ const FS = {
 
       await Activity.addActivity(address, [{
         path: path,
-        file: record[0].file,
+        file: record.isFile,
         action: 'DELETE',
       }]);
 
-      if (!record[0].file) {
+      if (!record.isFile) {
         await FS.deleteFileForDescendants(address, path);
       }
     } catch (err) {
@@ -96,23 +117,17 @@ const FS = {
       });
 
       const result = await FS.getFile(address, newPath);
-
-      if (!result[0].file) {
+      if (!result.isFile) {
         await FS.renameFileForDescendants(address, path, newPath);
       }
 
       await Activity.addActivity(address, [{
         path: path,
-        file: result[0].file,
+        file: result.isFile,
         action: 'RENAME',
       }]);
 
-      return {
-        path: result[0].path,
-        ipfs: JSON.parse(result[0].ipfs_hash).hash,
-        isFile: result[0].file,
-        created: result[0].timestamp,
-      };
+      return result;
     } catch (err) {
       throw err;
     }
@@ -142,15 +157,18 @@ const FS = {
 
   createFiles: async (address, updates) => {
     try {
+      let files = [];
+
       for (const file of updates) {
         const ipfs = JSON.stringify({
           hash: file.ipfs,
         });
 
         await DB.query({
-          sql: 'INSERT INTO fs(address, path, ipfs_hash, file_size) VALUES(?,?,?,?)',
+          sql: 'INSERT INTO fs(address, path, ipfs_hash, file_size, file_type) \
+                VALUES(?, ?, ?, ?, ?)',
           timeout: 6 * 1000, // 6s
-          values: [ address, file.path, ipfs, file.size ],
+          values: [ address, file.path, ipfs, file.fileSize, file.fileType ],
         });
 
         await Activity.addActivity(address, [{
@@ -158,7 +176,11 @@ const FS = {
           file: 1,
           action: 'CREATE',
         }]);
+
+        files.push(await FS.getFile(address, path));
       }
+
+      return files;
     } catch (err) {
       throw err;
     }
@@ -167,11 +189,10 @@ const FS = {
   createFolder: async (address, path) => {
     try {
       await DB.query({
-        sql: 'INSERT INTO fs(address, path, ipfs_hash, file) \
+        sql: 'INSERT INTO fs(address, path, ipfs_hash, is_file) \
               VALUES(?, ?, ?, ?)',
         timeout: 6 * 1000, // 6s
         values: [ address, path, '{\"hash\":[]}', false ],
-
       });
 
       await Activity.addActivity(address, [{
@@ -179,6 +200,8 @@ const FS = {
         file: 0,
         action: 'CREATE',
       }]);
+
+      return await FS.getFile(address, path);
 
     } catch (err) {
       throw err;

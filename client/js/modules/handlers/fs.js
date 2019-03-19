@@ -76,6 +76,7 @@ const FSHandler = {
                   ${file.isFile ? '<a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i><span>Download</span></a>' : ''}
                   <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i><span>Delete</span></a>
                   <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i><span>Rename</span></a>
+                  <a href="#" class="fs-info list-group-item"><i class="fas fa-info-circle"></i><span>Info</span></a>
                   <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i><span>Move</span></a>
                 </ul>`;
       }
@@ -191,6 +192,7 @@ const FSHandler = {
         FSHandler.fsSize -= FSHandler.fs[path].fileSize;
         const newFile = FSHandler.fs[path];
         delete FSHandler.fs[path];
+
         FSHandler.updateStorageUI();
         FSHandler.drawFS(Wallet.address, FSHandler.path);
 
@@ -271,11 +273,7 @@ const FSHandler = {
     const newFileName = Path.basename(newPath);
 
     try {
-      await FS.renameFile(Wallet.address, path, newPath);
-
-      // Update the FS.
-      let newFile = FSHandler.fs[path];
-      newFile.path = newPath;
+      const newFile = await FS.renameFile(Wallet.address, path, newPath);
       delete FSHandler.fs[path];
       FSHandler.fs[newFile.path] = newFile;
 
@@ -315,12 +313,53 @@ const FSHandler = {
         let newFile = FSHandler.fs[childPath];
         newFile.path = newPath + childPath.substr(path.length);
 
-        console.log(newFile.path);
-
         delete FSHandler.fs[childPath];
         FSHandler.fs[newFile.path] = newFile;
       }
     }
+  },
+
+  fileInfo: (e) => {
+    e.preventDefault();
+
+    // Get the file.
+    let ele = $(e.target);
+    while (!ele.hasClass('list-group-item')) {
+      ele = ele.parent();
+    }
+    const key = ele.parent().find('.fs-file-key').val();
+    const path = Buffer.from(key, 'hex').toString();
+    const file = FSHandler.fs[path];
+
+    const fileName = Path.basename(path);
+
+    const rows = `<tr>
+                    <th scope="row">Name</th>
+                    <td>${fileName}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Path</th>
+                    <td>${path}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Size</th>
+                    <td>${file.isFile ? File.getFileSize(file.fileSize) : 0}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Type</th>
+                    <td>${file.isFile ? file.fileType : 'Folder'}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Created on</th>
+                    <td>${file.created}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Last modified on</th>
+                    <td>${file.modified}</td>
+                  </tr>`;
+
+    $('#file-info-dialog').find('table').html(`<tbody>${rows}</tbody>`);
+    $('#file-info-dialog').modal('show');
   },
 
   createFolder: async (e) => {
@@ -351,14 +390,7 @@ const FSHandler = {
       }
 
       // Update the server.
-      await FS.createFolder(Wallet.address, path);
-
-      const file = {
-        path: path,
-        ipfs: [],
-        isFile: false,
-        fileSize: 0,
-      };
+      const file = await FS.createFolder(Wallet.address, path);
       FSHandler.fs[path] = file;
 
       // Update the UI.
