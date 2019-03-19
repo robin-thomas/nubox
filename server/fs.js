@@ -37,7 +37,7 @@ const FS = {
 
   getFile: async (address, path) => {
     try {
-      const out = await DB.query({
+      const result = await DB.query({
         sql: 'SELECT *, \
               CONVERT_TZ(created, @@session.time_zone, "+00:00") AS created_utc, \
               CONVERT_TZ(modified, @@session.time_zone, "+00:00") AS modified_utc \
@@ -46,7 +46,7 @@ const FS = {
         values: [ address, path ],
       });
 
-      if (out.length === 0) {
+      if (result.length === 0) {
         throw new Error('Unable to find the record');
       }
 
