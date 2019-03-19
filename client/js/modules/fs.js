@@ -50,9 +50,9 @@ const FS = {
 
       // Convert dates in UTC to local.
       const createdUTC = moment.utc(file.created).toDate();
-      file.created = moment(createdUTC).local().format('YYYY-MM-DD HH:mm:ss');
+      file.created = moment(createdUTC).local().format('MMMM DD, YYYY (hh:mm A)');
       const modifiedUTC = moment.utc(file.modified).toDate();
-      file.modified = moment(modifiedUTC).local().format('YYYY-MM-DD HH:mm:ss');
+      file.modified = moment(modifiedUTC).local().format('MMMM DD, YYYY (hh:mm A)');
 
       return file;
     } catch (err) {
@@ -70,7 +70,7 @@ const FS = {
       // Convert dates in UTC to local.
       for (let file of files) {
         const createdUTC = moment.utc(file.created).toDate();
-        file.created = moment(createdUTC).local().format('YYYY-MM-DD HH:mm:ss');
+        file.created = moment(createdUTC).local().format('MMMM DD, YYYY (hh:mm A)');
       }
 
       return files;
@@ -88,7 +88,7 @@ const FS = {
 
       // Convert dates in UTC to local.
       const createdUTC = moment.utc(file.created).toDate();
-      file.created = moment(createdUTC).local().format('YYYY-MM-DD HH:mm:ss');
+      file.created = moment(createdUTC).local().format('MMMM DD, YYYY (hh:mm A)');
 
       return file;
     } catch (err) {
