@@ -121,14 +121,16 @@ const FS = {
         await FS.renameFileForDescendants(address, path, newPath);
       }
 
+      // Move or rename operation.
       await Activity.addActivity(address, [{
         path: path,
         file: result.isFile,
-        action: 'RENAME',
+        action: Path.basename(path) === Path.basename(newPath) ? 'MOVE' : 'RENAME',
       }]);
 
       return result;
     } catch (err) {
+      console.log(err);
       throw err;
     }
   },

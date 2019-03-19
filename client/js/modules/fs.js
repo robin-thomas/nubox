@@ -23,8 +23,6 @@ const FS = {
         }
       }
 
-      console.log(files);
-
       return files;
     } catch (err) {
       throw err;

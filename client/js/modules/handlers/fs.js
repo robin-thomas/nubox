@@ -159,6 +159,9 @@ const FSHandler = {
           delete FSHandler.fs[path];
           FSHandler.fs[newFilePath] = newFile;
 
+          // Update the activity
+          ActivityHandler.load(Wallet.address);
+
           // Update the UI.
           $(dropped).remove();
         },

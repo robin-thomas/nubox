@@ -17,8 +17,8 @@ const ActivityHandler = {
             const ext = file.oldFileName.substring(index + 1);
 
             let name = file.oldFileName;
-            if (index !== -1) {
-              name = `${fileName.substr(0, 3)}...${fileName.substr(fileName.length -4)}.${ext}`;
+            if (index !== -1 && fileName.length > 9) {
+              name = `${fileName.substr(0, 3)}...${fileName.substr(fileName.length - 4)}.${ext}`;
             }
 
             itemRow += `<div class="row no-gutters" style="font-size:11px">
@@ -55,6 +55,7 @@ const ActivityHandler = {
         const act = activity[date];
 
         const deleteRow = getFileRow(act, 'DELETE', 'deleted');
+        const moveRow   = getFileRow(act, 'MOVE', 'moved');
         const renameRow = getFileRow(act, 'RENAME', 'renamed');
         const uploadRow = getFileRow(act, 'UPLOAD', 'uploaded');
         const createRow = getFileRow(act, 'CREATE', 'created');
@@ -70,6 +71,7 @@ const ActivityHandler = {
                           </div>
                           <div class="col-md-9">
                             ${deleteRow !== null ? deleteRow : ''}
+                            ${moveRow !== null ? moveRow : ''}
                             ${renameRow !== null ? renameRow : ''}
                             ${uploadRow !== null ? uploadRow : ''}
                             ${createRow !== null ? createRow : ''}
