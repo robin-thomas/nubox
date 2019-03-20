@@ -179,7 +179,7 @@ const FS = {
           action: 'CREATE',
         }]);
 
-        files.push(await FS.getFile(address, path));
+        files.push(await FS.getFile(address, file.path));
       }
 
       return files;
