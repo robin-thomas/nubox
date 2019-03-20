@@ -28,10 +28,12 @@ const Block = {
 
 const Worker = {
   downloadFile: async (ipfsList, fileName, privKey) => {
+    let writer = null;
+
     try {
       // Create the writeable stream.
       const fileStream = streamSaver.createWriteStream(fileName);
-      const writer = fileStream.getWriter();
+      writer = fileStream.getWriter();
 
       // Read all the blocks from ipfs and join them.
       for (const hash of ipfsList) {
@@ -43,6 +45,10 @@ const Worker = {
       writer.close();
 
     } catch (err) {
+      if (writer !== null) {
+        writer.abort();
+      }
+
       throw err;
     }
   },
@@ -56,7 +62,11 @@ class FileDownloader {
   }
 
   async start() {
-    await Worker.downloadFile(this.ipfsList, this.fileName, this.privKey);
+    try {
+      await Worker.downloadFile(this.ipfsList, this.fileName, this.privKey);
+    } catch (err) {
+      alert('Unable to download the file due to Infura! :/');
+    }
   }
 }
 

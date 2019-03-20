@@ -112,6 +112,18 @@ const FSHandler = {
       }
     });
 
+    // Make all the files draggable.
+    $('#content-fs-content').find('.draggable').draggable({
+      cursor: 'crosshair',
+      revert: 'invalid',
+    });
+
+    // Make all the folders droppable.
+    $('#content-fs-content').find('.droppable').droppable({
+      accept: '.draggable',
+      drop: Droppable,
+    });
+
     el.recalculate();
   },
 
