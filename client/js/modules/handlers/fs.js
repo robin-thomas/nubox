@@ -47,7 +47,7 @@ const FSHandler = {
           folderName === '/' || folderName.trim().length === 0) {
         folderName = 'nuBox';
       } else if (folderName.length > 12) {
-        folderName = `${folderName.substr(0, 4)}...${folderName.substr(folderName.length - 5)}`; 
+        folderName = `${folderName.substr(0, 4)}...${folderName.substr(folderName.length - 5)}`;
       }
 
       const path = Buffer.from(folder).toString('hex');
@@ -340,6 +340,7 @@ const FSHandler = {
                     ${newFile.isFile ? '<a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i><span>Download</span></a>' : ''}
                     <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i><span>Delete</span></a>
                     <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i><span>Rename</span></a>
+                    <a href="#" class="fs-info list-group-item"><i class="fas fa-info-circle"></i><span>Info</span></a>
                     <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i><span>Move</span></a>
                   </ul>`;
         }

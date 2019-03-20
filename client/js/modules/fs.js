@@ -71,6 +71,7 @@ const FS = {
       for (let file of files) {
         const createdUTC = moment.utc(file.created).toDate();
         file.created = moment(createdUTC).local().format('MMMM DD, YYYY (hh:mm A)');
+        file.modified = file.created;
       }
 
       return files;
@@ -89,6 +90,7 @@ const FS = {
       // Convert dates in UTC to local.
       const createdUTC = moment.utc(file.created).toDate();
       file.created = moment(createdUTC).local().format('MMMM DD, YYYY (hh:mm A)');
+      file.modified = file.created;
 
       return file;
     } catch (err) {
