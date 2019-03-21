@@ -374,6 +374,27 @@ const FSHandler = {
     }
   },
 
+  getChildDetailsForFileInfo: (path) => {
+    let childCount = 0;
+    let childFileSize = 0;
+
+    const file = FSHandler.fs[path];
+    if (file.isFile === true) {
+      return {childCount, childFileSize};
+    }
+
+    for (const childPath of Object.keys(FSHandler.fs)) {
+      if (childPath.startsWith(path) && path !== childPath) {
+        childCount++;
+        childFileSize += FSHandler.fs[childPath].fileSize;
+      }
+    }
+
+    childFileSize = File.getFileSize(childFileSize);
+
+    return {childCount, childFileSize};
+  },
+
   fileInfo: (e) => {
     e.preventDefault();
 
@@ -387,6 +408,7 @@ const FSHandler = {
     const file = FSHandler.fs[path];
 
     const fileName = Path.basename(path);
+    const {childCount, childFileSize} = FSHandler.getChildDetailsForFileInfo(path);
 
     const rows = `<tr>
                     <th scope="row">Name</th>
@@ -396,14 +418,19 @@ const FSHandler = {
                     <th scope="row">Path</th>
                     <td>${path}</td>
                   </tr>
-                  <tr>
-                    <th scope="row">Size</th>
-                    <td>${file.isFile ? File.getFileSize(file.fileSize) : 0}</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Type</th>
-                    <td>${file.isFile ? file.fileType : 'Folder'}</td>
-                  </tr>
+                  ${file.isFile ? `
+                    <tr>
+                      <th scope="row">Size</th>
+                      <td>${File.getFileSize(file.fileSize)}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Type</th>
+                      <td>${file.fileType}</td>
+                    </tr>` : `
+                    <tr>
+                      <th scope="row">Contents</th>
+                      <td>${childCount} item(s) totalling ${childFileSize}</td>
+                    </tr>`}
                   <tr>
                     <th scope="row">Created on</th>
                     <td>${file.created}</td>
@@ -413,6 +440,7 @@ const FSHandler = {
                     <td>${file.modified}</td>
                   </tr>`;
 
+    $('#file-info-dialog').find('.modal-title').html(`${file.isFile ? 'File' : 'Folder'} Info`);
     $('#file-info-dialog').find('table').html(`<tbody>${rows}</tbody>`);
     $('#file-info-dialog').modal('show');
   },
