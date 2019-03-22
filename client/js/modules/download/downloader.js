@@ -9,19 +9,23 @@ const ipfsUrl = config.infura.ipfs.gateway;
 
 const Block = {
   getNextBlock: async (url, writer, privKey) => {
+    let out = null;
     try {
       const res = await fetch(url, {
         headers: {
           'Content-Type': 'text/plain',
         },
       });
-      const out = await res.text();
-
-      const decrypted = await Crypto.decrypt(privKey, out);
-      writer.write(decrypted);
-
+      out = await res.text();
     } catch (err) {
       throw err;
+    }
+
+    try {
+      const decrypted = await Crypto.decrypt(privKey, out);
+      writer.write(decrypted);
+    } catch (err) {
+      throw new Error('Invalid private key!');
     }
   },
 };
@@ -65,7 +69,11 @@ class FileDownloader {
     try {
       await Worker.downloadFile(this.ipfsList, this.fileName, this.privKey);
     } catch (err) {
-      alert('Unable to download the file due to Infura! :/');
+      if (err.message === 'Invalid private key!') {
+        alert(err.message);
+      } else {
+        alert('Unable to download the file due to Infura! :/');
+      }
     }
   }
 }
