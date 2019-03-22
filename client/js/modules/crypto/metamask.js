@@ -10,6 +10,7 @@ const getPubKey = (msg, signature) => {
 
 const Metamask = {
   pubKey: null,
+  privKey: null,
   address: null,
 
   hasMetamask: () => {

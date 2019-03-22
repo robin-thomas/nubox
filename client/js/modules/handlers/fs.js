@@ -1,4 +1,5 @@
 const Path = require('path');
+const ethUtil = require('ethereumjs-util');
 
 const FS = require('../fs.js');
 const File = require('../upload/file.js');
@@ -224,7 +225,25 @@ const FSHandler = {
     const fileName = Path.basename(path);
     const ipfsList = FSHandler.fs[path].ipfs;
 
-    DownloadHandler.start(ipfsList, fileName, Wallet.pubKey);
+    // Retrieve the private key one time.
+    if (Wallet.privKey === null) {
+      let privKey = null;
+
+      while (true) {
+        privKey = prompt('Private Key: ');
+        if (privKey === null) {
+          return;
+        }
+        console.log(ethUtil.isValidPrivate(Buffer.from(privKey)));
+        if (ethUtil.isValidPrivate(ethUtil.toBuffer(privKey))) {
+          break;
+        }
+      }
+
+      Wallet.privKey = privKey;
+    }
+
+    DownloadHandler.start(ipfsList, fileName, Wallet.privKey);
   },
 
   deleteFile: async (e) => {
