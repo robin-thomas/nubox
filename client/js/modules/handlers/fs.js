@@ -311,7 +311,7 @@ const FSHandler = {
 
       // Make sure that the filename matches the name syntax.
       if (newFileName.trim().length < 1 ||
-          !/^[_a-zA-Z][_a-zA-Z0-9\.]*$/.test(newFileName)) {
+          !/^[_a-zA-Z][_a-zA-Z0-9.]*$/.test(newFileName)) {
         continue;
       }
 
@@ -486,7 +486,7 @@ const FSHandler = {
 
         if (folderName.trim().length >= 1 &&
             FSHandler.fs[path] === undefined &&
-            /^[_a-zA-Z][_a-zA-Z0-9\.]*$/.test(folderName)) {
+            /^[_a-zA-Z][_a-zA-Z0-9.]*$/.test(folderName)) {
           break;
         }
       }

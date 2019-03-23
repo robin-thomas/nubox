@@ -2,9 +2,6 @@ const WalletHandler = require('./modules/handlers/metamask.js');
 const FSHandler = require('./modules/handlers/fs.js');
 const ContactsHandler = require('./modules/handlers/contacts.js');
 const FileUploadHandler = require('./modules/handlers/uploader.js');
-const FileDownloadHandler = require('./modules/handlers/downloader.js');
-
-const Metamask = require('./modules/crypto/metamask.js');
 
 $(document).ready(async () => {
   const confirmAddrButton       = $('#confirm-eth-addr'),

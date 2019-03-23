@@ -1,5 +1,3 @@
-const crypto = require('crypto');
-
 const FS = require('../fs.js');
 const File = require('../upload/file.js');
 const FSHandler = require('./fs.js');
@@ -139,7 +137,6 @@ const FileUploadHandler = {
             FileUploadHandler.upload[key].isRunning = false;
 
             // Add to send as update to the server in batches.
-            const fileName = FileUploadHandler.upload[key].uploader.file.name;
             const record = {
               path: FileUploadHandler.upload[key].uploader.path,
               fileSize: FileUploadHandler.upload[key].uploader.file.size,

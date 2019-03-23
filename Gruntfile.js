@@ -7,6 +7,7 @@ module.exports = (grunt) => {
         './client/js/modules/*.js',
         './client/js/modules/**/*.js',
         './client/js/app.js',
+        './server/*.js',
       ],
       options: {
         configFile: './eslint.json',
@@ -46,7 +47,7 @@ module.exports = (grunt) => {
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify-es');
   grunt.registerTask('default', [
-//    'eslint',
+    'eslint',
     'browserify',
   ]);
 };

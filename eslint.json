@@ -35,6 +35,7 @@
   "extends": "eslint:recommended",
   "rules": {
     "no-console": "off",
-    "no-empty": "off"
+    "no-empty": "off",
+    "no-constant-condition": "off"
   }
 }

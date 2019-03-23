@@ -194,7 +194,7 @@ const FS = {
         sql: 'INSERT INTO fs(address, path, ipfs_hash, is_file) \
               VALUES(?, ?, ?, ?)',
         timeout: 6 * 1000, // 6s
-        values: [ address, path, '{\"hash\":[]}', false ],
+        values: [ address, path, '{"hash":[]}', false ],
       });
 
       await Activity.addActivity(address, [{

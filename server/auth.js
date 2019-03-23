@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const ethUtil = require('ethereumjs-util');
 
-const DB = require('./db.js');
 const Token = require('./token.js');
 const config = require('../config.json');
 
