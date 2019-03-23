@@ -2,8 +2,11 @@ const WalletHandler = require('./modules/handlers/metamask.js');
 const FSHandler = require('./modules/handlers/fs.js');
 const ContactsHandler = require('./modules/handlers/contacts.js');
 const FileUploadHandler = require('./modules/handlers/uploader.js');
+const Extension = require('./modules/nucypher/extension.js');
 
 $(document).ready(async () => {
+  Extension.checkForExtension();
+
   const confirmAddrButton       = $('#confirm-eth-addr'),
         confirmNewContactButton = $('#confirm-add-contact');
 
