@@ -40,21 +40,31 @@ const Extension = {
         alert('Unable to start the Chromium nuBox host!');
       }
     }
+  },
 
+  grant: async (label, bob_encrypting_key, bob_verifying_key, expiration) => {
     try {
-      const label = 'songs';
-      const encrypted = await callExtension('encrypt', ['helloworld', label]);
-      await callExtension('grant', [label]);
-      const decrypted = await callExtension('decrypt', [encrypted, label]);
-      console.log(decrypted);
+      await await callExtension('grant', [label, bob_encrypting_key, bob_verifying_key, expiration]);
     } catch (err) {
-      if (err === null) {
-        alert('You do not have the nuBox chromium extension installed!');
-      } else {
-        alert('Unable to start the Chromium nuBox host!');
-      }
+      throw err;
     }
-  }
+  },
+
+  encrypt: async (plaintext, label) => {
+    try {
+      return await await callExtension('encrypt', [plaintext, label]);
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  decrypt: async (encrypted, label) => {
+    try {
+      return await await callExtension('decrypt', [encrypted, label]);
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 module.exports = Extension;
