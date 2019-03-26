@@ -49,5 +49,6 @@ module.exports = (grunt) => {
   grunt.registerTask('default', [
     'eslint',
     'browserify',
+    // 'uglify'
   ]);
 };

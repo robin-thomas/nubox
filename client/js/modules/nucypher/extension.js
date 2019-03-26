@@ -1,6 +1,6 @@
 const Extension = {
   checkForExtension: () => {
-    const EXTENSION_ID = 'njhoeofhggekkacnblnlghlmdfganehh';
+    const EXTENSION_ID = 'chakfniokepheebjfjobbaeadeaodlhk';
 
     if (chrome === undefined || chrome === null ||
         chrome.runtime === undefined) {
@@ -8,12 +8,12 @@ const Extension = {
       return false;
     }
 
-    chrome.runtime.sendMessage(EXTENSION_ID, 'version', response => {
+    chrome.runtime.sendMessage(EXTENSION_ID, 'isHostRunning', response => {
       if (!response) {
         alert('You do not have the nuBox chromium extension installed!');
         return false;
       }
-      console.log('Extension version: ', response.version);
+      console.log('Extension response: ', response);
       return true;
     });
   }

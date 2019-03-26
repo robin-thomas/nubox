@@ -78,6 +78,7 @@ typings/
 #DynamoDB Local files
 .dynamodb/
 
+client/js/index.min.js
 client/js/index.js
 package-lock.json
 pics/
