@@ -23,10 +23,13 @@ app.post(config.api.addContact.path, Auth.validate, async (req, res) => {
   const contactAddress = req.body.contact_address;
   const contactNickname = req.body.contact_nickname;
   const address = req.body.address;
+  const contactEncryptingKey = req.body.contact_encrypting_key;
+  const contactVerifyingKey = req.body.contact_verifying_key;
 
   // Add the new contact to DB.
   try {
-    const id = await Contacts.add(address, contactAddress, contactNickname);
+    const id = await Contacts.add(address, contactAddress, contactNickname,
+                                  contactEncryptingKey, contactVerifyingKey);
 
     res.status(200).send({
       status: 'ok',

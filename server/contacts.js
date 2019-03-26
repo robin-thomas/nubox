@@ -2,7 +2,8 @@ const DB = require('./db.js');
 const ContactValidation = require('../client/js/modules/contacts.js');
 
 const Contacts = {
-  add: async (address, contactAddress, contactNickname) => {
+  add: async (address, contactAddress, contactNickname,
+              contactEncryptingKey, contactVerifyingKey) => {
     // Validate the input.
     try {
       ContactValidation.validateContactFields(contactAddress, contactNickname);
@@ -11,10 +12,12 @@ const Contacts = {
     }
 
     const query = {
-      sql: 'INSERT INTO contacts(address, contact_address, contact_nickname) \
-            VALUES(?, ?, ?)',
+      sql: 'INSERT INTO contacts(address, contact_address, contact_nickname, \
+              contact_encrypting_key, contact_verifying_key) \
+            VALUES(?, ?, ?, ?, ?)',
       timeout: 6 * 1000, // 6s
-      values: [ address, contactAddress, contactNickname ],
+      values: [ address, contactAddress, contactNickname,
+                contactEncryptingKey, contactVerifyingKey ],
     };
 
     try {
@@ -27,7 +30,8 @@ const Contacts = {
 
   getAll: async (address) => {
     const query = {
-      sql: 'SELECT contact_address as address, contact_nickname as nickname \
+      sql: 'SELECT contact_address as address, contact_nickname as nickname, \
+            contact_encrypting_key as encryptingKey, contact_verifying_key as verifyingKey \
             FROM contacts WHERE address = ?',
       timeout: 6 * 1000, // 6s
       values: [ address ],

@@ -3,11 +3,13 @@ const Wallet = require('../crypto/metamask.js');
 
 const config = require('../../../../config.json');
 
-const contactsBeforeConnect = $('#contacts-before-connect'),
-      contactsAfterConnect  = $('#contacts-dashboard'),
-      expenseContacts       = $('#expense-contacts'),
-      newContactAddress     = $('#new-contact-address'),
-      newContactNickname    = $('#new-contact-nickname');
+const contactsBeforeConnect   = $('#contacts-before-connect'),
+      contactsAfterConnect    = $('#contacts-dashboard'),
+      expenseContacts         = $('#expense-contacts'),
+      newContactAddress       = $('#new-contact-address'),
+      newContactNickname      = $('#new-contact-nickname'),
+      newContactEncryptingKey = $('#new-contact-encrypting-key'),
+      newContactVerifyingKey  = $('#new-contact-verifying-key');
 
 const addContactDialog = $('#add-contact-dialog');
 
@@ -93,6 +95,8 @@ const ContactsHandler = {
 
     const contactName = btn !== null ? newContactNickname.val() : contact.nickname;
     const contactAddress = btn !== null ? newContactAddress.val() : contact.address;
+    const contactEncryptingKey = btn !== null ? newContactEncryptingKey.val() : contact.encryptingKey;
+    const contactVerifyingKey = btn !== null ? newContactVerifyingKey.val() : contact.verifyingKey;
 
     // Validate the fields.
     try {
@@ -113,7 +117,9 @@ const ContactsHandler = {
       await Contacts.addNewContact({
         contact_address: contactAddress,
         contact_nickname: contactName,
-        address: Wallet.address
+        address: Wallet.address,
+        contact_encrypting_key: contactEncryptingKey,
+        contact_verifying_key: contactVerifyingKey,
       });
     } catch (err) {
       if (btn) {
@@ -140,7 +146,12 @@ const ContactsHandler = {
     }
 
     // Load all the contacts
-    ContactsHandler.contactsList.push({address: contactAddress, nickname: contactName});
+    ContactsHandler.contactsList.push({
+      address: contactAddress,
+      nickname: contactName,
+      encryptingKey: contactEncryptingKey,
+      verifyingKey: contactVerifyingKey,
+    });
     ContactsHandler.contactsDisplayHandler();
 
     if (btn) {
