@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Audiowide">
     <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./css/style.css">
+    <title>nuBox - Decentralized encrypted Dropbox</title>
   </head>
   <body>
     <div id="cookie-login-loading">
@@ -113,6 +114,32 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="confirm-add-contact">Add Contact</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="share-file-dialog" class="modal fade" role="dialog" aria-hidden="true" data-keyboard="false">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Share file</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="share-file-contact">Contact:</label>
+              <input type="text" class="form-control" id="share-file-contact">
+            </div>
+            <div class="form-group">
+              <label for="share-file-expiration">Share file until:</label>
+              <input type="text" class="form-control" id="share-file-expiration">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="confirm-share-file">Share</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
           </div>
         </div>

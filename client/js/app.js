@@ -52,6 +52,16 @@ $(document).ready(async () => {
     $('#account-dashboard').find(`[aria-describedBy="${id}"]`).popover('hide');
     $('#upload-file-dialog').modal('show');
   });
+  $(document).on('click', '.popover .fs-share', (e) => {
+    e.preventDefault();
+    const id = $(document).find('.popover').first().attr('id');
+    $('#account-dashboard').find(`[aria-describedBy="${id}"]`).popover('hide');
+    $('#share-file-dialog').find('#share-file-expiration').datepicker({
+      minDate: new Date(),
+      dateFormat: 'yy-mm-dd',
+    });
+    $('#share-file-dialog').modal('show');
+  });
   $(document).on('dblclick', '.fa-folder', FSHandler.openFolder);
   $('#content-fs-header .row').on('click', '.col-md-2', FSHandler.openFolderFromHeader);
 
