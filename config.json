@@ -1,8 +1,7 @@
 {
   "app": {
     "name": "nubox",
-    "url": "https://nubox.herokuapp.com",
-    "extension": "chakfniokepheebjfjobbaeadeaodlhk"
+    "url": "https://nubox.herokuapp.com"
   },
   "jwt": {
     "secret": "hello",

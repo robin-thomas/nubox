@@ -11,7 +11,7 @@ module.exports = (grunt) => {
       ],
       options: {
         configFile: './eslint.json',
-        globals: ['$', 'SimpleBar', 'chrome'],
+        globals: ['$', 'SimpleBar', 'chrome', 'nuBox'],
       },
     },
     run: {
