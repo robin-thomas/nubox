@@ -74,6 +74,15 @@ $(document).ready(async () => {
       minDate: new Date(),
       dateFormat: 'yy-mm-dd',
     });
+
+    // Get the file key and store it in the share-file dialog.
+    let ele = $(e.target);
+    while (!ele.hasClass('list-group-item')) {
+      ele = ele.parent();
+    }
+    const key = ele.parent().find('.fs-file-key').val();
+    $('#share-file-dialog').find('#share-file-path').val(key);
+
     $('#share-file-dialog').modal('show');
   });
   $(document).on('dblclick', '.fa-folder', FSHandler.openFolder);
