@@ -2,6 +2,7 @@ const WalletHandler = require('./modules/handlers/metamask.js');
 const FSHandler = require('./modules/handlers/fs.js');
 const ContactsHandler = require('./modules/handlers/contacts.js');
 const FileUploadHandler = require('./modules/handlers/uploader.js');
+const ShareHandler = require('./modules/handlers/share.js');
 
 $(document).ready(async () => {
   try {
@@ -59,6 +60,16 @@ $(document).ready(async () => {
     e.preventDefault();
     const id = $(document).find('.popover').first().attr('id');
     $('#account-dashboard').find(`[aria-describedBy="${id}"]`).popover('hide');
+
+    const names = ContactsHandler.contactsList.filter(e => e.hasOwnProperty('nickname')).map(e => e.nickname);
+    try {
+      $('#share-file-dialog').find('#share-file-contact').autocomplete({
+        source: names
+      });
+    } catch (err) {
+      console.log(err);
+    }
+
     $('#share-file-dialog').find('#share-file-expiration').datepicker({
       minDate: new Date(),
       dateFormat: 'yy-mm-dd',
@@ -67,6 +78,8 @@ $(document).ready(async () => {
   });
   $(document).on('dblclick', '.fa-folder', FSHandler.openFolder);
   $('#content-fs-header .row').on('click', '.col-md-2', FSHandler.openFolderFromHeader);
+  $('#confirm-share-file').on('click', ShareHandler.confirmShare);
+  $('#revoke-share-file').on('click', ShareHandler.revokeAccess);
 
   $(document).on('click', () => {
     const popover = $(document).find('.popover');
@@ -158,6 +171,16 @@ $(document).ready(async () => {
     $('#activity-dashboard').animate({
       right: '-300px',
     }, 300);
+  });
+
+  $('.modal').on('show.bs.modal', function() {
+    const idx = $('.modal:visible').length;
+    $(this).css('z-index', 1040 + (10 * idx));
+  });
+  $('.modal').on('shown.bs.modal', function() {
+    const idx = ($('.modal:visible').length) -1; // raise backdrop after animation.
+    $('.modal-backdrop').not('.stacked').css('z-index', 1039 + (10 * idx));
+    $('.modal-backdrop').not('.stacked').addClass('stacked');
   });
 
 });
