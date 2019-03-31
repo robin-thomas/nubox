@@ -7,6 +7,7 @@ const Auth = require('./server/auth.js');
 const Contacts = require('./server/contacts.js');
 const FS = require('./server/fs.js');
 const Activity = require('./server/activity.js');
+const Shares = require('./server/shares.js');
 
 const app = express();
 const port = !_.isUndefined(process.env.PORT) ? process.env.PORT : 4000;
@@ -205,6 +206,44 @@ app.get(config.api.getActivity.path, Auth.validate, async (req, res) => {
     res.status(200).send({
       status: 'ok',
       msg: activity,
+    });
+  } catch (err) {
+    res.status(500).send({
+      status: 'not ok',
+      msg: err.message
+    });
+  }
+});
+
+app.post(config.api.shareFile.path, Auth.validate, async (req, res) => {
+  const sharer = req.body.address;
+  const sharedWith = req.body.sharedWith;
+  const fileId = req.body.fileId;
+
+  try {
+    await Shares.shareFile(sharer, sharedWith, fileId);
+
+    res.status(200).send({
+      status: 'ok',
+      msg: '',
+    });
+  } catch (err) {
+    res.status(500).send({
+      status: 'not ok',
+      msg: err.message
+    });
+  }
+});
+
+app.get(config.api.getShares.path, Auth.validate, async (req, res) => {
+  const address = req.query.address;
+
+  try {
+    const files = await Shares.getShares(address);
+
+    res.status(200).send({
+      status: 'ok',
+      msg: files,
     });
   } catch (err) {
     res.status(500).send({

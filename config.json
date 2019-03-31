@@ -30,7 +30,7 @@
     }
   },
   "upload": {
-    "blocksize": 1048576
+    "blocksize": 262144
   },
   "api": {
     "login": {
@@ -129,6 +129,24 @@
     "getActivity": {
       "name": "getActivity",
       "path": "/fs/activity",
+      "method": "GET",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-access-token": "%token"
+      }
+    },
+    "shareFile": {
+      "name": "shareFile",
+      "path": "/fs/shares",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-access-token": "%token"
+      }
+    },
+    "getShares": {
+      "name": "getShares",
+      "path": "/fs/shares",
       "method": "GET",
       "headers": {
         "Content-Type": "application/json",
