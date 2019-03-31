@@ -18,9 +18,9 @@
     createWriteStream,
     supported: false,
     version: {
-      full: '1.1.0',
+      full: '1.2.0',
       major: 1,
-      minor: 1,
+      minor: 2,
       dot: 0
     }
   }
@@ -30,7 +30,7 @@
 
   try {
     // Some browser has it but ain't allowed to construct a stream yet
-    streamSaver.supported = 'serviceWorker' in navigator && !!new ReadableStream() && !!new WritableStream()
+    streamSaver.supported = 'serviceWorker' in navigator && !!new ReadableStream()
   } catch (err) {}
 
   try {
