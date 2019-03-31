@@ -2,6 +2,7 @@ const Path = require('path');
 
 const DB = require('./db.js');
 const Activity = require('./activity.js');
+const Shares = require('./shares.js');
 
 const FS = {
   getFsStructure: async (address) => {
@@ -18,15 +19,17 @@ const FS = {
       });
 
       for (const result of out) {
-        results[result.path] = {
-          path: result.path,
-          ipfs: JSON.parse(result.ipfs_hash).hash,
-          isFile: result.is_file,
-          created: result.created_utc,
-          modified: result.modified_utc,
-          fileSize: result.file_size,
-          fileType: result.file_type,
-        };
+        if (result.deleted === false) {
+          results[result.path] = {
+            path: result.path,
+            ipfs: JSON.parse(result.ipfs_hash).hash,
+            isFile: result.is_file,
+            created: result.created_utc,
+            modified: result.modified_utc,
+            fileSize: result.file_size,
+            fileType: result.file_type,
+          };
+        }
       }
 
       return results;
@@ -46,7 +49,7 @@ const FS = {
         values: [ address, path ],
       });
 
-      if (result.length === 0) {
+      if (result.length === 0 || result[0].deleted === true) {
         throw new Error('Unable to find the record');
       }
 
@@ -68,11 +71,22 @@ const FS = {
     try {
       const record = await FS.getFile(address, path);
 
-      await DB.query({
-        sql: 'DELETE FROM fs WHERE address = ? AND path = ?',
-        timeout: 6 * 1000, // 6s
-        values: [ address, path ],
-      });
+      // Check whether the file is shared or not.
+      const isShared = Shares.isFileShared(address, record.id);
+
+      if (!isShared) {
+        await DB.query({
+          sql: 'DELETE FROM fs WHERE address = ? AND path = ?',
+          timeout: 6 * 1000, // 6s
+          values: [ address, path ],
+        });
+      } else {
+        await DB.query({
+          sql: 'UPDATE fs SET deleted = true WHERE id = ?',
+          timeout: 6 * 1000, // 6s
+          values: [ record.id ],
+        });
+      }
 
       await Activity.addActivity(address, [{
         path: path,
