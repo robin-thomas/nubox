@@ -1,14 +1,12 @@
 const fetch = require('node-fetch');
 
 const config = require('../../../../config.json');
-
-const Crypto = require('../crypto/crypto.js');
 const streamSaver = require('./StreamSaver.js');
 
 const ipfsUrl = config.infura.ipfs.gateway;
 
 const Block = {
-  getNextBlock: async (url, writer, privKey) => {
+  getNextBlock: async (url, writer, path) => {
     let out = null;
     try {
       const res = await fetch(url, {
@@ -22,16 +20,17 @@ const Block = {
     }
 
     try {
-      const decrypted = await Crypto.decrypt(privKey, out);
+      const decryptedB64 = await nuBox.decrypt(out, path);
+      const decrypted = Buffer.from(decryptedB64, 'base64');
       writer.write(decrypted);
     } catch (err) {
-      throw new Error('Invalid private key!');
+      throw err;
     }
   },
 };
 
 const Worker = {
-  downloadFile: async (ipfsList, fileName, privKey) => {
+  downloadFile: async (ipfsList, fileName, path) => {
     let writer = null;
 
     try {
@@ -42,7 +41,7 @@ const Worker = {
       // Read all the blocks from ipfs and join them.
       for (const hash of ipfsList) {
         const url = ipfsUrl + hash;
-        await Block.getNextBlock(url, writer, privKey);
+        await Block.getNextBlock(url, writer, path);
       }
 
       // Close the stream.
@@ -59,21 +58,18 @@ const Worker = {
 };
 
 class FileDownloader {
-  constructor(ipfsList, fileName, privKey) {
+  constructor(ipfsList, fileName, path) {
     this.ipfsList = ipfsList;
     this.fileName = fileName;
-    this.privKey  = privKey;
+    this.path = path;
   }
 
   async start() {
     try {
-      await Worker.downloadFile(this.ipfsList, this.fileName, this.privKey);
+      await Worker.downloadFile(this.ipfsList, this.fileName, this.path);
     } catch (err) {
-      if (err.message === 'Invalid private key!') {
-        alert(err.message);
-      } else {
-        alert('Unable to download the file due to Infura! :/');
-      }
+      alert('Issue with downloading from infura!');
+      console.log(err);
     }
   }
 }

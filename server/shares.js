@@ -1,5 +1,3 @@
-const Path = require('path');
-
 const DB = require('./db.js');
 
 const Shares = {
@@ -44,7 +42,7 @@ const Shares = {
       });
 
       let output = [];
-      for (const result of result) {
+      for (const result of results) {
 
         try {
           const files = await DB.query({
@@ -56,7 +54,7 @@ const Shares = {
           if (files.length > 0) {
             output.push(files[0]);
           }
-        } catch () {}
+        } catch (err) {}
       }
 
       return output;
