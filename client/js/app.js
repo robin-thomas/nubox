@@ -71,7 +71,7 @@ $(document).ready(async () => {
     }
 
     $('#share-file-dialog').find('#share-file-expiration').datepicker({
-      minDate: new Date(),
+      minDate: new Date(new Date().getTime() + (24 * 60 * 60 * 1000)),
       dateFormat: 'yy-mm-dd',
     });
 
