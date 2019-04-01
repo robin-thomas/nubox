@@ -129,13 +129,23 @@
             </button>
           </div>
           <div class="modal-body">
-            <div class="form-group">
-              <label for="share-file-contact">Contact:</label>
-              <input type="text" class="form-control" id="share-file-contact">
-            </div>
-            <div class="form-group">
-              <label for="share-file-expiration">Share file until:</label>
-              <input type="text" class="form-control" id="share-file-expiration">
+            <div class="form-row">
+              <div class="col-md-10">
+                <input type="text" class="form-control" id="share-file-contact" placeholder="Search for contact">
+              </div>
+              <div class="col-md-2">
+                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                  <input type="hidden" class="form-control datetimepicker-input" data-target="#datetimepicker1"/>
+                  <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                    <div class="input-group-text">
+                      <label style="cursor:pointer;margin-bottom:0 !important;">
+                        <i class="fas fa-calendar-alt" title="Set the time"></i>
+                      </label>
+                    </div>
+                  </div>
+                  <input type="text" id="share-file-expiration" style="visibility:hidden">
+                </div>
+              </div>
             </div>
           </div>
           <div class="modal-footer">

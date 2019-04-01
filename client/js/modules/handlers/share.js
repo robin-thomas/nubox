@@ -23,7 +23,7 @@ const ShareHandler = {
 
     const date = contactExpire.val();
     if (!(moment(date, 'YYYY-MM-DD').isValid())) {
-      contactExpire.focus();
+      $('#share-file-dialog').find('#share-file-expiration').datepicker('show');
       return;
     }
     const expiration = moment(date).format('YYYY-MM-DD') + ' 00:00:00';

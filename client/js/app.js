@@ -89,6 +89,10 @@ $(document).ready(async () => {
   $('#content-fs-header .row').on('click', '.col-md-2', FSHandler.openFolderFromHeader);
   $('#confirm-share-file').on('click', ShareHandler.confirmShare);
   $('#revoke-share-file').on('click', ShareHandler.revokeAccess);
+  $('#share-file-dialog .input-group-append').on('click', () => {
+    $('#share-file-dialog').find('#share-file-expiration').datepicker('show');
+  })
+
 
   $(document).on('click', () => {
     const popover = $(document).find('.popover');
