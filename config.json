@@ -152,6 +152,15 @@
         "Content-Type": "application/json",
         "x-access-token": "%token"
       }
+    },
+    "getSharedWith": {
+      "name": "getSharedWith",
+      "path": "/fs/shares/all",
+      "method": "GET",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-access-token": "%token"
+      }
     }
   }
 }
