@@ -19,8 +19,9 @@ const FS = {
       });
 
       for (const result of out) {
-        if (result.deleted === false) {
+        if (result.deleted !== true) {
           results[result.path] = {
+            id: result.id,
             path: result.path,
             ipfs: JSON.parse(result.ipfs_hash).hash,
             isFile: result.is_file,
@@ -54,6 +55,7 @@ const FS = {
       }
 
       return {
+        id: result[0].id,
         path: result[0].path,
         ipfs: JSON.parse(result[0].ipfs_hash).hash,
         isFile: result[0].is_file,

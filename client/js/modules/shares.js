@@ -23,6 +23,17 @@ const Shares = {
       throw err;
     }
   },
+
+  getSharedWith: async (address, fileId) => {
+    try {
+      return await Session.api(config.api.getSharedWith.name, {
+        address: address,
+        fileId: fileId,
+      });
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 module.exports = Shares;

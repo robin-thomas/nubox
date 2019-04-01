@@ -253,4 +253,23 @@ app.get(config.api.getShares.path, Auth.validate, async (req, res) => {
   }
 });
 
+app.get(config.api.getSharedWith.path, Auth.validate, async (req, res) => {
+  const address = req.query.address;
+  const fileId = req.query.fileId;
+
+  try {
+    const sharers = await Shares.getSharedWith(address, fileId);
+
+    res.status(200).send({
+      status: 'ok',
+      msg: sharers,
+    });
+  } catch (err) {
+    res.status(500).send({
+      status: 'not ok',
+      msg: err.message
+    });
+  }
+});
+
 app.listen(port, () => console.log(`app listening on ${port}`));

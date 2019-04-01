@@ -1,5 +1,8 @@
 const moment = require('moment');
 
+const Wallet = require('../crypto/metamask.js');
+const Shares = require('../shares.js');
+const FSHandler = require('./fs.js');
 const ContactsHandler = require('./contacts.js');
 
 const shareFileDialog = $('#share-file-dialog');
@@ -37,11 +40,15 @@ const ShareHandler = {
       const label = Buffer.from(key, 'hex').toString();
 
       await nuBox.grant(label, bek, bvk, expiration);
+
+      const sharedWith = ContactsHandler.contactsList.filter(e => e.nickname === contactName).map(e => e.address);
+      await Shares.shareFile(Wallet.address, sharedWith, FSHandler.fs[label].id);
     } catch (err) {
       alert(err);
     }
 
     shareBtn.html(shareBtn.data('original-text')).attr('disabled', false);
+    shareFileDialog.modal('close');
   },
 
   revokeAccess: async () => {

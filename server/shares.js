@@ -33,6 +33,20 @@ const Shares = {
     }
   },
 
+  getSharedWith: async (address, fileId) => {
+    try {
+      const sharers = await DB.query({
+        sql: 'SELECT shared_with FROM shares WHERE sharer = ? AND file_id = ?',
+        timeout: 6 * 1000, // 6s
+        values: [ address, fileId ],
+      });
+
+      return (sharers === undefined || sharers === null) ? [] : sharers;
+    } catch (err) {
+      throw err;
+    }
+  },
+
   getShares: async (address) => {
     try {
       const results = await DB.query({
