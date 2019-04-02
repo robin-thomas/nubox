@@ -434,3 +434,7 @@ body {
 #ui-id-1 {
   z-index:9999;
 }
+
+#share-file-dialog hr {
+  margin-top: 3px;
+}

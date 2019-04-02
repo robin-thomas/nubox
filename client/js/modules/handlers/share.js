@@ -12,6 +12,71 @@ const shareBtn = shareFileDialog.find('#confirm-share-file');
 const revokeBtn = shareFileDialog.find('#revoke-share-file');
 
 const ShareHandler = {
+  constructRowForShareFileUI: (contact) => {
+    return `<div class="row no-gutters" style="margin:15px 0">
+              <input type="hidden" value="${contact.bek}" class="contact-bek" />
+              <input type="hidden" value="${contact.bvk}" class="contact-bvk" />
+              <div class="col-md-2">
+                <i class="fas fa-user-circle" style="font-size:2.5em;"></i>
+              </div>
+              <div class="col-md-8">
+                <div class="row"><div class="col">${contact.nickname}</div></div>
+                <div class="row"><div class="col" style="font-size:11px">${contact.address}</div></div>
+              </div>
+              <div class="col-md-2" style="display:flex;align-items:center;justify-content:center">
+                <div class="form-check">
+                  ${contact.bek === undefined ? '' : '<input class="form-check-input" type="checkbox" checked>'}
+                </div>
+              </div>
+            </div>`;
+  },
+
+  constructShareFileUI: async (e) => {
+    e.preventDefault();
+
+    const id = $(document).find('.popover').first().attr('id');
+    $('#account-dashboard').find(`[aria-describedBy="${id}"]`).popover('hide');
+
+    const names = ContactsHandler.contactsList.filter(e => e.hasOwnProperty('nickname')).map(e => e.nickname);
+    try {
+      contactText.autocomplete({
+        source: names
+      });
+    } catch (err) {}
+
+    contactExpire.datepicker({
+      minDate: new Date(new Date().getTime() + (24 * 60 * 60 * 1000)),
+      dateFormat: 'yy-mm-dd',
+    });
+
+    // Get the file key and store it in the share-file dialog.
+    let ele = $(e.target);
+    while (!ele.hasClass('list-group-item')) {
+      ele = ele.parent();
+    }
+    const key = ele.parent().find('.fs-file-key').val();
+    shareFileDialog.find('#share-file-path').val(key);
+
+    // Get which contacts have access.
+    const path = Buffer.from(key, 'hex').toString();
+    const fileId = FSHandler.fs[path].id;
+    const contactsWithAccess = await Shares.getSharedWith(Wallet.address, fileId);
+    console.log(contactsWithAccess);
+
+    // Build the shared with UI.
+    let rows = ShareHandler.constructRowForShareFileUI({ nickname: '(you)', address: Wallet.address });
+    for (const contact of contactsWithAccess) {
+      const row = ShareHandler.constructRowForShareFileUI(contact);
+      rows += row;
+    }
+    const html = `<div class="container">${rows}</div>`;
+    shareFileDialog.find('#contacts-shared-with-file').html(html);
+
+    new SimpleBar(shareFileDialog.find('#contacts-shared-with-file')[0]);
+
+    shareFileDialog.modal('show');
+  },
+
   confirmShare: async () => {
     // Validate input.
     const contactName = contactText.val();

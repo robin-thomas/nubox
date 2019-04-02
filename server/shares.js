@@ -36,12 +36,29 @@ const Shares = {
   getSharedWith: async (address, fileId) => {
     try {
       const sharers = await DB.query({
-        sql: 'SELECT shared_with FROM shares WHERE sharer = ? AND file_id = ?',
+        sql: 'SELECT s.shared_with, c.* FROM shares s \
+              LEFT JOIN contacts c ON c.contact_address = s.shared_with \
+              WHERE s.sharer = ? AND s.file_id = ?',
         timeout: 6 * 1000, // 6s
         values: [ address, fileId ],
+        nestTables: true,
       });
 
-      return (sharers === undefined || sharers === null) ? [] : sharers;
+      if (sharers === undefined || sharers === null) {
+        return [];
+      }
+
+      let output = [];
+      for (const sharer of sharers) {
+        output.push({
+          nickname: sharer.c.contact_nickname,
+          address: sharer.s.shared_with,
+          bek: sharer.c.contact_encrypting_key,
+          bvk: sharer.c.contact_verifying_key,
+        });
+      }
+      return output;
+
     } catch (err) {
       throw err;
     }

@@ -56,43 +56,18 @@ $(document).ready(async () => {
     $('#account-dashboard').find(`[aria-describedBy="${id}"]`).popover('hide');
     $('#upload-file-dialog').modal('show');
   });
-  $(document).on('click', '.popover .fs-share', (e) => {
-    e.preventDefault();
-    const id = $(document).find('.popover').first().attr('id');
-    $('#account-dashboard').find(`[aria-describedBy="${id}"]`).popover('hide');
-
-    const names = ContactsHandler.contactsList.filter(e => e.hasOwnProperty('nickname')).map(e => e.nickname);
-    try {
-      $('#share-file-dialog').find('#share-file-contact').autocomplete({
-        source: names
-      });
-    } catch (err) {
-      console.log(err);
-    }
-
-    $('#share-file-dialog').find('#share-file-expiration').datepicker({
-      minDate: new Date(new Date().getTime() + (24 * 60 * 60 * 1000)),
-      dateFormat: 'yy-mm-dd',
-    });
-
-    // Get the file key and store it in the share-file dialog.
-    let ele = $(e.target);
-    while (!ele.hasClass('list-group-item')) {
-      ele = ele.parent();
-    }
-    const key = ele.parent().find('.fs-file-key').val();
-    $('#share-file-dialog').find('#share-file-path').val(key);
-
-    $('#share-file-dialog').modal('show');
-  });
+  $(document).on('click', '.popover .fs-share', ShareHandler.constructShareFileUI);
   $(document).on('dblclick', '.fa-folder', FSHandler.openFolder);
   $('#content-fs-header .row').on('click', '.col-md-2', FSHandler.openFolderFromHeader);
   $('#confirm-share-file').on('click', ShareHandler.confirmShare);
   $('#revoke-share-file').on('click', ShareHandler.revokeAccess);
   $('#share-file-dialog .input-group-append').on('click', () => {
-    $('#share-file-dialog').find('#share-file-expiration').datepicker('show');
-  })
+    const open = $('#share-file-dialog').find('#share-file-expiration').datepicker( "widget" ).is(":visible");
 
+    if (!open) {
+      $('#share-file-dialog').find('#share-file-expiration').datepicker('show');
+    }
+  });
 
   $(document).on('click', () => {
     const popover = $(document).find('.popover');
