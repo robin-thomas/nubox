@@ -240,28 +240,36 @@ body {
   color: rgba(0,0,0,0.5);
 }
 
-#content-fs {
+.content-fs {
   width: calc(100vw - 350px);
   height: calc(100vh - 50px);
   position: absolute;
   left: 300px;
 }
 
-#content-fs-header {
+.content-fs-shared-inactive {
+  z-index:-1;
+}
+
+.content-fs-shared-active {
+  z-index:2;
+}
+
+.content-fs-header {
   width: 100%;
   height: 50px;
 }
 
-#content-fs-header > .container-fluid {
+.content-fs-header > .container-fluid {
   height: 100%;
 }
 
-#content-fs-header > .container-fluid > .row {
+.content-fs-header > .container-fluid > .row {
   height: 100%;
   margin-left: -3%;
 }
 
-#content-fs-header > .container-fluid > .row > .col-md-2 {
+.content-fs-header > .container-fluid > .row > .col-md-2 {
   text-align: center;
   cursor: pointer;
   transition: all 0.3s;
@@ -270,24 +278,24 @@ body {
   box-shadow: inset 0 0 2em rgba(0,0,0,0.05);
 }
 
-#content-fs-header > .container-fluid > .row > .col-md-2 > span {
+.content-fs-header > .container-fluid > .row > .col-md-2 > span {
   font-size: 17px;
   color: rgba(0,0,0,0.7);
 }
 
-#content-fs-content .simplebar-content > .container {
+.content-fs-content .simplebar-content > .container {
   margin: 35px 75px !important;
 }
 
-#content-fs-content .simplebar-content > .container > .row {
+.content-fs-content .simplebar-content > .container > .row {
   margin-bottom: 100px;
 }
 
-#content-fs .col {
+.content-fs .col {
   text-align: center;
 }
 
-#content-fs .fs-file-name {
+.content-fs .fs-file-name {
   font-size: 15px;
 }
 
