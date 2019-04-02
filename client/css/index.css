@@ -438,3 +438,22 @@ body {
 #share-file-dialog hr {
   margin-top: 3px;
 }
+
+#account-dashboard .nav-link {
+  color: black;
+  transition: all 0.3s;
+  height: 50px;
+  line-height: 30px;
+}
+
+#account-dashboard .nav-link-active {
+  background:#FFBCC3;
+  color:#dc3545;
+  border-radius: 0 50px 50px 0;
+  font-weight:800;
+}
+
+#account-dashboard .nav-link:not(.nav-link-active):hover {
+  background:#E2E2E2;
+  border-radius: 0 50px 50px 0;
+}
