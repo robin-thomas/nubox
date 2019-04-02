@@ -107,7 +107,6 @@ const FSHandler = {
                   <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i><span>Delete</span></a>
                   <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i><span>Rename</span></a>
                   <a href="#" class="fs-info list-group-item"><i class="fas fa-info-circle"></i><span>Info</span></a>
-                  <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i><span>Move</span></a>
                   ${file.isFile ? '<a href="#" class="fs-share list-group-item"><i class="fas fa-share-alt"></i><span>Share</span></a>' : ''}
                 </ul>`;
       }
@@ -353,7 +352,6 @@ const FSHandler = {
                     <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i><span>Delete</span></a>
                     <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i><span>Rename</span></a>
                     <a href="#" class="fs-info list-group-item"><i class="fas fa-info-circle"></i><span>Info</span></a>
-                    <a href="#" class="fs-move-file list-group-item"><i class="fas fa-file-export"></i><span>Move</span></a>
                     ${newFile.isFile ? '<a href="#" class="fs-share list-group-item"><i class="fas fa-share-alt"></i><span>Share</span></a>' : ''}
                   </ul>`;
         }
