@@ -286,9 +286,7 @@ body {
 }
 
 .content-fs-content {
-  position: absolute;
-  top: 50px;
-  z-index:2;
+  padding-top: 50px;
 }
 
 .content-fs-content .simplebar-content > .container {
@@ -307,9 +305,9 @@ body {
   font-size: 15px;
 }
 
-.fs-file-icon {
+.content-fs .fs-file-icon {
   font-size: 60px;
-  cursor: pointer;
+  cursor: pointer !important;
   padding: 10px;
 }
 

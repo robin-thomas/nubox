@@ -131,7 +131,6 @@ const FSHandler = {
       cursor: 'crosshair',
       revert: 'invalid',
       containment: '.content-fs',
-      zIndex:10000,
     });
 
     // Make all the folders droppable.
