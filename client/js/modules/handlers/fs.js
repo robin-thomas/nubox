@@ -66,7 +66,7 @@ const FSHandler = {
     }
   },
 
-  drawFile: (file, fsEle = $('#content-fs .content-fs-content')) => {
+  drawFile: (file, fsEle = $('#content-fs .content-fs-content'), shared = false) => {
     const name = Path.basename(file.path);
     const el = new SimpleBar(fsEle[0]);
 
@@ -106,10 +106,10 @@ const FSHandler = {
         return `<ul id="popover-content" class="list-group">
                   <input class="fs-file-key" type="hidden" value="${key}" />
                   ${file.isFile ? '<a href="#" class="fs-download list-group-item"><i class="fas fa-download"></i><span>Download</span></a>' : ''}
-                  <a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i><span>Delete</span></a>
-                  <a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i><span>Rename</span></a>
+                  ${shared === true ? '' : '<a href="#" class="fs-delete list-group-item"><i class="far fa-trash-alt"></i><span>Delete</span></a>'}
+                  ${shared === true ? '' : '<a href="#" class="fs-rename list-group-item"><i class="far fa-edit"></i><span>Rename</span></a>'}
                   <a href="#" class="fs-info list-group-item"><i class="fas fa-info-circle"></i><span>Info</span></a>
-                  ${file.isFile ? '<a href="#" class="fs-share list-group-item"><i class="fas fa-share-alt"></i><span>Share</span></a>' : ''}
+                  ${file.isFile && shared === false ? '<a href="#" class="fs-share list-group-item"><i class="fas fa-share-alt"></i><span>Share</span></a>' : ''}
                 </ul>`;
       }
     });

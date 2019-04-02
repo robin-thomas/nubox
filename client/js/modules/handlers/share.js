@@ -158,7 +158,7 @@ const ShareHandler = {
 
         for (const file of files) {
           console.log(file);
-          FSHandler.drawFile(file, $('#content-fs-shared .content-fs-content'));
+          FSHandler.drawFile(file, $('#content-fs-shared .content-fs-content'), true);
         }
       }
 

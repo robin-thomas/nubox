@@ -23,19 +23,19 @@ $(document).ready(async () => {
   confirmNewContactButton.on('click', () => ContactsHandler.addNewContactHandler(confirmNewContactButton));
   $('#contacts-after-connect').on('click', '.fa-trash-alt', (e) => ContactsHandler.deleteContactHandler(e.target));
 
-  $('#content-fs').on('contextmenu', '.fs-file-icon', (e) => {
+  $('.content-fs').on('contextmenu', '.fs-file-icon', (e) => {
     e.preventDefault();
 
     const popover = $(document).find('.popover');
     if (popover.length >= 1) {
       const id = popover.first().attr('id');
-      $('#content-fs').find(`[aria-describedBy="${id}"]`).popover('toggle');
+      $('.content-fs').find(`[aria-describedBy="${id}"]`).popover('toggle');
     }
 
     $(e.target).popover('toggle');
   });
 
-  $('#content-fs').on('contextmenu', (e) => {
+  $('.content-fs').on('contextmenu', (e) => {
     e.preventDefault();
 
     const popover = $(document).find('.popover');
@@ -75,7 +75,7 @@ $(document).ready(async () => {
     const popover = $(document).find('.popover');
     if (popover.length >= 1) {
       const id = popover.first().attr('id');
-      $('#content-fs').find(`[aria-describedBy="${id}"]`).popover('hide');
+      $('.content-fs').find(`[aria-describedBy="${id}"]`).popover('hide');
     }
   });
 
