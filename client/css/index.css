@@ -258,8 +258,6 @@ body {
 .content-fs-header {
   width: 100%;
   height: 50px;
-  position: absolute;
-  z-index:1;
 }
 
 .content-fs-header > .container-fluid {
@@ -283,10 +281,6 @@ body {
 .content-fs-header > .container-fluid > .row > .col-md-2 > span {
   font-size: 17px;
   color: rgba(0,0,0,0.7);
-}
-
-.content-fs-content {
-  padding-top: 50px;
 }
 
 .content-fs-content .simplebar-content > .container {

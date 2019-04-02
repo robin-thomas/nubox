@@ -65,10 +65,7 @@ const FSHandler = {
           const path = Buffer.from(key, 'hex').toString();
 
           const folderKey = $(this).find('input[type="hidden"]').val();
-          const folderPath = Buffer.from(folderKey, 'hex').toString();
-
-          // Get the new path.
-          let newFilePath = folderPath;
+          let newFilePath = Buffer.from(folderKey, 'hex').toString();
           newFilePath += (newFilePath.endsWith('/') ? '' : '/') + Path.basename(path);
 
           return newFilePath !== path;
@@ -130,7 +127,6 @@ const FSHandler = {
     fsEle.find('.draggable').draggable({
       cursor: 'crosshair',
       revert: 'invalid',
-      containment: '.content-fs',
     });
 
     // Make all the folders droppable.
