@@ -60,13 +60,25 @@ const FSHandler = {
                   </div>`;
       fsEle.find('.content-fs-header').find('.row').append(row);
       fsEle.find('.content-fs-header').find('.droppable').droppable({
-        accept: '.draggable',
+        accept: function (dropped) {
+          const key = $(dropped).find('input[type="hidden"]').val();
+          const path = Buffer.from(key, 'hex').toString();
+
+          const folderKey = $(this).find('input[type="hidden"]').val();
+          const folderPath = Buffer.from(folderKey, 'hex').toString();
+
+          // Get the new path.
+          let newFilePath = folderPath;
+          newFilePath += (newFilePath.endsWith('/') ? '' : '/') + Path.basename(path);
+
+          return newFilePath !== path;
+        },
         drop: Droppable,
       });
     }
   },
 
-  drawFile: (file, fsEle = $('#content-fs .content-fs-content'), shared = false) => {
+  drawFile: (file, fsEle = $('#content-fs > .content-fs-content'), shared = false) => {
     const name = Path.basename(file.path);
     const el = new SimpleBar(fsEle[0]);
 
@@ -85,7 +97,7 @@ const FSHandler = {
     }
 
     const key = Buffer.from(file.path).toString('hex');
-    const folder = `<div class="fs-file-total col-md-2 ${file.isFile ? 'draggable' : 'droppable'}">
+    const folder = `<div class="fs-file-total col-md-2 ${file.isFile && shared === false ? 'draggable' : 'droppable'}">
                       <input type="hidden" value="${key}" />
                       <div class="row">
                         <div class="col">
@@ -118,11 +130,25 @@ const FSHandler = {
     fsEle.find('.draggable').draggable({
       cursor: 'crosshair',
       revert: 'invalid',
+      containment: '.content-fs',
+      zIndex:10000,
     });
 
     // Make all the folders droppable.
     fsEle.find('.droppable').droppable({
-      accept: '.draggable',
+      accept: function (dropped) {
+        const key = $(dropped).find('input[type="hidden"]').val();
+        const path = Buffer.from(key, 'hex').toString();
+
+        const folderKey = $(this).find('input[type="hidden"]').val();
+        const folderPath = Buffer.from(folderKey, 'hex').toString();
+
+        // Get the new path.
+        let newFilePath = folderPath;
+        newFilePath += (newFilePath.endsWith('/') ? '' : '/') + Path.basename(path);
+
+        return newFilePath !== path;
+      },
       drop: Droppable,
     });
 
@@ -159,7 +185,7 @@ const FSHandler = {
       path = (path.endsWith('/') ? path : path + '/');
 
       // Reset the current fs screen.
-      $('#content-fs-content').html('<div class="container"></div>');
+      $('#content-fs .content-fs-content').html('<div class="container"></div>');
 
       // Display empty folder banner if required.
       const structure = FSHandler.getStructure(path);
@@ -177,13 +203,13 @@ const FSHandler = {
       }
 
       // Make all the files draggable.
-      $('#content-fs-content').find('.draggable').draggable({
+      $('#content-fs .content-fs-content').find('.draggable').draggable({
         cursor: 'crosshair',
         revert: 'invalid',
       });
 
       // Make all the folders droppable.
-      $('#content-fs-content').find('.droppable').droppable({
+      $('#content-fs .content-fs-content').find('.droppable').droppable({
         accept: '.draggable',
         drop: Droppable,
       });
@@ -258,7 +284,7 @@ const FSHandler = {
         ActivityHandler.load(Wallet.address);
 
         // Delete from UI.
-        $('#content-fs-content').find(`.fs-file-total > input[type="hidden"][value=${key}]`).parent().remove();
+        $('#content-fs .content-fs-content').find(`.fs-file-total > input[type="hidden"][value=${key}]`).parent().remove();
       } catch (err) {
         throw err;
       }
@@ -340,7 +366,7 @@ const FSHandler = {
       // Update the UI.
       ActivityHandler.load(Wallet.address);
       const newKey = Buffer.from(newPath).toString('hex');
-      const hidden = $('#content-fs-content').find(`.fs-file-total > input[type="hidden"][value=${key}]`);
+      const hidden = $('#content-fs .content-fs-content').find(`.fs-file-total > input[type="hidden"][value=${key}]`);
       hidden.val(newKey);
       hidden.parent().find('.fs-file-name').html(newFileName);
       hidden.parent().find('[data-toggle="popover"]').popover('dispose');
