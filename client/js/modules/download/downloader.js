@@ -1,26 +1,9 @@
-const fetch = require('node-fetch');
-
-const config = require('../../../../config.json');
 const streamSaver = require('./StreamSaver.js');
 
-const ipfsUrl = config.infura.ipfs.gateway;
-
 const Block = {
-  getNextBlock: async (url, writer, path) => {
-    let out = null;
+  getNextBlock: async (hash, writer, path) => {
     try {
-      const res = await fetch(url, {
-        headers: {
-          'Content-Type': 'text/plain',
-        },
-      });
-      out = await res.text();
-    } catch (err) {
-      throw err;
-    }
-
-    try {
-      const decryptedB64 = await nuBox.decrypt(out, path);
+      const decryptedB64 = await nuBox.decrypt(hash, path, true /* ipfs */);
       const decrypted = Buffer.from(decryptedB64, 'base64');
       writer.write(decrypted);
     } catch (err) {
@@ -40,8 +23,7 @@ const Worker = {
 
       // Read all the blocks from ipfs and join them.
       for (const hash of ipfsList) {
-        const url = ipfsUrl + hash;
-        await Block.getNextBlock(url, writer, path);
+        await Block.getNextBlock(hash, writer, path);
       }
 
       // Close the stream.

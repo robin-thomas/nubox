@@ -19,7 +19,7 @@ const FS = {
       });
 
       for (const result of out) {
-        if (result.deleted !== true) {
+        if (!result.deleted) {
           results[result.path] = {
             id: result.id,
             path: result.path,
@@ -50,7 +50,7 @@ const FS = {
         values: [ address, path ],
       });
 
-      if (result.length === 0 || result[0].deleted === true) {
+      if (result.length === 0 || result[0].deleted) {
         throw new Error('Unable to find the record');
       }
 
@@ -74,7 +74,7 @@ const FS = {
       const record = await FS.getFile(address, path);
 
       // Check whether the file is shared or not.
-      const isShared = Shares.isFileShared(address, record.id);
+      const isShared = await Shares.isFileShared(address, record.id);
 
       if (!isShared) {
         await DB.query({
