@@ -31,6 +31,24 @@ const ShareHandler = {
             </div>`;
   },
 
+  createSharedWithUI: async (key) => {
+    // Get which contacts have access.
+    const path = Buffer.from(key, 'hex').toString();
+    const fileId = FSHandler.fs[path].id;
+    const contactsWithAccess = await Shares.getSharedWith(Wallet.address, fileId);
+
+    // Build the shared with UI.
+    let rows = ShareHandler.constructRowForShareFileUI({ nickname: '(you)', address: Wallet.address });
+    for (const contact of contactsWithAccess) {
+      const row = ShareHandler.constructRowForShareFileUI(contact);
+      rows += row;
+    }
+    const html = `<div class="container">${rows}</div>`;
+    shareFileDialog.find('#contacts-shared-with-file').html(html);
+
+    new SimpleBar(shareFileDialog.find('#contacts-shared-with-file')[0]);
+  },
+
   constructShareFileUI: async (e) => {
     e.preventDefault();
 
@@ -57,22 +75,7 @@ const ShareHandler = {
     const key = ele.parent().find('.fs-file-key').val();
     shareFileDialog.find('#share-file-path').val(key);
 
-    // Get which contacts have access.
-    const path = Buffer.from(key, 'hex').toString();
-    const fileId = FSHandler.fs[path].id;
-    const contactsWithAccess = await Shares.getSharedWith(Wallet.address, fileId);
-    console.log(contactsWithAccess);
-
-    // Build the shared with UI.
-    let rows = ShareHandler.constructRowForShareFileUI({ nickname: '(you)', address: Wallet.address });
-    for (const contact of contactsWithAccess) {
-      const row = ShareHandler.constructRowForShareFileUI(contact);
-      rows += row;
-    }
-    const html = `<div class="container">${rows}</div>`;
-    shareFileDialog.find('#contacts-shared-with-file').html(html);
-
-    new SimpleBar(shareFileDialog.find('#contacts-shared-with-file')[0]);
+    await ShareHandler.createSharedWithUI(key);
 
     shareFileDialog.modal('show');
   },
@@ -108,6 +111,8 @@ const ShareHandler = {
 
       const sharedWith = ContactsHandler.contactsList.filter(e => e.nickname === contactName).map(e => e.address);
       await Shares.shareFile(Wallet.address, sharedWith, FSHandler.fs[label].id);
+
+      await ShareHandler.createSharedWithUI(key);
     } catch (err) {
       alert(err);
     }
