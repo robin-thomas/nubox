@@ -138,6 +138,35 @@ const ShareHandler = {
 
     revokeBtn.html(revokeBtn.data('original-text')).attr('disabled', false);
   },
+
+  openShareFileUI: async (e) => {
+    e.preventDefault();
+
+    const ele = $(e.currentTarget);
+    if (!ele.hasClass('nav-link-active')) {
+      if (!$('#content-fs-shared').hasClass('content-fs-shared-active')) {
+        // Reset the current fs screen.
+        $('#content-fs-shared .content-fs-content').html('<div class="container"></div>');
+
+        // Display empty folder banner if required.
+        const files = await Shares.getShares(Wallet.address);
+        if (files.length === 0) {
+          $('#content-fs-shared #fs-empty-folder-display').show();
+        } else {
+          $('#content-fs-shared #fs-empty-folder-display').hide();
+        }
+
+        for (const file of files) {
+          console.log(file);
+          FSHandler.drawFile(file, $('#content-fs-shared .content-fs-content'));
+        }
+      }
+
+      $('#content-fs-shared').toggleClass('content-fs-shared-active');
+      ele.parent().siblings().find('.nav-link').removeClass('nav-link-active');
+      ele.addClass('nav-link-active');
+    }
+  },
 };
 
 module.exports = ShareHandler;

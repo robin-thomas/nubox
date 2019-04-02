@@ -45,16 +45,7 @@ $(document).ready(async () => {
     }
   });
 
-  $('#account-dashboard .nav-link').on('click', (e) => {
-    e.preventDefault();
-
-    const ele = $(e.currentTarget);
-    if (!ele.hasClass('nav-link-active')) {
-      $('#content-fs-shared').toggleClass('content-fs-shared-active');
-      ele.parent().siblings().find('.nav-link').removeClass('nav-link-active');
-      ele.addClass('nav-link-active');
-    }
-  })
+  $('#account-dashboard .nav-link').on('click', ShareHandler.openShareFileUI);
 
   $(document).on('click', '.popover .fs-info', FSHandler.fileInfo);
   $(document).on('click', '.popover .fs-download', FSHandler.downloadFile);

@@ -18,16 +18,18 @@ const Droppable = async (event, ui) => {
   let newFilePath = folderPath;
   newFilePath += (newFilePath.endsWith('/') ? '' : '/') + Path.basename(path);
 
-  // Update the server.
-  const newFile = await FS.renameFile(Wallet.address, path, newFilePath);
-  delete FSHandler.fs[path];
-  FSHandler.fs[newFilePath] = newFile;
+  if (newFilePath !== path) {
+    // Update the server.
+    const newFile = await FS.renameFile(Wallet.address, path, newFilePath);
+    delete FSHandler.fs[path];
+    FSHandler.fs[newFilePath] = newFile;
 
-  // Update the activity
-  ActivityHandler.load(Wallet.address);
+    // Update the activity
+    ActivityHandler.load(Wallet.address);
 
-  // Update the UI.
-  $(dropped).remove();
+    // Update the UI.
+    $(dropped).remove();
+  }
 }
 
 const FSHandler = {
@@ -36,11 +38,11 @@ const FSHandler = {
   path: '/',
   pathStack: ['/'],
 
-  drawFSHeader: () => {
+  drawFSHeader: (fsEle = $('#content-fs')) => {
     // Get the last 6 folders nested deep.
     const arr = (FSHandler.pathStack.length <= 6) ? FSHandler.pathStack : FSHandler.pathStack.slice(FSHandler.pathStack.length - 6);
 
-    $('#content-fs-header').find('.row').html('');
+    fsEle.find('.content-fs-header').find('.row').html('');
     for (const folder of arr) {
       let folderName = Path.basename(folder);
       if (folderName == null || folderName === undefined ||
@@ -56,29 +58,29 @@ const FSHandler = {
                     <input type="hidden" value="${path}" />
                     <span class="d-table-cell align-middle">${folderName}</span>
                   </div>`;
-      $('#content-fs-header').find('.row').append(row);
-      $('#content-fs-header').find('.droppable').droppable({
+      fsEle.find('.content-fs-header').find('.row').append(row);
+      fsEle.find('.content-fs-header').find('.droppable').droppable({
         accept: '.draggable',
         drop: Droppable,
       });
     }
   },
 
-  drawFile: (file) => {
+  drawFile: (file, fsEle = $('#content-fs .content-fs-content')) => {
     const name = Path.basename(file.path);
-    const el = new SimpleBar($('#content-fs-content')[0]);
+    const el = new SimpleBar(fsEle[0]);
 
     // Find the last row.
-    let row = $('#content-fs-content .simplebar-content').find('.container > .row');
+    let row = fsEle.find('.simplebar-content').find('.container > .row');
     if (row === null || row === undefined || row.length < 1) {
-      $('#content-fs-content .simplebar-content').find('.container').html('<div class="row no-gutters"></div>');
-      row = $('#content-fs-content .simplebar-content').find('.container > .row').first();
+      fsEle.find('.simplebar-content').find('.container').html('<div class="row no-gutters"></div>');
+      row = fsEle.find('.simplebar-content').find('.container > .row').first();
     } else {
       // Check if enough columns are already present.
       row = row.last();
       if (row.find('.col-md-2').length === 6) {
-        $('#content-fs-content .simplebar-content').find('.container').append('<div class="row no-gutters"></div>');
-        row = $('#content-fs-content .simplebar-content').find('.container > .row').last();
+        fsEle.find('.simplebar-content').find('.container').append('<div class="row no-gutters"></div>');
+        row = fsEle.find('.simplebar-content').find('.container > .row').last();
       }
     }
 
@@ -113,13 +115,13 @@ const FSHandler = {
     });
 
     // Make all the files draggable.
-    $('#content-fs-content').find('.draggable').draggable({
+    fsEle.find('.draggable').draggable({
       cursor: 'crosshair',
       revert: 'invalid',
     });
 
     // Make all the folders droppable.
-    $('#content-fs-content').find('.droppable').droppable({
+    fsEle.find('.droppable').droppable({
       accept: '.draggable',
       drop: Droppable,
     });
