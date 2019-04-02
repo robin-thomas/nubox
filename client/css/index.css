@@ -465,3 +465,9 @@ body {
   background:#E2E2E2;
   border-radius: 0 50px 50px 0;
 }
+
+.fs-file-icon-hover {
+  content: "\f16c";
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 400;
+}

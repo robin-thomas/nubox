@@ -29,6 +29,7 @@ const Droppable = async (event, ui) => {
 
     // Update the UI.
     $(dropped).remove();
+    $(event.target).find('.fa-folder').removeClass('fs-file-icon-hover');
   }
 }
 
@@ -145,6 +146,12 @@ const FSHandler = {
         return newFilePath !== path;
       },
       drop: Droppable,
+      over: function() {
+        $(this).find('.fa-folder').addClass('fs-file-icon-hover');
+      },
+      out: function() {
+        $(this).find('.fa-folder').removeClass('fs-file-icon-hover');
+      },
     });
 
     el.recalculate();
