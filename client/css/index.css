@@ -404,7 +404,8 @@ body {
 }
 
 #activity-dashboard-display {
-  height: calc(100vh - 10px);
+  height: calc(100vh - 100px);
+  overflow-x: hidden;
 }
 
 #contacts-display .row {
