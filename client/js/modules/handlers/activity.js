@@ -57,6 +57,7 @@ const ActivityHandler = {
         const deleteRow = getFileRow(act, 'DELETE', 'deleted');
         const moveRow   = getFileRow(act, 'MOVE', 'moved');
         const renameRow = getFileRow(act, 'RENAME', 'renamed');
+        const sharedRow = getFileRow(act, 'SHARE', 'shared');
         const uploadRow = getFileRow(act, 'UPLOAD', 'uploaded');
         const createRow = getFileRow(act, 'CREATE', 'created');
 
@@ -73,6 +74,7 @@ const ActivityHandler = {
                             ${deleteRow !== null ? deleteRow : ''}
                             ${moveRow !== null ? moveRow : ''}
                             ${renameRow !== null ? renameRow : ''}
+                            ${sharedRow !== null ? sharedRow : ''}
                             ${uploadRow !== null ? uploadRow : ''}
                             ${createRow !== null ? createRow : ''}
                           </div>

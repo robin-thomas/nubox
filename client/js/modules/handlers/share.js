@@ -1,5 +1,6 @@
 const moment = require('moment');
 
+const Activity = require('./activity.js')
 const Wallet = require('../crypto/metamask.js');
 const Shares = require('../shares.js');
 const FSHandler = require('./fs.js');
@@ -55,6 +56,7 @@ const ShareHandler = {
     const id = $(document).find('.popover').first().attr('id');
     $('#account-dashboard').find(`[aria-describedBy="${id}"]`).popover('hide');
 
+    contactText.val('');
     const names = ContactsHandler.contactsList.filter(e => e.hasOwnProperty('nickname')).map(e => e.nickname);
     try {
       contactText.autocomplete({
@@ -62,6 +64,7 @@ const ShareHandler = {
       });
     } catch (err) {}
 
+    contactExpire.val('');
     contactExpire.datepicker({
       minDate: new Date(new Date().getTime() + (24 * 60 * 60 * 1000)),
       dateFormat: 'yy-mm-dd',
@@ -112,6 +115,8 @@ const ShareHandler = {
       const sharedWith = ContactsHandler.contactsList.filter(e => e.nickname === contactName).map(e => e.address);
       await Shares.shareFile(Wallet.address, sharedWith, FSHandler.fs[label].id);
 
+      // Update UI.
+      await Activity.load(Wallet.address);
       await ShareHandler.createSharedWithUI(key);
     } catch (err) {
       alert(err);
@@ -157,7 +162,6 @@ const ShareHandler = {
         }
 
         for (const file of files) {
-          console.log(file);
           FSHandler.drawFile(file, $('#content-fs-shared .content-fs-content'), true);
         }
       }

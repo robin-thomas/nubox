@@ -1,15 +1,14 @@
 const DB = require('./db.js');
+const Activity = require('./activity.js');
 
 const Shares = {
   isFileShared: async (address, fileId) => {
     try {
-      const query = {
+      const results = await DB.query({
         sql: 'SELECT * FROM shares WHERE sharer = ? AND file_id = ? LIMIT 1',
         timeout: 6 * 1000, // 6s
         values: [ address, fileId ],
-      };
-
-      const results = await DB.query(query);
+      });
       return results.length > 0;
     } catch (err) {
       throw err;
@@ -18,16 +17,31 @@ const Shares = {
 
   shareFile: async (sharer, sharedWith, fileId) => {
     try {
-      const query = {
+      // Check for already shared.
+      const contacts = await Shares.getSharedWith(sharer, fileId);
+      const contactAddress = contacts.filter(e => e.address == sharedWith);
+      if (contactAddress.length > 0) {
+        throw new Error('File already shared with this user');
+      }
+
+      await DB.query({
         sql: 'INSERT INTO shares(sharer, shared_with, file_id) \
               VALUES(?,?,?)',
         timeout: 6 * 1000, // 6s
         values: [ sharer, sharedWith, fileId ],
-      };
+      });
 
-      await DB.query(query);
+      const path = await DB.query({
+        sql: 'SELECT path FROM fs WHERE id = ?',
+        timeout: 6 * 1000, // 6s
+        values: [ fileId ],
+      });
 
-      // TODO: add as an activity.
+      await Activity.addActivity(sharer, [{
+        path: path[0].path,
+        file: true,
+        action: 'SHARE',
+      }]);
     } catch (err) {
       throw err;
     }
