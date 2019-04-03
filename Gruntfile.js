@@ -40,15 +40,28 @@ module.exports = (grunt) => {
         dest: './client/js/index.min.js'
       }
     },
+    cssmin: {
+      options: {
+        mergeIntoShorthands: false,
+        roundingPrecision: -1
+      },
+      target: {
+        files: {
+          './client/css/index.min.css': ['./client/css/index.css', './client/css/style.css']
+        }
+      }
+    }
   });
 
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-run');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify-es');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.registerTask('default', [
     'eslint',
     'browserify',
-    // 'uglify'
+    'uglify',
+    'cssmin'
   ]);
 };
