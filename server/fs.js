@@ -1,4 +1,5 @@
 const Path = require('path');
+const crypto = require('crypto');
 
 const DB = require('./db.js');
 const Activity = require('./activity.js');
@@ -29,6 +30,7 @@ const FS = {
             modified: result.modified_utc,
             fileSize: result.file_size,
             fileType: result.file_type,
+            hash: result.hash,
           };
         }
       }
@@ -48,6 +50,37 @@ const FS = {
               FROM fs WHERE address = ? AND path = ?',
         timeout: 6 * 1000, // 6s
         values: [ address, path ],
+      });
+
+      if (result.length === 0 || result[0].deleted) {
+        throw new Error('Unable to find the record');
+      }
+
+      return {
+        id: result[0].id,
+        path: result[0].path,
+        ipfs: JSON.parse(result[0].ipfs_hash).hash,
+        isFile: result[0].is_file,
+        created: result[0].created_utc,
+        modified: result[0].modified_utc,
+        fileSize: result[0].file_size,
+        fileType: result[0].file_type,
+        hash: result[0].hash,
+      };
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  getFileById: async (id) => {
+    try {
+      const result = await DB.query({
+        sql: 'SELECT *, \
+              CONVERT_TZ(created, @@session.time_zone, "+00:00") AS created_utc, \
+              CONVERT_TZ(modified, @@session.time_zone, "+00:00") AS modified_utc \
+              FROM fs WHERE id = ?',
+        timeout: 6 * 1000, // 6s
+        values: [ id ],
       });
 
       if (result.length === 0 || result[0].deleted) {
@@ -154,7 +187,7 @@ const FS = {
   getIPFSByFileHash: async (hash) => {
     try {
       let ipfs = await DB.query({
-        sql: 'SELECT path, ipfs_hash FROM fs WHERE id = ?',
+        sql: 'SELECT path, ipfs_hash FROM fs WHERE hash = ?',
         timeout: 6 * 1000, // 6s
         values: [ hash ],
       });
@@ -205,11 +238,12 @@ const FS = {
           hash: file.ipfs,
         });
 
-        await DB.query({
-          sql: 'INSERT INTO fs(address, path, ipfs_hash, file_size, file_type) \
-                VALUES(?, ?, ?, ?, ?)',
+        const hash = crypto.randomBytes(64).toString('hex');
+        const record = await DB.query({
+          sql: 'INSERT INTO fs(address, path, ipfs_hash, file_size, file_type, hash) \
+                VALUES(?, ?, ?, ?, ?, ?)',
           timeout: 6 * 1000, // 6s
-          values: [ address, file.path, ipfs, file.fileSize, file.fileType ],
+          values: [ address, file.path, ipfs, file.fileSize, file.fileType, hash ],
         });
 
         await Activity.addActivity(address, [{
@@ -218,7 +252,7 @@ const FS = {
           action: 'CREATE',
         }]);
 
-        files.push(await FS.getFile(address, file.path));
+        files.push(await FS.getFileById(record.insertId));
       }
 
       return files;

@@ -48,6 +48,10 @@ const ShareHandler = {
     shareFileDialog.find('#contacts-shared-with-file').html(html);
 
     new SimpleBar(shareFileDialog.find('#contacts-shared-with-file')[0]);
+
+    let url = $(location).attr("href");
+    url += (url.endsWith('/') ? '' : '/') + 'download/' + FSHandler.fs[path].hash;
+    shareFileDialog.find('#share-file-link').val(url);
   },
 
   constructShareFileUI: async (e) => {
