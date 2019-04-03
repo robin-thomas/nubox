@@ -272,4 +272,21 @@ app.get(config.api.getSharedWith.path, Auth.validate, async (req, res) => {
   }
 });
 
+app.get('/download/:hash', async (req, res) => {
+  const hash = req.params.hash;
+
+  try {
+    const data = await FS.getIPFSByFileHash(hash);
+
+    res.setHeader('nubox-file', JSON.stringify(data));
+    res.status(200).send();
+
+  } catch (err) {
+    res.status(err.message === 'Not Found' ? 404 : 500).send({
+      status: 'not ok',
+      msg: err.message
+    });
+  }
+});
+
 app.listen(port, () => console.log(`app listening on ${port}`));

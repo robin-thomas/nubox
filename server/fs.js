@@ -151,6 +151,29 @@ const FS = {
     }
   },
 
+  getIPFSByFileHash: async (hash) => {
+    try {
+      let ipfs = await DB.query({
+        sql: 'SELECT path, ipfs_hash FROM fs WHERE id = ?',
+        timeout: 6 * 1000, // 6s
+        values: [ hash ],
+      });
+
+      if (ipfs === undefined || ipfs.length === 0) {
+        throw new Error('Not Found');
+      }
+
+      return {
+        path: ipfs[0].path,
+        filename: Path.basename(ipfs[0].path),
+        ipfs: JSON.parse(ipfs[0].ipfs_hash).hash,
+      };
+
+    } catch (err) {
+      throw err;
+    }
+  },
+
   renameFileForDescendants: async (address, path, newPath) => {
     try {
       const records = await DB.query({
