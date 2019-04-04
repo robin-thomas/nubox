@@ -144,6 +144,15 @@
         "x-access-token": "%token"
       }
     },
+    "deleteShare": {
+      "name": "deleteShare",
+      "path": "/fs/shares",
+      "method": "DELETE",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-access-token": "%token"
+      }
+    },
     "getShares": {
       "name": "getShares",
       "path": "/fs/shares",

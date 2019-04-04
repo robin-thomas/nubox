@@ -15,6 +15,18 @@ const Shares = {
     }
   },
 
+  deleteShare: async (sharer, sharedWith, fileId) => {
+    try {
+      await DB.query({
+        sql: 'DELETE FROM shares WHERE sharer = ? AND shared_with = ? AND file_id = ?',
+        timeout: 6 * 1000, // 6s
+        values: [ sharer, sharedWith, fileId ],
+      });
+    } catch (err) {
+      throw err;
+    }
+  },
+
   shareFile: async (sharer, sharedWith, fileId) => {
     try {
       // Check for already shared.

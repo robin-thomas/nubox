@@ -61,8 +61,24 @@ $(document).ready(async () => {
   $(document).on('click', '.popover .fs-share', ShareHandler.constructShareFileUI);
   $(document).on('dblclick', '.fa-folder', FSHandler.openFolder);
   $('#content-fs .content-fs-header .row').on('click', '.col-md-2', FSHandler.openFolderFromHeader);
-  $('#confirm-share-file').on('click', ShareHandler.confirmShare);
-  $('#revoke-share-file').on('click', ShareHandler.revokeAccess);
+  $('#confirm-share-file').on('click', (e) => ShareHandler.confirmShare(e, true));
+  $('#share-file-dialog').on('change', '.share-file-revoke-grant', async function(e) {
+    if (this.checked) {
+      try {
+        await ShareHandler.confirmShare(e);
+      } catch (err) {
+        console.log(err);
+        $(this).prop('checked', false);
+      }
+    } else {
+      try {
+        await ShareHandler.revokeAccess(e);
+      } catch (err) {
+        console.log(err);
+        $(this).prop('checked', true);
+      }
+    }
+  });
   $('#share-file-dialog .input-group-append').on('click', () => {
     const open = $('#share-file-dialog').find('#share-file-expiration').datepicker( "widget" ).is(":visible");
 

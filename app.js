@@ -235,6 +235,26 @@ app.post(config.api.shareFile.path, Auth.validate, async (req, res) => {
   }
 });
 
+app.delete(config.api.deleteShare.path, Auth.validate, async (req, res) => {
+  const sharer = req.body.address;
+  const sharedWith = req.body.sharedWith;
+  const fileId = req.body.fileId;
+
+  try {
+    await Shares.deleteShare(sharer, sharedWith, fileId);
+
+    res.status(200).send({
+      status: 'ok',
+      msg: '',
+    });
+  } catch (err) {
+    res.status(500).send({
+      status: 'not ok',
+      msg: err.message
+    });
+  }
+});
+
 app.get(config.api.getShares.path, Auth.validate, async (req, res) => {
   const address = req.query.address;
 

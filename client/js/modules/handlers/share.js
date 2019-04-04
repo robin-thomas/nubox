@@ -10,7 +10,6 @@ const shareFileDialog = $('#share-file-dialog');
 const contactText = shareFileDialog.find('#share-file-contact')
 const contactExpire = shareFileDialog.find('#share-file-expiration');
 const shareBtn = shareFileDialog.find('#confirm-share-file');
-const revokeBtn = shareFileDialog.find('#revoke-share-file');
 
 const ShareHandler = {
   constructRowForShareFileUI: (contact) => {
@@ -21,12 +20,12 @@ const ShareHandler = {
                 <i class="fas fa-user-circle" style="font-size:2.5em;"></i>
               </div>
               <div class="col-md-8">
-                <div class="row"><div class="col">${contact.nickname}</div></div>
-                <div class="row"><div class="col" style="font-size:11px">${contact.address}</div></div>
+                <div class="row"><div class="col file-share-contact-nickname">${contact.nickname}</div></div>
+                <div class="row"><div class="col file-share-contact-address" style="font-size:11px">${contact.address}</div></div>
               </div>
               <div class="col-md-2" style="display:flex;align-items:center;justify-content:center">
                 <div class="form-check">
-                  ${contact.bek === undefined ? '' : '<input class="form-check-input" type="checkbox" checked>'}
+                  ${contact.bek === undefined ? '' : '<input class="form-check-input share-file-revoke-grant" type="checkbox" checked>'}
                 </div>
               </div>
             </div>`;
@@ -87,28 +86,44 @@ const ShareHandler = {
     shareFileDialog.modal('show');
   },
 
-  confirmShare: async () => {
-    // Validate input.
-    const contactName = contactText.val();
-    const names = ContactsHandler.contactsList.filter(e => e.hasOwnProperty('nickname')).map(e => e.nickname);
-    if (contactName.trim().length === 0 || names.indexOf(contactName) === -1) {
-      contactText.focus();
-      return;
-    }
+  confirmShare: async (e, btn = false) => {
+    // share for first time for this contact.
+    let expiration = moment().add(10, 'days').format('YYYY-MM-DD') + ' 00:00:00';
+    let contactName;
+    if (btn) {
+      // Validate input.
+      contactName = contactText.val();
+      const names = ContactsHandler.contactsList.filter(e => e.hasOwnProperty('nickname')).map(e => e.nickname);
+      if (contactName.trim().length === 0 || names.indexOf(contactName) === -1) {
+        contactText.focus();
+        return;
+      }
 
-    const date = contactExpire.val();
-    if (!(moment(date, 'YYYY-MM-DD').isValid())) {
-      $('#share-file-dialog').find('#share-file-expiration').datepicker('show');
-      return;
-    }
-    const expiration = moment(date).format('YYYY-MM-DD') + ' 00:00:00';
+      const date = contactExpire.val();
+      if (!(moment(date, 'YYYY-MM-DD').isValid())) {
+        $('#share-file-dialog').find('#share-file-expiration').datepicker('show');
+        return;
+      }
+      expiration = moment(date).format('YYYY-MM-DD') + ' 00:00:00';
 
-    const loadingText = '<i class="fas fa-spinner fa-spin"></i>&nbsp;Sharing...';
-    shareBtn.data('original-text', shareBtn.html());
-    shareBtn.html(loadingText).attr('disabled', 'disabled');
+      const loadingText = '<i class="fas fa-spinner fa-spin"></i>&nbsp;Sharing...';
+      shareBtn.data('original-text', shareBtn.html());
+      shareBtn.html(loadingText).attr('disabled', 'disabled');
+    }
 
     try {
-      const { bek, bvk } = await nuBox.getBobKeys();
+      let bek, bvk, sharedWith;
+      if (btn) {
+        const bob = await nuBox.getBobKeys();
+        bek = bob.bek;
+        bvk = bob.bvk;
+        sharedWith = ContactsHandler.contactsList.filter(e => e.nickname === contactName).map(e => e.address);
+      } else {
+        const parent = $(e.currentTarget).parent().parent().parent();
+        bek = parent.find('.contact-bek').val();
+        bvk = parent.find('.contact-bvk').val();
+        sharedWith = parent.find('.file-share-contact-address').html();
+      }
 
       // Get the file path.
       const key = shareFileDialog.find('#share-file-path').val();
@@ -116,36 +131,44 @@ const ShareHandler = {
 
       await nuBox.grant(label, bek, bvk, expiration);
 
-      const sharedWith = ContactsHandler.contactsList.filter(e => e.nickname === contactName).map(e => e.address);
       await Shares.shareFile(Wallet.address, sharedWith, FSHandler.fs[label].id);
 
-      // Update UI.
-      await Activity.load(Wallet.address);
-      await ShareHandler.createSharedWithUI(key);
+      if (btn) {
+        await Activity.load(Wallet.address);
+        await ShareHandler.createSharedWithUI(key);
+      }
+
     } catch (err) {
-      alert(err);
+      if (btn) {
+        alert(err);
+      } else {
+        throw err;
+      }
     }
 
-    shareBtn.html(shareBtn.data('original-text')).attr('disabled', false);
-    shareFileDialog.modal('close');
+    if (btn) {
+      shareBtn.html(shareBtn.data('original-text')).attr('disabled', false);
+    }
   },
 
-  revokeAccess: async () => {
-    const loadingText = '<i class="fas fa-spinner fa-spin"></i>&nbsp;Revoking...';
-    revokeBtn.data('original-text', revokeBtn.html());
-    revokeBtn.html(loadingText).attr('disabled', 'disabled');
-
+  revokeAccess: async (e) => {
     try {
+      const parent = $(e.currentTarget).parent().parent().parent();
+      const sharedWith = parent.find('.file-share-contact-address').html();
+      // const bek = parent.find('.contact-bek').val();
+      // const bvk = parent.find('.contact-bvk').val();
+
       // Get the file path.
       const key = shareFileDialog.find('#share-file-path').val();
       const label = Buffer.from(key, 'hex').toString();
 
       await nuBox.revoke(label);
-    } catch (err) {
-      alert(err);
-    }
 
-    revokeBtn.html(revokeBtn.data('original-text')).attr('disabled', false);
+      // delete the share from the server.
+      await Shares.deleteShare(Wallet.address, sharedWith, FSHandler.fs[label].id);
+    } catch (err) {
+      throw err;
+    }
   },
 
   openShareFileUI: async (e) => {
