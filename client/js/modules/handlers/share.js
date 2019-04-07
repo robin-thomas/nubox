@@ -114,10 +114,10 @@ const ShareHandler = {
     try {
       let bek, bvk, sharedWith;
       if (btn) {
-        const bob = await nuBox.getBobKeys();
-        bek = bob.bek;
-        bvk = bob.bvk;
-        sharedWith = ContactsHandler.contactsList.filter(e => e.nickname === contactName).map(e => e.address);
+        const bob = ContactsHandler.contactsList.filter(e => e.nickname === contactName);
+        bek = bob[0].bek;
+        bvk = bob[0].bvk;
+        sharedWith = bob[0].address;
       } else {
         const parent = $(e.currentTarget).parent().parent().parent();
         bek = parent.find('.contact-bek').val();
@@ -129,7 +129,7 @@ const ShareHandler = {
       const key = shareFileDialog.find('#share-file-path').val();
       const label = Buffer.from(key, 'hex').toString();
 
-      await nuBox.grant(label, bek, bvk, expiration);
+      await nuBox.grant(FSHandler.fs[label].hash, bek, bvk, expiration);
 
       await Shares.shareFile(Wallet.address, sharedWith, FSHandler.fs[label].id);
 
@@ -155,14 +155,13 @@ const ShareHandler = {
     try {
       const parent = $(e.currentTarget).parent().parent().parent();
       const sharedWith = parent.find('.file-share-contact-address').html();
-      // const bek = parent.find('.contact-bek').val();
-      // const bvk = parent.find('.contact-bvk').val();
+      const bvk = parent.find('.contact-bvk').val();
 
       // Get the file path.
       const key = shareFileDialog.find('#share-file-path').val();
       const label = Buffer.from(key, 'hex').toString();
 
-      await nuBox.revoke(label);
+      await nuBox.revoke(FSHandler.fs[label].hash, bvk);
 
       // delete the share from the server.
       await Shares.deleteShare(Wallet.address, sharedWith, FSHandler.fs[label].id);

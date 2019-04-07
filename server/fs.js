@@ -47,12 +47,12 @@ const FS = {
         sql: 'SELECT *, \
               CONVERT_TZ(created, @@session.time_zone, "+00:00") AS created_utc, \
               CONVERT_TZ(modified, @@session.time_zone, "+00:00") AS modified_utc \
-              FROM fs WHERE address = ? AND path = ?',
+              FROM fs WHERE address = ? AND path = ? AND deleted = false',
         timeout: 6 * 1000, // 6s
         values: [ address, path ],
       });
 
-      if (result.length === 0 || result[0].deleted) {
+      if (result === undefined || result.length === 0 || result[0].deleted) {
         throw new Error('Unable to find the record');
       }
 
@@ -96,6 +96,7 @@ const FS = {
         modified: result[0].modified_utc,
         fileSize: result[0].file_size,
         fileType: result[0].file_type,
+        hash: result[0].hash,
       };
     } catch (err) {
       throw err;
@@ -111,7 +112,7 @@ const FS = {
 
       if (!isShared) {
         await DB.query({
-          sql: 'DELETE FROM fs WHERE address = ? AND path = ?',
+          sql: 'DELETE FROM fs WHERE address = ? AND path = ? AND deleted = false',
           timeout: 6 * 1000, // 6s
           values: [ address, path ],
         });

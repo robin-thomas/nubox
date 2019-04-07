@@ -155,10 +155,14 @@ const FileUploadHandler = {
       // send the updates to the server.
       if (updates.length >= 1) {
         FS.createFiles(Metamask.address, updates)
-          .then((files) => {
+          .then(async (files) => {
+            const bob = await nuBox.getBobKeys();
+
             for (const file of files) {
               FSHandler.fs[file.path] = file;
               FSHandler.fsSize += file.fileSize;
+
+              await nuBox.grant(file.hash, bob.bek, bob.bvk, '2019-05-01 00:00:00');
             }
 
             FSHandler.updateStorageUI();

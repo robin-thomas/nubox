@@ -95,8 +95,8 @@ const ContactsHandler = {
 
     const contactName = btn !== null ? newContactNickname.val() : contact.nickname;
     const contactAddress = btn !== null ? newContactAddress.val() : contact.address;
-    const contactEncryptingKey = btn !== null ? newContactEncryptingKey.val() : contact.encryptingKey;
-    const contactVerifyingKey = btn !== null ? newContactVerifyingKey.val() : contact.verifyingKey;
+    const contactEncryptingKey = btn !== null ? newContactEncryptingKey.val() : contact.bek;
+    const contactVerifyingKey = btn !== null ? newContactVerifyingKey.val() : contact.bvk;
 
     // Validate the fields.
     try {
@@ -149,8 +149,8 @@ const ContactsHandler = {
     ContactsHandler.contactsList.push({
       address: contactAddress,
       nickname: contactName,
-      encryptingKey: contactEncryptingKey,
-      verifyingKey: contactVerifyingKey,
+      bek: contactEncryptingKey,
+      bvk: contactVerifyingKey,
     });
     ContactsHandler.contactsDisplayHandler();
 

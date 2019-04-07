@@ -26,11 +26,11 @@ class FileUploader {
 
       console.log(this.results);
 
-      nuBox.getBobKeys()
-        .then((bob) => nuBox.grant(this.path, bob.bek, bob.bvk, '2019-05-01 00:00:00'))
-        .catch((err) => {
-          console.log(err);
-        });
+      // nuBox.getBobKeys()
+      //   .then((bob) => nuBox.grant(this.path, bob.bek, bob.bvk, '2019-05-01 00:00:00'))
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
 
       progressStatusDiv.css('color', '#28a745').html('Completed');
       keyDiv.find('.file-upload-progress-btn').html('');

@@ -31,7 +31,7 @@ const Contacts = {
   getAll: async (address) => {
     const query = {
       sql: 'SELECT contact_address as address, contact_nickname as nickname, \
-            contact_encrypting_key as encryptingKey, contact_verifying_key as verifyingKey \
+            contact_encrypting_key as bek, contact_verifying_key as bvk \
             FROM contacts WHERE address = ?',
       timeout: 6 * 1000, // 6s
       values: [ address ],
