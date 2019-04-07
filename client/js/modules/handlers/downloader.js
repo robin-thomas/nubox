@@ -1,8 +1,8 @@
 const FileDownloader = require('../download/downloader.js');
 
 const FileDownloadHandler = {
-  start: (ipfsList, fileName, path) => {
-    new FileDownloader(ipfsList, fileName, path).start();
+  start: (ipfsList, fileName, label) => {
+    new FileDownloader(ipfsList, fileName, label).start();
   },
 };
 

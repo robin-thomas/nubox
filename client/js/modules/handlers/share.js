@@ -48,7 +48,8 @@ const ShareHandler = {
 
     new SimpleBar(shareFileDialog.find('#contacts-shared-with-file')[0]);
 
-    let url = $(location).attr("href");
+    // const hashHex = Buffer.from(FSHandler.fs[path].hash, 'base64').toString('hex');
+    let url = $(location).attr('href');
     url += (url.endsWith('/') ? '' : '/') + 'download/' + FSHandler.fs[path].hash;
     shareFileDialog.find('#share-file-link').val(url);
   },

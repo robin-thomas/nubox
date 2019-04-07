@@ -1,9 +1,9 @@
 const streamSaver = require('./StreamSaver.js');
 
 const Block = {
-  getNextBlock: async (hash, writer, path) => {
+  getNextBlock: async (hash, writer, label) => {
     try {
-      const decryptedB64 = await nuBox.decrypt(hash, path, true /* ipfs */);
+      const decryptedB64 = await nuBox.decrypt(hash, label, true /* ipfs */);
       const decrypted = Buffer.from(decryptedB64, 'base64');
       writer.write(decrypted);
     } catch (err) {
@@ -13,7 +13,7 @@ const Block = {
 };
 
 const Worker = {
-  downloadFile: async (ipfsList, fileName, path) => {
+  downloadFile: async (ipfsList, fileName, label) => {
     let writer = null;
 
     try {
@@ -23,7 +23,7 @@ const Worker = {
 
       // Read all the blocks from ipfs and join them.
       for (const hash of ipfsList) {
-        await Block.getNextBlock(hash, writer, path);
+        await Block.getNextBlock(hash, writer, label);
       }
 
       // Close the stream.
@@ -40,15 +40,15 @@ const Worker = {
 };
 
 class FileDownloader {
-  constructor(ipfsList, fileName, path) {
+  constructor(ipfsList, fileName, label) {
     this.ipfsList = ipfsList;
     this.fileName = fileName;
-    this.path = path;
+    this.label = label;
   }
 
   async start() {
     try {
-      await Worker.downloadFile(this.ipfsList, this.fileName, this.path);
+      await Worker.downloadFile(this.ipfsList, this.fileName, this.label);
     } catch (err) {
       alert('Issue with downloading from infura!');
       console.log(err);

@@ -141,7 +141,7 @@ const FS = {
   deleteFileForDescendants: async (address, path) => {
     try {
       const records = await DB.query({
-        sql: 'SELECT * FROM fs WHERE path LIKE ? AND address = ?',
+        sql: 'SELECT * FROM fs WHERE path LIKE ? AND address = ? AND deleted = false',
         timeout: 6 * 1000, // 6s
         values: [ `${path}/%`, address ],
       });
@@ -161,7 +161,7 @@ const FS = {
   renameFile: async (address, path, newPath) => {
     try {
       await DB.query({
-        sql: 'UPDATE fs SET path = ? WHERE address = ? AND path = ?',
+        sql: 'UPDATE fs SET path = ? WHERE address = ? AND path = ? AND deleted = false',
         timeout: 6 * 1000, // 6s
         values: [ newPath, address, path ],
       });
@@ -188,7 +188,7 @@ const FS = {
   getIPFSByFileHash: async (hash) => {
     try {
       let ipfs = await DB.query({
-        sql: 'SELECT path, ipfs_hash FROM fs WHERE hash = ?',
+        sql: 'SELECT path, hash, ipfs_hash FROM fs WHERE hash = ?',
         timeout: 6 * 1000, // 6s
         values: [ hash ],
       });
@@ -199,6 +199,7 @@ const FS = {
 
       return {
         path: ipfs[0].path,
+        label: ipfs[0].hash,
         filename: Path.basename(ipfs[0].path),
         ipfs: JSON.parse(ipfs[0].ipfs_hash).hash,
       };
@@ -211,7 +212,7 @@ const FS = {
   renameFileForDescendants: async (address, path, newPath) => {
     try {
       const records = await DB.query({
-        sql: 'SELECT * FROM fs WHERE path LIKE ? AND address = ?',
+        sql: 'SELECT * FROM fs WHERE path LIKE ? AND address = ? AND deleted = false',
         timeout: 6 * 1000, // 6s
         values: [ `${path}/%`, address ],
       });
@@ -239,7 +240,7 @@ const FS = {
           hash: file.ipfs,
         });
 
-        const hash = crypto.randomBytes(64).toString('hex');
+        const hash = crypto.randomBytes(20).toString('base64');
         const record = await DB.query({
           sql: 'INSERT INTO fs(address, path, ipfs_hash, file_size, file_type, hash) \
                 VALUES(?, ?, ?, ?, ?, ?)',

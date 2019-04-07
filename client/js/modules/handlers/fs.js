@@ -252,8 +252,9 @@ const FSHandler = {
     const path = Buffer.from(key, 'hex').toString();
     const fileName = Path.basename(path);
     const ipfsList = FSHandler.fs[path].ipfs;
+    const label = FSHandler.fs[path].hash;
 
-    DownloadHandler.start(ipfsList, fileName, path);
+    DownloadHandler.start(ipfsList, fileName, label);
   },
 
   deleteFile: async (e) => {
