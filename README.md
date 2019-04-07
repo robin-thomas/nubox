@@ -47,10 +47,15 @@ Nubox is a blockchain-based file storage solution built on top of **[NuCypher](h
         * Create, rename, and/or delete a folder
         * Accept any dropped files
         * View folder metadata
-
 * **Clean Materialistic UI**
     * *UI inspired by Google Drive* - get the feeling of using Google Drive, but hey, you control the files!
     * *Right-clicking* on any file or folder will open up the options for the various file (or folder) operations.
     * View all files that are shared for you
     * View the total size of the files upload
     * View various activity in your account (Uploading, renaming, deleting and sharing files and folders)
+
+# Known Nucypher issues:
+* You cannot download same file twice: https://github.com/nucypher/nucypher/issues/833
+
+
+**Free Software, Hell Yeah!**
