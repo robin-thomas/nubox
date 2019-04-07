@@ -35,6 +35,14 @@ Nubox is a blockchain-based file storage solution built on top of **[NuCypher](h
     * You can share a file with any contact for a specified duration of time.
     * You can delete a shared file, yet the file will be accessible for anyone previously shared with (unless their access is revoked later).
     * Individually revoke access for any contact.
+* **File Upload**
+    * nuBox allows you to choose multiple files to upload at any time.
+    * All files to be uploaded are dumped onto a job queue.
+    * Currently the job queue is set to process one file at a time (rest of the jobs will be queued).
+    * File uploads can be paused and resumed.
+    * The UI shows the file upload progress as well as the total progress of the all the uploads.
+    * It shows file size in human readable form, as well as the total size of all the uploads.
+
 * **File/Folder operations**
     * *File operations:*
         * Upload, rename, delete, and/or download a file
