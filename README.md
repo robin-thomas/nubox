@@ -38,7 +38,7 @@ Nubox is a blockchain-based file storage solution built on top of **[NuCypher](h
 * **File/Folder operations**
     * *File operations:*
         * Upload, rename, delete, and/or download a file
-        * Drag files into different folders
+        * Drag files into different folders (move files)
         * Share a file with one or more contacts
         * See the contacts with whom the file has been shared with
         * Revoke access to a file for one or more contacts *(latest NuCypher release do not support individual `revoke` operation, but rather revoking everyone who has been granted access. But nuBox supports this, after modifying NuCypher code)*
@@ -53,7 +53,7 @@ Nubox is a blockchain-based file storage solution built on top of **[NuCypher](h
     * *Right-clicking* on any file or folder will open up the options for the various file (or folder) operations.
     * View all files that are shared for you
     * View the total size of the files upload
-    * View various activity in your account (Uploading, renaming, deleting and sharing files and folders)
+    * View various activity in your account (Uploading, renaming, deleting, moving and sharing files and folders)
 
 # Known Nucypher issues:
 * You cannot download same file twice: https://github.com/nucypher/nucypher/issues/833
