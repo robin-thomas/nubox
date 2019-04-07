@@ -1,7 +1,7 @@
 # nuBox - Decentralized encrypted Dropbox
 ![](http://i67.tinypic.com/34ooa6h_th.png)
 
-![](https://img.shields.io/badge/nuBox-1.0-yellowgreen.svg) [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
+![](https://img.shields.io/badge/nodejs-8.10-blue.svg) ![](https://img.shields.io/badge/nuBox-1.0-yellowgreen.svg) [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 # Table of Contents
 1. [What is nuBox?](#what-is-nubox)
