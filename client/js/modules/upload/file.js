@@ -1,4 +1,17 @@
 const File = {
+  removeFromTotalSize: (fileSize) => {
+    let currentSize = $('#upload-file-dialog').find('#file-upload-progress-total-size').val();
+    currentSize = parseInt(currentSize);
+    currentSize = isNaN(currentSize) ? 0 : currentSize;
+
+    let newSize = currentSize - parseInt(fileSize);
+    newSize = (newSize < 0 ? 0 : newSize);
+    const size = File.getFileSize(newSize);
+
+    $('#upload-file-dialog').find('#file-upload-progress-total-size').val(newSize);
+    $('#upload-file-dialog').find('#file-upload-progress-total-size-display > b').html(size);
+  },
+
   updateTotalFilesSize: (files) => {
     // Calculate the total file size.
     let currentSize = $('#upload-file-dialog').find('#file-upload-progress-total-size').val();
@@ -18,23 +31,18 @@ const File = {
     $('#upload-file-dialog').find('#file-upload-progress-total-size-display > b').html(size);
   },
 
-  getFileKey: (file) => {
-    return Buffer.from(JSON.stringify({
-      lastMod: file.lastModified,
-      size: file.size,
-      name: file.name,
-      type: file.type,
-    })).toString('hex');
+  getFileKey: (file, path) => {
+    const newPath = path + (path.endsWith('/') ? '' : '/') + file.name;
+    return Buffer.from(newPath).toString('hex');
   },
 
   getFileName: (fileName) => {
     const index = fileName.lastIndexOf('.');
-
     const ext = fileName.substr(index + 1);
 
     let name = fileName.substr(0, index);
-    if (name.length > 10) {
-      name = name.substr(0, 3) + '...' + name.substr(name.length - 4);
+    if ((name + ext).length > 20) {
+      name = name.substr(0, 3) + '...' + name.substr(name.length - 11);
     }
 
     return name + '.' + ext;

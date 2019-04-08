@@ -92,8 +92,6 @@ const Shares = {
 
   getShares: async (address) => {
     try {
-      address = '0x4247ACebDA3f79B15E2E29dfbDb36D0BD1AccA86';
-
       const results = await DB.query({
         sql: 'SELECT file_id FROM shares WHERE shared_with = ?',
         timeout: 6 * 1000, // 6s

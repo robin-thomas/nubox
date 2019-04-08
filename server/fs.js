@@ -1,5 +1,6 @@
 const Path = require('path');
-const crypto = require('crypto');
+// const Base58 = require('base-58');
+// const crypto = require('crypto');
 
 const DB = require('./db.js');
 const Activity = require('./activity.js');
@@ -147,11 +148,22 @@ const FS = {
       });
 
       for (const record of records) {
-        await DB.query({
-          sql: 'DELETE FROM fs WHERE id = ?',
-          timeout: 6 * 1000, // 6s
-          values: [ record.id ],
-        });
+        // Check whether the file is shared or not.
+        const isShared = await Shares.isFileShared(address, record.id);
+
+        if (!isShared) {
+          await DB.query({
+            sql: 'DELETE FROM fs WHERE address = ? AND path = ? AND deleted = false',
+            timeout: 6 * 1000, // 6s
+            values: [ address, path ],
+          });
+        } else {
+          await DB.query({
+            sql: 'UPDATE fs SET deleted = true WHERE id = ?',
+            timeout: 6 * 1000, // 6s
+            values: [ record.id ],
+          });
+        }
       }
     } catch (err) {
       throw err;
@@ -240,12 +252,13 @@ const FS = {
           hash: file.ipfs,
         });
 
-        const hash = crypto.randomBytes(20).toString('base64');
+        // const hash = Math.random().toString(16).slice(2);
+        const b64hash = file.path;
         const record = await DB.query({
           sql: 'INSERT INTO fs(address, path, ipfs_hash, file_size, file_type, hash) \
                 VALUES(?, ?, ?, ?, ?, ?)',
           timeout: 6 * 1000, // 6s
-          values: [ address, file.path, ipfs, file.fileSize, file.fileType, hash ],
+          values: [ address, file.path, ipfs, file.fileSize, file.fileType, b64hash ],
         });
 
         await Activity.addActivity(address, [{

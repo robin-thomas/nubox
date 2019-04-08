@@ -271,9 +271,11 @@ const FSHandler = {
 
     if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
       try {
+
         await FS.deleteFile(Wallet.address, path);
 
-        FSHandler.fsSize -= FSHandler.fs[path].fileSize;
+        const fileSize = FSHandler.fs[path].fileSize;
+        FSHandler.fsSize -= fileSize;
         const newFile = FSHandler.fs[path];
         delete FSHandler.fs[path];
 
@@ -288,6 +290,11 @@ const FSHandler = {
 
         // Delete from UI.
         $('#content-fs .content-fs-content').find(`.fs-file-total > input[type="hidden"][value=${key}]`).parent().remove();
+        const found = $('#file-upload-simplebar-container').find(`#${key}`);
+        if (found.length > 0) {
+          found.remove();
+          File.removeFromTotalSize(fileSize);
+        }
       } catch (err) {
         throw err;
       }

@@ -297,6 +297,7 @@ body {
 
 .content-fs .fs-file-name {
   font-size: 15px;
+  padding: 0 25px !important;
 }
 
 .content-fs .fs-file-icon {

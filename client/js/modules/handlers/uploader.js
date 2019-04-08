@@ -11,8 +11,8 @@ const FileUploadHandler = {
   jobQueue: [],
 
   doesFileKeyExists: (key) => {
-    return (FileUploadHandler.upload !== null && FileUploadHandler.upload[key] !== undefined) ?
-      true : false;
+    const found = $('#file-upload-simplebar-container').find(`#${key}`);
+    return found !== undefined && found.length > 0;
   },
 
   startJob: () => {
@@ -88,16 +88,17 @@ const FileUploadHandler = {
     // Check if the file is in the upload UI.
     // If not, start the job.
     for (const file of files) {
-      const key = File.getFileKey(file);
+      const key = File.getFileKey(file, FSHandler.path);
+
+      console.log('upload');
 
       if (!FileUploadHandler.doesFileKeyExists(key)) {
+        FileUploadHandler.destroy(key);
         FileUploadHandler.createFileUploadUI(key, file);
         FileUploadHandler.start(file, key);
         processedFiles.push(file);
       } else if (files.length === 1) {
         alert('File is already present in the UI');
-
-        // TODO: scroll the UI to the existing file in the UI.
       }
     }
 
@@ -106,6 +107,7 @@ const FileUploadHandler = {
     }
 
     el.recalculate();
+    $(e.currentTarget).val('');
   },
 
   timer: () => {
@@ -155,25 +157,17 @@ const FileUploadHandler = {
       // send the updates to the server.
       if (updates.length >= 1) {
         FS.createFiles(Metamask.address, updates)
-          .then(async (files) => {
-            const bob = await nuBox.getBobKeys();
-
-            for (const file of files) {
-              FSHandler.fs[file.path] = file;
-              FSHandler.fsSize += file.fileSize;
-
-              await nuBox.grant(file.hash, bob.bek, bob.bvk, '2019-05-01 00:00:00');
-            }
-
+          .then(FileUploadHandler.processFiles)
+          .then(() => {
             FSHandler.updateStorageUI();
             ActivityHandler.load(Metamask.address);
           });
+      } else {
+        // Check for jobs in the queue and start one if possible.
+        FileUploadHandler.startJob();
       }
 
-      // Check for jobs in the queue and start one if possible.
-      FileUploadHandler.startJob();
-
-      // Destroy the time since all files has been uploaded.
+      // Destroy the timer since all files has been uploaded.
       if (isFilesUploaded) {
         clearInterval(FileUploadHandler.uploadTimer);
         FileUploadHandler.uploadTimer = null;
@@ -188,6 +182,25 @@ const FileUploadHandler = {
       $('#upload-file-dialog').find('#file-upload-progress-total').width(totalProgress);
       $('#upload-file-dialog').find('#file-upload-progress-total-display > b').html(totalProgress);
     }
+  },
+
+  processFiles: async (files) => {
+    const bob = await nuBox.getBobKeys();
+
+    for (const file of files) {
+      FSHandler.fs[file.path] = file;
+      FSHandler.fsSize += file.fileSize;
+
+      try {
+        await nuBox.grant(file.hash, bob.bek, bob.bvk, '2019-05-01 00:00:00', true /* noPopup */);
+        console.log('Bob given access (no popup since Bob here is Alice)');
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    // Check for jobs in the queue and start one if possible.
+    FileUploadHandler.startJob();
   },
 
   start: (file, key) => {
@@ -222,7 +235,8 @@ const FileUploadHandler = {
   },
 
   destroy: (key) => {
-    if (FileUploadHandler.upload[key] !== undefined) {
+    if (FileUploadHandler.upload &&
+        FileUploadHandler.upload[key] !== undefined) {
       FileUploadHandler.upload[key].uploader.pause();
       delete FileUploadHandler.upload[key];
     }

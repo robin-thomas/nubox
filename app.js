@@ -294,8 +294,8 @@ app.get(config.api.getSharedWith.path, Auth.validate, async (req, res) => {
 
 app.get('/download/:hash', async (req, res) => {
   try {
-    // const hash = Buffer.from(req.params.hash, 'hex').toString('base64');
-    const data = await FS.getIPFSByFileHash(req.params.hash);
+    const hash = Buffer.from(req.params.hash, 'hex').toString();
+    const data = await FS.getIPFSByFileHash(hash);
 
     res.setHeader('nubox-file', JSON.stringify(data));
     res.status(200).send();
