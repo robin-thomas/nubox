@@ -68,7 +68,9 @@ Nubox is a blockchain-based file storage solution built on top of **[NuCypher](h
 ![](https://user-images.githubusercontent.com/2564234/49080419-dda35680-f243-11e8-90d7-6f649d80e03d.png)
 
 # Known issues:
-* **NuCypher** - You cannot download same file twice: https://github.com/nucypher/nucypher/issues/833
+* **NuCypher**
+   - You cannot download same file twice: https://github.com/nucypher/nucypher/issues/833
+   - Some issue with encoding: https://github.com/nucypher/nucypher/issues/920
 * **Infura IPFS** - it might throw 504 or gateway errors while trying to upload or download a file. Certain times, it'll be quite slow.
 * The demo is hosted on free Heroku server, [which goes to sleep regularly](https://blog.heroku.com/app_sleeping_on_heroku). So it can be a bit slow to download all the frontend files initially.
 
