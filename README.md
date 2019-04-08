@@ -7,6 +7,7 @@
 1. [What is nuBox?](#what-is-nubox)
 2. [Requirements](#requirements)
 3. [Features](#features)
+3. [Known Issues](#known-issues)
 
 # What is nuBox?
 Nubox is a blockchain-based file storage solution built on top of **[NuCypher](https://www.nucypher.com/)** (using [nuBox chrome extension](https://github.com/robin-thomas/nubox-ext)) and **[IPFS](https://ipfs.io/)**. You can upload and download files of any size, create folders, delete and rename files and folders, drag and drop files around, share files with anyone - *totally feel like using a filesystem*!
