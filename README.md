@@ -63,8 +63,9 @@ Nubox is a blockchain-based file storage solution built on top of **[NuCypher](h
     * View the total size of the files upload
     * View various activity in your account (Uploading, renaming, deleting, moving and sharing files and folders)
 
-# Known Nucypher issues:
-* You cannot download same file twice: https://github.com/nucypher/nucypher/issues/833
+# Known issues:
+* **NuCypher** - You cannot download same file twice: https://github.com/nucypher/nucypher/issues/833
+* **Infura IPFS** - it might throw 504 or gateway errors while trying to upload or download a file. Certain times, it'll be quite slow.
 
 
 **Free Software, Hell Yeah!**
