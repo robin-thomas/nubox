@@ -1,9 +1,8 @@
 # nuBox - Decentralized encrypted Dropbox
-![](http://i67.tinypic.com/34ooa6h_th.png)
 
 ![](https://img.shields.io/badge/nodejs-8.10-blue.svg) ![](https://img.shields.io/badge/nuBox-1.0-yellowgreen.svg) [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-## [Winner of NuCypher + CoinList hackathon!!](https://coinlist.co/build/nucypher/votes)
+## [Winner of NuCypher + CoinList hackathon!!](https://coinlist.co/build/nucypher/projects/ab706d82-56d3-48f3-99d7-08a4474d55cb)
 
 # Table of Contents
 1. [What is nuBox?](#what-is-nubox)
@@ -28,7 +27,7 @@ Nubox is a blockchain-based file storage solution built on top of **[NuCypher](h
 * **Unlimited file size** -
     * nuBox supports files of any size.
     * All files are broken into chunks of 256KB, encrypted using NuCypher and then uploaded to [IPFS](https://ipfs.io/).
-* **Unique shareable link per file** - 
+* **Unique shareable link per file** -
     * Each file gets a unique link that can be shared with anyone.
     * Whenever anyone tries to access the link, the IPFS hashes where the file is stored is encoded in the HTTP response headers (Chrome has serious limitations in the context of chrome extensions. Hence response headers and not response body).
     * nuBox chrome extension will be listening for the response headers. Once the headers are decoded, it opens up a stream to start saving the file, download encrypted data from IPFS one by one, decrypt it through NuCypher (decrypt will fail, if the person who is downloading hasn't been granted access), and send it to the stream! Voila!
